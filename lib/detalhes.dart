@@ -1,3 +1,4 @@
+import 'package:app_tenda/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -68,6 +69,7 @@ class _DetalhesFilhoState extends State<DetalhesFilho> {
 
           final data = snapshot.data!.data() as Map<String, dynamic>;
           final mensalidades = data['mensalidade'] as List<dynamic>;
+          final alergias = data['alergias'] as List<dynamic>;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -81,29 +83,79 @@ class _DetalhesFilhoState extends State<DetalhesFilho> {
                     return const SizedBox.shrink();
                   }
                 }),
+
+                // Seção para exibir as alergias
+                if (alergias.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  const Text('Alergias:',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const SizedBox(height: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:
+                        alergias.map((alergia) => Text('- $alergia')).toList(),
+                  ),
+                ] else ...[
+                  const SizedBox(height: 16),
+                  const Text('Alergias:',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const SizedBox(height: 8),
+                  const Text(
+                      'Nenhuma alergia informada.'), // Texto para lista vazia
+                ],
+
                 const SizedBox(height: 16),
-                const Text('Mensalidades:',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                ListView.builder(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Mensalidades:',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                    IconButton(
+                      iconSize: 15,
+                      onPressed: () {
+                        _mostrarDialogoConfirmacao(filhoData['nome']);
+                      },
+                      icon: const Icon(Icons.refresh, color: kPrimaryColor),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: kPrimaryColor),
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(10),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, // Número de colunas no grid
+                    childAspectRatio: 2, // Proporção largura/altura dos itens
+                  ),
                   itemCount: mensalidades.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(mesLabels[index]),
-                      trailing: Switch(
-                        value: mensalidades[index],
-                        onChanged: (value) {
-                          _atualizarMensalidade(
-                              filhoData['nome'], index, value);
-                        },
-                        activeColor: Colors.green, // Cor quando ativo (ligado)
-                        inactiveThumbColor: Colors
-                            .red, // Cor do círculo quando inativo (desligado)
-                        inactiveTrackColor:
-                            Colors.red.shade200, // Cor da faixa quando inativo
-                      ),
+                    return Column(
+                      children: [
+                        Text(
+                          mesLabels[index],
+                          style: const TextStyle(fontSize: 10),
+                          textAlign: TextAlign.center, // Centraliza o texto
+                        ),
+                        Switch(
+                          value: mensalidades[index],
+                          onChanged: (value) {
+                            _atualizarMensalidade(
+                                filhoData['nome'], index, value);
+                          },
+                          activeColor: Colors.green,
+                          inactiveThumbColor: Colors.red,
+                          inactiveTrackColor: Colors.red.shade200,
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -113,6 +165,61 @@ class _DetalhesFilhoState extends State<DetalhesFilho> {
         },
       ),
     );
+  }
+
+  void _mostrarDialogoConfirmacao(String nomeFilho) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirmação"),
+          content: Text(
+              "Tem certeza que deseja resetar todas as mensalidades de $nomeFilho?"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Não"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("Sim"),
+              onPressed: () {
+                _zerarTodasMensalidades(nomeFilho);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _zerarTodasMensalidades(String nomeFilho) async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('Filhos')
+          .doc(nomeFilho)
+          .get();
+
+      if (doc.exists) {
+        List<dynamic> mensalidades = doc.get('mensalidade');
+
+        List<bool> updatedMensalidades =
+            List.generate(mensalidades.length, (index) => false);
+
+        await FirebaseFirestore.instance
+            .collection('Filhos')
+            .doc(nomeFilho)
+            .update({'mensalidade': updatedMensalidades});
+
+        setState(() {});
+      } else {
+        print("Document not found");
+      }
+    } catch (e) {
+      print('Error updating document: $e');
+    }
   }
 
   Future<void> _atualizarMensalidade(

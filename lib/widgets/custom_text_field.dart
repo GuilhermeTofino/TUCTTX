@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.icon,
     required this.label,
     this.isSecret = false,
@@ -16,7 +16,8 @@ class CustomTextField extends StatefulWidget {
     this.onSaved,
     this.textInputType,
     this.formFieldKey,
-  }) : super(key: key);
+    this.onChanged,
+  });
   final IconData icon;
   final String label;
   final bool isSecret;
@@ -29,6 +30,7 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final TextInputType? textInputType;
   final GlobalKey<FormFieldState>? formFieldKey;
+  final ValueChanged<String>? onChanged;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -48,6 +50,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
+        onChanged: widget.onChanged,
         key: widget.formFieldKey,
         controller: widget.controller,
         validator: widget.validator,

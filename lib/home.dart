@@ -106,7 +106,7 @@ class _HomeState extends State<Home> {
                 voltar: false),
             VisualizarPdf(
               appBarTitle: 'Rumbê',
-              pdfAssetPath: 'images/pdfs/RUMBÊ TUCTTX.pdf',
+              pdfAssetPath: 'images/pdfs/RUMBE TUCTTX.pdf',
               voltar: false,
               naoMostrar: false,
             ),

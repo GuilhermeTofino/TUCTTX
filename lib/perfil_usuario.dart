@@ -78,12 +78,12 @@ class _PerfilUsuarioState extends State<PerfilUsuario> {
 
       if (snapshot.exists) {
         setState(() {
-          numeroEmergencia = snapshot.get('numero_emergencia') ?? "";
-          orixaDeFrente = snapshot.get('orixa_de_frente') ?? "";
-          orixaJunto = snapshot.get('orixa_junto') ?? "";
-          idade = snapshot.get('idade') ?? "";
-          dataNascimento = snapshot.get('data_nascimento') ?? "";
-          login = snapshot.get('login_key') ?? "";
+          numeroEmergencia = snapshot.get('numero_emergencia');
+          orixaDeFrente = snapshot.get('orixa_de_frente');
+          orixaJunto = snapshot.get('orixa_junto');
+          idade = snapshot.get('idade');
+          dataNascimento = snapshot.get('data_nascimento');
+          login = snapshot.get('login_key');
 
           numeroEmergenciaController.text = numeroEmergencia;
           orixaDeFrenteController.text = orixaDeFrente;
