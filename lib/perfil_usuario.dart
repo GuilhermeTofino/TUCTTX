@@ -80,7 +80,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> {
         setState(() {
           numeroEmergencia = snapshot.get('numero_emergencia');
           orixaDeFrente = snapshot.get('orixa_de_frente');
-          orixaJunto = snapshot.get('orixa_junto');
+          orixaJunto = snapshot.get('Orixa_junto');
           idade = snapshot.get('idade');
           dataNascimento = snapshot.get('data_nascimento');
           login = snapshot.get('login_key');
@@ -112,7 +112,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> {
           .update({
         'numero_emergencia': numeroEmergenciaController.text,
         'orixa_de_frente': orixaDeFrenteController.text,
-        'orixa_junto': orixaJuntoController.text,
+        'Orixa_junto': orixaJuntoController.text,
         'idade': idadeController.text,
         'data_nascimento': dataNascimentoController.text,
         'login_key': loginController.text,

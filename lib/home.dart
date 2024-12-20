@@ -1,4 +1,5 @@
 import 'package:app_tenda/Tela%20Inicial/calendario.dart';
+import 'package:app_tenda/Tela%20Inicial/financeiro.dart';
 import 'package:app_tenda/Tela%20Inicial/grid_pdfs.dart';
 import 'package:app_tenda/Tela%20Inicial/vizualizador_pdf.dart';
 import 'package:app_tenda/colors.dart';
@@ -132,6 +133,7 @@ class _HomeState extends State<Home> {
               appBarTitle: 'Biblioteca',
             ),
             Filhos(),
+            Financeiro(),
           ],
         ),
         Positioned(
@@ -185,7 +187,9 @@ class _HomeState extends State<Home> {
           _buildDrawerItem("Ervas", 6, Icons.compost),
           _buildDrawerItem("Biblioteca", 7, Icons.menu_book),
           if (isAdmin) _buildDrawerItem("Filhos", 8, Icons.people_alt_outlined),
-          _buildDrawerItem("Sair", 9, Icons.exit_to_app)
+          if (isAdmin) _buildDrawerItem("Financeiro", 9, Icons.attach_money),
+
+          _buildDrawerItem("Sair", 10, Icons.exit_to_app)
           // ... outros itens
         ],
       ),
@@ -200,6 +204,10 @@ class _HomeState extends State<Home> {
           style: GoogleFonts.lato(
               fontSize: 13, color: kPrimaryColor, fontWeight: FontWeight.bold)),
       selected: _selectedIndex == index,
+      selectedTileColor: Colors.grey[200],
+      trailing: _selectedIndex == index
+          ? const Icon(Icons.arrow_forward_ios, color: kPrimaryColor)
+          : null,
       onTap: () {
         if (title == "Sair") {
           Navigator.of(context).pushAndRemoveUntil(
