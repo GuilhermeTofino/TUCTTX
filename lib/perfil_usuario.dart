@@ -196,17 +196,9 @@ class _PerfilUsuarioState extends State<PerfilUsuario> {
                            List<dynamic> mensalidade = snapshot.get('mensalidade') ?? [];
 
 
-                            if (mensalidade != null) {
-                              Navigator.pushNamed(context, '/mensalidade',
-                                  arguments: mensalidade);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Dados de mensalidade não encontrados.')),
-                              );
-                            }
-                          }
+                            Navigator.pushNamed(context, '/mensalidade',
+                                arguments: mensalidade);
+                                                    }
                         } catch (e) {
                           print("Error fetching mensalidade: $e");
                           ScaffoldMessenger.of(context).showSnackBar(

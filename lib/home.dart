@@ -3,8 +3,6 @@ import 'package:app_tenda/Tela%20Inicial/financeiro.dart';
 import 'package:app_tenda/Tela%20Inicial/grid_pdfs.dart';
 import 'package:app_tenda/Tela%20Inicial/vizualizador_pdf.dart';
 import 'package:app_tenda/colors.dart';
-import 'package:app_tenda/listas%20Pdfs/list_pdfs.dart';
-import 'package:app_tenda/perfil_usuario.dart';
 import 'package:app_tenda/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:app_tenda/entrar.dart';
@@ -187,7 +185,8 @@ class _HomeState extends State<Home> {
           _buildDrawerItem("Ervas", 6, Icons.compost),
           _buildDrawerItem("Biblioteca", 7, Icons.menu_book),
           if (isAdmin) _buildDrawerItem("Filhos", 8, Icons.people_alt_outlined),
-          if (isAdmin) _buildDrawerItem("Financeiro", 9, Icons.attach_money),
+          // if (isAdmin) 
+          _buildDrawerItem("Financeiro", 9, Icons.attach_money),
 
           _buildDrawerItem("Sair", 10, Icons.exit_to_app)
           // ... outros itens

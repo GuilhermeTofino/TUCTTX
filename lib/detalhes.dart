@@ -222,41 +222,94 @@ class _DetalhesFilhoState extends State<DetalhesFilho> {
     }
   }
 
-  Future<void> _atualizarMensalidade(
-      String nomeFilho, int index, bool value) async {
-    try {
-      DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection('Filhos')
-          .doc(nomeFilho)
-          .get();
+ Future<void> _atualizarMensalidade(String nomeFilho, int index, bool pago) async {
+  double mensalidadeValor = 0.0; // Valor digitado pelo usuário
 
-      if (doc.exists) {
-        List<dynamic> mensalidades = doc.get('mensalidade');
-        if (index >= 0 && index < mensalidades.length) {
-          List<bool> updatedMensalidades =
-              mensalidades.map<bool>((dynamic e) => e as bool).toList();
+  if (pago) {
+    TextEditingController valorController = TextEditingController();
 
-          updatedMensalidades[index] = value;
+    bool confirmado = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Valor da Mensalidade"),
+          content: TextField(
+            controller: valorController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(labelText: "Digite o valor pago"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false), // Cancela
+              child: const Text("Cancelar"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (valorController.text.isNotEmpty) {
+                  mensalidadeValor = double.tryParse(valorController.text) ?? 0.0;
+                  if (mensalidadeValor > 0) {
+                    Navigator.pop(context, true);
+                  }
+                }
+              },
+              child: const Text("Confirmar"),
+            ),
+          ],
+        );
+      },
+    );
 
-          await FirebaseFirestore.instance
-              .collection('Filhos')
-              .doc(nomeFilho)
-              .update({
-            'mensalidade': updatedMensalidades,
-          });
-          print('Mensalidade atualizada com sucesso!');
-
-          setState(() {});
-        } else {
-          print("Invalid index or the field 'mensalidade' is not a list");
-        }
-      } else {
-        print("Document not found");
-      }
-    } catch (error) {
-      print('Erro ao atualizar mensalidade: $error');
-    }
+    if (!confirmado) return; // Se cancelar, não faz nada
   }
+
+  try {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('Filhos')
+        .doc(nomeFilho)
+        .get();
+
+    if (doc.exists) {
+      List<dynamic> mensalidades = doc.get('mensalidade');
+      double totalArrecadado = 0.0;
+
+      // Buscar o total arrecadado do Firestore
+      DocumentSnapshot financeiroSnapshot =
+          await FirebaseFirestore.instance.collection("financeiro").doc("dados").get();
+      if (financeiroSnapshot.exists) {
+        totalArrecadado = financeiroSnapshot["totalArrecadado"] ?? 0.0;
+      }
+
+      // Atualizar o estado da mensalidade
+      mensalidades[index] = pago;
+
+      // Atualizar o total arrecadado
+      totalArrecadado = pago ? totalArrecadado + mensalidadeValor : totalArrecadado - mensalidadeValor;
+
+      // Atualizar Firestore - Mensalidade do Filho
+      await FirebaseFirestore.instance.collection("Filhos").doc(nomeFilho).update({
+        "mensalidade": mensalidades,
+      });
+
+      // Atualizar Firestore - Total Arrecadado
+      await FirebaseFirestore.instance.collection("financeiro").doc("dados").update({
+        "totalArrecadado": totalArrecadado,
+      });
+
+      // Atualizar UI
+      setState(() {});
+
+      // Exibir notificação de sucesso
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Mensalidade de ${mesLabels[index]} atualizada!")),
+      );
+    }
+  } catch (error) {
+    print('Erro ao atualizar mensalidade: $error');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Erro ao atualizar mensalidade.')),
+    );
+  }
+}
 
   Widget _buildDetailRow(String key, dynamic value) {
     return Padding(
