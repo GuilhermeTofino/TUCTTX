@@ -129,7 +129,7 @@ class _CalendarioState extends State<Calendario> {
           final evento = doc.data() as Map<String, dynamic>;
           final documentId = doc.id;
           return _buildItemEvento(evento, documentId);
-        }).toList(),
+        }),
       ],
     );
   }

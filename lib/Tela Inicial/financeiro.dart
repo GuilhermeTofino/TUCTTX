@@ -175,7 +175,7 @@ ${despesas.map((d) => "📌 ${d['nome']}: R\$ ${d['valor'].toStringAsFixed(2)}")
 📈 Total Arrecadado: R\$ ${totalArrecadadoFirebase.toStringAsFixed(2)}
 ${saldoFinalCalculado >= 0 ? "✅ Saldo Positivo: R\$ ${saldoFinalCalculado.toStringAsFixed(2)}" : "❌ Saldo Negativo: R\$ ${saldoFinalCalculado.abs().toStringAsFixed(2)}"}
 ----------------------------------
-✅ Relatório salvo com sucesso no Firebase!
+✅ Relatório salvo com sucesso no Banco de dados!
 """;
 
     // Exibir o relatório corretamente

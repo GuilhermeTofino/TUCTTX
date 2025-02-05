@@ -226,46 +226,78 @@ class _CadastrarState extends State<Cadastrar> {
   }
 
   Future<void> _submitForm() async {
-    setState(() {
-      _errorMessage = null;
-    });
+  setState(() {
+    _errorMessage = null;
+  });
 
-    if (_formKey.currentState!.validate()) {
-      try {
-        final db = FirebaseFirestore.instance;
-        final usersCollection = db.collection('Filhos');
-        final loginKey =
-            '${_nomeController.text.split(' ')[0]}.${_nomeController.text.split(' ').last}';
-        final userData = {
-          'nome': _nomeController.text,
-          'idade': _idadeController.text,
-          'data_nascimento': _dataNascimentoController.text,
-          'numero_emergencia': _numeroEmergenciaController.text,
-          'tirou_santo': _tirouSanto ? "Sim" : "Não",
-          'orixa_de_frente': _tirouSanto ? _frenteController.text : "Não Sabe",
-          'Orixa_junto': _tirouSanto ? _juntoController.text : "Não Sabe",
-          'login_key': loginKey,
-          'mensalidade': List.filled(12, false),
-          'alergias': _alergias,
-        };
+  if (_formKey.currentState!.validate()) {
+    try {
+      final db = FirebaseFirestore.instance;
+      final usersCollection = db.collection('Filhos');
 
-        await usersCollection.doc(_nomeController.text).set(userData);
-        if (_formKey.currentState!.validate()) {
-          const snackBar =
-              SnackBar(content: Text('Usuário cadastrado com sucesso!'));
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      final String nome = _nomeController.text.trim();
+      final String loginKey =
+          '${nome.split(' ')[0]}.${nome.split(' ').last}'.toLowerCase();
 
-          await Future.delayed(const Duration(seconds: 2));
+      final userData = {
+        'nome': nome,
+        'idade': _idadeController.text,
+        'data_nascimento': _dataNascimentoController.text,
+        'numero_emergencia': _numeroEmergenciaController.text,
+        'tirou_santo': _tirouSanto ? "Sim" : "Não",
+        'orixa_de_frente': _tirouSanto ? _frenteController.text : "Não Sabe",
+        'Orixa_junto': _tirouSanto ? _juntoController.text : "Não Sabe",
+        'login_key': loginKey,
+        'mensalidade': List.filled(12, false),
+        'alergias': _alergias,
+      };
 
-          Navigator.pop(context);
-        }
-      } catch (e) {
-        Navigator.pop(context);
-      }
-    } else {
+      await usersCollection.doc(nome).set(userData);
+
+      // Exibir AlertDialog de sucesso
+      showDialog(
+        context: context,
+        barrierDismissible: false, // Evita que o usuário feche o diálogo sem clicar no botão
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.check_circle, color: Colors.green, size: 80),
+              const SizedBox(height: 16),
+              const Text(
+                "Bem-vindo Tender",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Seu login é: $loginKey",
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Fecha o diálogo
+                Navigator.pop(context); // Volta à tela anterior
+              },
+              child: const Text("OK", style: TextStyle(color: Colors.green)),
+            ),
+          ],
+        ),
+      );
+
+    } catch (e) {
       setState(() {
-        _errorMessage = '* favor preencher todos os campos obrigatórios';
+        _errorMessage = "Erro ao cadastrar usuário. Tente novamente.";
       });
     }
+  } else {
+    setState(() {
+      _errorMessage = '* Favor preencher todos os campos obrigatórios';
+    });
   }
+}
 }

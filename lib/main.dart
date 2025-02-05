@@ -1,4 +1,5 @@
 import 'package:app_tenda/Tela%20Inicial/calendario.dart';
+import 'package:app_tenda/bazar.dart';
 import 'package:app_tenda/cadastrar.dart';
 import 'package:app_tenda/detalhes.dart';
 import 'package:app_tenda/entrar.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         '/perfilUsuario': (context) => const PerfilUsuario(),
         '/mensalidade': (context) => const Mensalidade(),
         '/detalhesFilho': (context) => const DetalhesFilho(),
+        '/bazar': (context) => const Bazar(),
       },
     );
   }

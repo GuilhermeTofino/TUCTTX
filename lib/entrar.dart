@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 // Variável global para indicar se o usuário é administrador
 bool isAdmin = false;
+bool isBazar = false;
 
 class Entrar extends StatefulWidget {
   const Entrar({super.key});
@@ -66,46 +67,45 @@ class _EntrarState extends State<Entrar> {
 
   // Função para realizar o login
   Future<void> _tentarLogin() async {
-    if (_formKey.currentState!.validate()) {
-      final usuario = _usuarioController.text;
-      try {
-        // Busca por usuário na coleção "Filhos"
-        final filhosSnapshot = await FirebaseFirestore.instance
-            .collection('Filhos')
-            .where('login_key', isEqualTo: usuario)
-            .get();
+  if (!_formKey.currentState!.validate()) return;
 
-        if (filhosSnapshot.docs.isNotEmpty) {
-          isAdmin = false;
-          String nomeUsuario =
-              filhosSnapshot.docs[0].get('nome'); 
-          _redirecionarParaTelaPrincipal(nomeUsuario); 
-          return;
-        }
+  final usuario = _usuarioController.text.trim();
+  try {
+    final resultado = await _buscarUsuario(usuario);
 
-        // Se não encontrar em "Filhos", busca na coleção "Adm"
-        final admSnapshot = await FirebaseFirestore.instance
-            .collection('Adm')
-            .where('login_key', isEqualTo: usuario)
-            .get();
+    if (resultado != null) {
+      isAdmin = resultado['tipo'] == 'Adm';
+      isBazar = resultado['tipo'] == 'Bazar';
+      _redirecionarParaTelaPrincipal(resultado['nome'] ?? "");
+    } else {
+      _mostrarAlertaUsuarioNaoEncontrado();
+    }
+  } catch (e) {
+    print('Erro durante o login: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Erro ao fazer login.')),
+    );
+  }
+}
+Future<Map<String, String>?> _buscarUsuario(String login) async {
+  final List<String> colecoes = ['Filhos', 'Adm', 'Bazar'];
 
-        if (admSnapshot.docs.isNotEmpty) {
-          isAdmin = true;
-          String nomeUsuario = admSnapshot.docs[0].get('nome'); 
-          _redirecionarParaTelaPrincipal(nomeUsuario); 
-          return;
-        }
+  for (String colecao in colecoes) {
+    final snapshot = await FirebaseFirestore.instance
+        .collection(colecao)
+        .where('login_key', isEqualTo: login)
+        .get();
 
-        // Se não encontrar em nenhuma coleção, exibe alerta
-        _mostrarAlertaUsuarioNaoEncontrado();
-      } catch (e) {
-        print('Erro durante o login: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao fazer login.')),
-        );
-      }
+    if (snapshot.docs.isNotEmpty) {
+      return {
+        'nome': snapshot.docs.first.get('nome'),
+        'tipo': colecao, // Define o tipo de usuário
+      };
     }
   }
+  return null; // Retorna nulo se não encontrar o usuário em nenhuma coleção
+}
+
 
   // Função para redirecionar para a tela principal
   void _redirecionarParaTelaPrincipal(String nomeUsuario) {

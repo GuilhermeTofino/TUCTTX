@@ -2,6 +2,7 @@ import 'package:app_tenda/Tela%20Inicial/calendario.dart';
 import 'package:app_tenda/Tela%20Inicial/financeiro.dart';
 import 'package:app_tenda/Tela%20Inicial/grid_pdfs.dart';
 import 'package:app_tenda/Tela%20Inicial/vizualizador_pdf.dart';
+import 'package:app_tenda/bazar.dart';
 import 'package:app_tenda/colors.dart';
 import 'package:app_tenda/splash.dart';
 import 'package:flutter/material.dart';
@@ -59,13 +60,15 @@ class _HomeState extends State<Home> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            isAdmin ? 'Olá - $nomeUsuario (ADM)' : 'Olá - $nomeUsuario',
+            isAdmin || isBazar
+                ? 'Olá - $nomeUsuario (ADM)'
+                : 'Olá - $nomeUsuario',
             style: GoogleFonts.lato(
                 fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          if (isAdmin) const SizedBox(width: 100),
-          if (!isAdmin) const SizedBox(width: 10),
-          if (!isAdmin)
+          if (!isAdmin && !isBazar) const SizedBox(width: 100),
+          if (!isAdmin && !isBazar) const SizedBox(width: 10),
+          if (!isAdmin && !isBazar)
             GestureDetector(
               onTap: () {
                 Navigator.pushNamed(
@@ -132,6 +135,7 @@ class _HomeState extends State<Home> {
             ),
             Filhos(),
             Financeiro(),
+            Bazar()
           ],
         ),
         Positioned(
@@ -164,35 +168,45 @@ class _HomeState extends State<Home> {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            // Usando DrawerHeader para o cabeçalho
-            decoration: const BoxDecoration(
-              color: kPrimaryColor,
-            ),
-            child: Image.asset(
-              'images/logo_TUCTTX.png',
-              fit: BoxFit.contain,
-            ),
+            decoration: const BoxDecoration(color: kPrimaryColor),
+            child: Image.asset('images/logo_TUCTTX.png', fit: BoxFit.contain),
           ),
-          // Itens do menu
-          _buildDrawerItem(
-              'Calendário', 0, Icons.calendar_today), // Exemplo de ícone
-          _buildDrawerItem('APOSTILA', 1, Icons.book), // Ícone de livro
-          _buildDrawerItem('RUMBÊ', 2, Icons.rule), // Ícone de música
-          _buildDrawerItem('FAQ-PERGUNTAS FREQUENTES', 3,
-              Icons.question_answer), // Ícone de chat
-          _buildDrawerItem("Pontos Cantados", 4, Icons.graphic_eq),
-          _buildDrawerItem("Pontos Riscados", 5, Icons.edit),
-          _buildDrawerItem("Ervas", 6, Icons.compost),
-          _buildDrawerItem("Biblioteca", 7, Icons.menu_book),
-          if (isAdmin) _buildDrawerItem("Filhos", 8, Icons.people_alt_outlined),
-          // if (isAdmin) 
-          _buildDrawerItem("Financeiro", 9, Icons.attach_money),
-
-          _buildDrawerItem("Sair", 10, Icons.exit_to_app)
-          // ... outros itens
+          // Concatena as listas específicas de cada tipo de usuário
+          ..._getMenuItems(),
+          _buildDrawerItem("Sair", 11, Icons.exit_to_app),
         ],
       ),
     );
+  }
+
+  List<Widget> _getMenuItems() {
+    List<Widget> menuItems = [];
+
+    if (!isBazar) {
+      menuItems.addAll([
+        _buildDrawerItem('Calendário', 0, Icons.calendar_today),
+        _buildDrawerItem('APOSTILA', 1, Icons.book),
+        _buildDrawerItem('RUMBÊ', 2, Icons.rule),
+        _buildDrawerItem('FAQ-PERGUNTAS FREQUENTES', 3, Icons.question_answer),
+        _buildDrawerItem("Pontos Cantados", 4, Icons.graphic_eq),
+        _buildDrawerItem("Pontos Riscados", 5, Icons.edit),
+        _buildDrawerItem("Ervas", 6, Icons.compost),
+        _buildDrawerItem("Biblioteca", 7, Icons.menu_book),
+      ]);
+    }
+
+    if (isAdmin) {
+      menuItems.add(_buildDrawerItem("Filhos", 8, Icons.people_alt_outlined));
+      menuItems.add(_buildDrawerItem("Bazar", 10, Icons.money_rounded));
+    }
+
+    menuItems.add(_buildDrawerItem("Financeiro", 9, Icons.attach_money));
+
+    if (isBazar) {
+      menuItems.add(_buildDrawerItem("Bazar", 10, Icons.money_rounded));
+    }
+
+    return menuItems;
   }
 
   // Constrói um item do Drawer
