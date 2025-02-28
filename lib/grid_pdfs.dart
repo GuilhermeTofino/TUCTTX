@@ -400,7 +400,7 @@ class _ListaPdfState extends State<ListaPdf> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("Nome do Documento"),
+            title: const Text("Nome do Documento"),
             content: CustomTextField(
               icon: Icons.paste,
               label: "Digite o nome do documento",
@@ -408,11 +408,11 @@ class _ListaPdfState extends State<ListaPdf> {
             ),
             actions: <Widget>[
               TextButton(
-                child: Text("Cancelar"),
+                child: const Text("Cancelar"),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               TextButton(
-                child: Text("Salvar"),
+                child: const Text("Salvar"),
                 onPressed: () {
                   enteredName = nameController.text;
                   Navigator.of(context).pop();
