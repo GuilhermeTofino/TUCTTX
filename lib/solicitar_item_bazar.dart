@@ -39,39 +39,52 @@ class _SolicitarProdutoScreenState extends State<SolicitarProdutoScreen> {
 
   /// Gera a mensagem e abre o WhatsApp
   /// Gera a mensagem e abre o WhatsApp em uma conversa específica
-Future<void> _enviarListaParaWhatsApp() async {
-  QuerySnapshot snapshot =
-      await firestore.collection("bazar_solicitacoes").get();
+  Future<void> _enviarListaParaWhatsApp() async {
+    QuerySnapshot snapshot =
+        await firestore.collection("bazar_solicitacoes").get();
 
-  if (snapshot.docs.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Nenhum produto na lista para enviar.")),
-    );
-    return;
+    if (snapshot.docs.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Nenhum produto na lista para enviar.")),
+      );
+      return;
+    }
+
+    // 🔥 Usamos links de imagens em vez de emojis
+    String titulo = "*Lista de Produtos Solicitados para o Bazar:*\n\n";
+    String marcador = "👉"; // Alternativa para 🔹 que pode funcionar
+    String celular = "📲"; // Alternativa para 📲
+
+    // Construção da mensagem
+    String mensagem = titulo;
+    for (var doc in snapshot.docs) {
+      mensagem += "• ${doc["nome"]}\n";
+    }
+
+    mensagem += "\n*Enviado via App Tenda*";
+
+    // ✅ Substituir número pelo correto (código do país + número sem espaços)
+    String numeroWhatsApp = "551183407118";
+
+    // ✅ Codificar a mensagem corretamente
+    String url =
+        "https://wa.me/$numeroWhatsApp?text=${Uri.encodeFull(mensagem)}";
+
+    try {
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Erro ao abrir o WhatsApp.")),
+        );
+      }
+    } catch (e) {
+      print("Erro ao abrir o WhatsApp: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Erro ao abrir o WhatsApp.")),
+      );
+    }
   }
-
-  // Montar a mensagem com os produtos solicitados
-  String mensagem = "📋 *Lista de Produtos Solicitados para repor no bazar:*\n\n";
-  for (var doc in snapshot.docs) {
-    mensagem += "🔹 ${doc["nome"]}\n";
-  }
-  mensagem += "\n📲 *Enviado via App Tenda*";
-
-  // Defina o número de telefone (sem espaços, com código do país, ex: Brasil = 55)
-  String numeroWhatsApp = "5511983407118"; // Substitua pelo número correto
-
-  // Codificar para URL
-  String url =
-      "https://wa.me/$numeroWhatsApp?text=${Uri.encodeComponent(mensagem)}";
-
-  if (await canLaunchUrl(Uri.parse(url))) {
-    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Erro ao abrir o WhatsApp.")),
-    );
-  }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +127,8 @@ Future<void> _enviarListaParaWhatsApp() async {
                   var solicitacoes = snapshot.data!.docs;
 
                   if (solicitacoes.isEmpty) {
-                    return const Center(child: Text("Nenhum produto solicitado."));
+                    return const Center(
+                        child: Text("Nenhum produto solicitado."));
                   }
 
                   return ListView.builder(
@@ -128,7 +142,8 @@ Future<void> _enviarListaParaWhatsApp() async {
                           title: Text(solicitacao["nome"]),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _removerSolicitacao(solicitacao.id),
+                            onPressed: () =>
+                                _removerSolicitacao(solicitacao.id),
                           ),
                         ),
                       );

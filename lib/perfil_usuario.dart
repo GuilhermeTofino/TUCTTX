@@ -1,4 +1,4 @@
-import 'package:app_tenda/colors.dart';
+import 'package:app_tenda/widgets/colors.dart';
 import 'package:app_tenda/widgets/custom_text_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +72,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> {
   Future<void> fetchUserData(String username) async {
     try {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection('Filhos')
+          .collection('Usuarios')
           .doc(username)
           .get();
 
@@ -107,7 +107,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> {
   Future<void> updateUserData() async {
     try {
       await FirebaseFirestore.instance
-          .collection('Filhos')
+          .collection('Usuarios')
           .doc(nomeUsuario)
           .update({
         'numero_emergencia': numeroEmergenciaController.text,
@@ -189,7 +189,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> {
                         try {
                           DocumentSnapshot snapshot = await FirebaseFirestore
                               .instance
-                              .collection('Filhos')
+                              .collection('Usuarios')
                               .doc(nomeUsuario)
                               .get();
                           if (snapshot.exists) {

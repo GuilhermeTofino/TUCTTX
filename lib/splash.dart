@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:app_tenda/colors.dart';
+import 'package:app_tenda/widgets/colors.dart';
 import 'package:app_tenda/login.dart';
 import 'package:google_fonts/google_fonts.dart';
 

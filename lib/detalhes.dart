@@ -1,4 +1,4 @@
-import 'package:app_tenda/colors.dart';
+import 'package:app_tenda/widgets/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +53,7 @@ class _DetalhesFilhoState extends State<DetalhesFilho> {
       appBar: AppBar(title: const Text('Detalhes do Filho')),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('Filhos')
+            .collection('Usuarios')
             .doc(filhoData['nome'])
             .snapshots(),
         builder: (context, snapshot) {
@@ -198,7 +198,7 @@ class _DetalhesFilhoState extends State<DetalhesFilho> {
   Future<void> _zerarTodasMensalidades(String nomeFilho) async {
     try {
       DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection('Filhos')
+          .collection('Usuarios')
           .doc(nomeFilho)
           .get();
 
@@ -209,7 +209,7 @@ class _DetalhesFilhoState extends State<DetalhesFilho> {
             List.generate(mensalidades.length, (index) => false);
 
         await FirebaseFirestore.instance
-            .collection('Filhos')
+            .collection('Usuarios')
             .doc(nomeFilho)
             .update({'mensalidade': updatedMensalidades});
 
@@ -264,7 +264,7 @@ class _DetalhesFilhoState extends State<DetalhesFilho> {
 
   try {
     DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('Filhos')
+        .collection('Usuarios')
         .doc(nomeFilho)
         .get();
 

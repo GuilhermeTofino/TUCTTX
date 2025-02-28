@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
-  const CustomTextField({
-    super.key,
-    required this.icon,
-    required this.label,
-    this.isSecret = false,
-    this.inputFormatters,
-    this.initialValue,
-    this.readOnly = false,
-    this.onTap,
-    this.validator,
-    this.controller,
-    this.onSaved,
-    this.textInputType,
-    this.formFieldKey,
-    this.onChanged,
-  });
-  final IconData icon;
+  const CustomTextField(
+      {super.key,
+      this.icon,
+      required this.label,
+      this.isSecret = false,
+      this.inputFormatters,
+      this.initialValue,
+      this.readOnly = false,
+      this.onTap,
+      this.validator,
+      this.controller,
+      this.onSaved,
+      this.textInputType,
+      this.formFieldKey,
+      this.onChanged,
+      this.hintText});
+  final IconData? icon;
   final String label;
   final bool isSecret;
   final List<TextInputFormatter>? inputFormatters;
@@ -31,6 +31,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputType? textInputType;
   final GlobalKey<FormFieldState>? formFieldKey;
   final ValueChanged<String>? onChanged;
+  final String? hintText;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -62,6 +63,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         keyboardType: widget.textInputType,
         onSaved: widget.onSaved,
         decoration: InputDecoration(
+            hintText: widget.hintText,
             labelText: widget.label,
             isDense: true,
             prefixIcon: Icon(widget.icon),

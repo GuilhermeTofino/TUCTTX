@@ -1,4 +1,4 @@
-import 'package:app_tenda/colors.dart';
+import 'package:app_tenda/widgets/colors.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {

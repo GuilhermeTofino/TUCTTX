@@ -1,13 +1,16 @@
-import 'package:app_tenda/Tela%20Inicial/calendario.dart';
-import 'package:app_tenda/bazar.dart';
-import 'package:app_tenda/cadastrar.dart';
+import 'package:app_tenda/calendario.dart';
+
+import 'package:app_tenda/screens/bazar.dart';
+import 'package:app_tenda/screens/cadastrar.dart';
 import 'package:app_tenda/detalhes.dart';
 import 'package:app_tenda/entrar.dart';
 import 'package:app_tenda/home.dart';
 import 'package:app_tenda/login.dart';
 import 'package:app_tenda/mensalidade.dart';
 import 'package:app_tenda/perfil_usuario.dart';
+import 'package:app_tenda/solicitar_item_bazar.dart';
 import 'package:app_tenda/splash.dart';
+import 'package:app_tenda/widgets/fechar_teclado.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -15,7 +18,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-    await initializeDateFormatting('pt_BR', null);
+  await initializeDateFormatting('pt_BR', null);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -27,27 +30,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(color: Colors.white, elevation: 0),
-        useMaterial3: true,
+    return DismissKeyboard(
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: const AppBarTheme(color: Colors.white, elevation: 0),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: const Splash(),
+        routes: {
+          '/login': (context) => const Login(),
+          '/cadastrar': (context) => const Cadastrar(),
+          '/entrar': (context) => const Entrar(),
+          '/tela_principal': (context) => const Home(),
+          '/calendario': (context) => const Calendario(),
+          '/perfilUsuario': (context) => const PerfilUsuario(),
+          '/mensalidade': (context) => const Mensalidade(),
+          '/detalhesFilho': (context) => const DetalhesFilho(),
+          '/bazar': (context) => const Bazar(),
+          '/solicitar_produto': (context) => const SolicitarProdutoScreen(),
+        },
       ),
-      debugShowCheckedModeBanner: false,
-      home: const Splash(),
-      routes: {
-        '/login': (context) => const Login(),
-        '/cadastrar': (context) => const Cadastrar(),
-        '/entrar': (context) => const Entrar(),
-        '/tela_principal': (context) => const Home(),
-        '/calendario': (context) => const Calendario(),
-        '/perfilUsuario': (context) => const PerfilUsuario(),
-        '/mensalidade': (context) => const Mensalidade(),
-        '/detalhesFilho': (context) => const DetalhesFilho(),
-        '/bazar': (context) => const Bazar(),
-      },
     );
   }
 }

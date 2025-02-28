@@ -7,7 +7,9 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
   firebase_core
   firebase_storage
+  local_auth_windows
   pdfx
+  printing
   share_plus
   syncfusion_pdfviewer_windows
   url_launcher_windows
