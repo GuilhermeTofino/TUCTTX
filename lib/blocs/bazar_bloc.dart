@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:rxdart/rxdart.dart';
 import '../models/bazar_model.dart';
 import '../data/bazar_data.dart';
@@ -20,18 +21,14 @@ class BazarBloc {
     });
   }
 
-  Future<void> adicionarProduto(ProdutoBazar produto) async {
-    await _bazarData.adicionarProduto(produto);
-    carregarEstoque(); // Atualiza os produtos ao adicionar
+  Future<void> adicionarProduto(ProdutoBazar produto, File? imagem) async {
+    await _bazarData.adicionarProduto(produto, imagem: imagem);
+    carregarEstoque();
   }
 
-  Future<void> venderProduto(ProdutoBazar produto) async {
-    await _bazarData.venderProduto(produto);
-    carregarEstoque(); // Atualiza os produtos ao vender
-  }
-
-  Future<void> removerProduto(String produtoId) async {
-    await _bazarData.removerProduto(produtoId);
+  Future<void> venderProduto(ProdutoBazar produto, int quantidadeVendida) async {
+    await _bazarData.venderProduto(produto, quantidadeVendida);
+    carregarEstoque();
   }
 
   void dispose() {

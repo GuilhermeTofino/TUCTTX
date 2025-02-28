@@ -218,13 +218,6 @@ class _CalendarioState extends State<Calendario> {
     }
   }
 
-  ButtonStyle _buttonStyle() {
-    return const ButtonStyle(
-      elevation: MaterialStatePropertyAll(0),
-      backgroundColor: MaterialStatePropertyAll(Colors.white),
-    );
-  }
-
   Widget _buildBotaoAdicionarEvento() {
     return Positioned(
       bottom: 70.0,
@@ -265,21 +258,6 @@ class _CalendarioState extends State<Calendario> {
         return Colors.white;
       default:
         return Colors.grey;
-    }
-  }
-
-  Future<void> _excluirEvento(String documentId) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('GiraMes')
-          .doc(documentId)
-          .delete();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Evento excluído.')));
-    } catch (e) {
-      print("Erro ao excluir evento: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao excluir evento.')));
     }
   }
 

@@ -1,42 +1,42 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 class ProdutoBazar {
-  final String id;
-  final String nome;
-  final double valor;
-  final String? imagemBase64;
-  late final int quantidade;
+  String id;
+  String nome;
+  String categoria;
+  double preco;
+  int quantidade;
+  String fornecedor;
+  String imagemBase64;
 
   ProdutoBazar({
     required this.id,
     required this.nome,
-    required this.valor,
-    this.imagemBase64,
+    required this.categoria,
+    required this.preco,
     required this.quantidade,
+    required this.fornecedor,
+    required this.imagemBase64,
   });
 
   factory ProdutoBazar.fromFirestore(Map<String, dynamic> data, String id) {
     return ProdutoBazar(
       id: id,
-      nome: data["nome"] ?? "Sem nome",
-      valor: (data["valor"] ?? 0.0).toDouble(),
-      imagemBase64: data["imagem_base64"],
-      quantidade: data["quantidade"] ?? 0,
+      nome: data['nome'],
+      categoria: data['categoria'],
+      preco: (data['preco'] as num).toDouble(),
+      quantidade: data['quantidade'] ?? 0,
+      fornecedor: data['fornecedor'],
+      imagemBase64: data['imagemBase64'] ?? '',
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
-      "nome": nome,
-      "valor": valor,
-      "imagem_base64": imagemBase64,
-      "quantidade": quantidade,
+      'nome': nome,
+      'categoria': categoria,
+      "preco": preco.isFinite ? preco : 0.0,
+      'quantidade': quantidade,
+      'fornecedor': fornecedor,
+      'imagemBase64': imagemBase64,
     };
-  }
-
-  Uint8List? getImageBytes() {
-    if (imagemBase64 == null) return null;
-    return base64Decode(imagemBase64!);
   }
 }

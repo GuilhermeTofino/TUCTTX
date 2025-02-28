@@ -132,7 +132,7 @@ class _HomeState extends State<Home> {
             ListaPdf(appBarTitle: 'Biblioteca'),
             Filhos(),
             Financeiro(),
-            Bazar(),
+            // BazarScreen(),
             DemonstrativosScreen()
           ],
         ),
@@ -194,14 +194,14 @@ class _HomeState extends State<Home> {
               icon: Icons.admin_panel_settings,
               children: [
                 _buildDrawerItem("Filhos", 8, Icons.people_alt_outlined),
-                _buildDrawerItem("Bazar", 10, Icons.shopping_bag),
+                // _buildDrawerItem("Bazar", 10, Icons.shopping_bag),
                 _buildDrawerItem("Financeiro", 9, Icons.attach_money),
-                _buildDrawerItem("Demonstrativos", 11, Icons.picture_as_pdf),
+                _buildDrawerItem("Demonstrativos", 10, Icons.picture_as_pdf),
               ],
             ),
 
           // Caso seja usuário do bazar, adiciona Financeiro e Bazar separadamente
-          if (isBazar) _buildDrawerItem("Bazar", 10, Icons.money_rounded),
+          // if (isBazar) _buildDrawerItem("Bazar", 10, Icons.money_rounded),
 
           _buildDrawerItem("Sair", 12, Icons.exit_to_app),
         ],

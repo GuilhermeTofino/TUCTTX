@@ -8,6 +8,7 @@ import 'package:app_tenda/home.dart';
 import 'package:app_tenda/login.dart';
 import 'package:app_tenda/mensalidade.dart';
 import 'package:app_tenda/perfil_usuario.dart';
+import 'package:app_tenda/screens/cadastro_produto.dart';
 import 'package:app_tenda/solicitar_item_bazar.dart';
 import 'package:app_tenda/splash.dart';
 import 'package:app_tenda/widgets/fechar_teclado.dart';
@@ -50,8 +51,9 @@ class MyApp extends StatelessWidget {
           '/perfilUsuario': (context) => const PerfilUsuario(),
           '/mensalidade': (context) => const Mensalidade(),
           '/detalhesFilho': (context) => const DetalhesFilho(),
-          '/bazar': (context) => const Bazar(),
+          '/bazar': (context) => BazarScreen(),
           '/solicitar_produto': (context) => const SolicitarProdutoScreen(),
+          '/cadastro_produto': (context) => const CadastroProdutoScreen(),
         },
       ),
     );

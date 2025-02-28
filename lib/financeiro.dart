@@ -17,11 +17,7 @@ class _FinanceiroState extends State<Financeiro> {
   final TextEditingController arrecadadoController = TextEditingController();
   double totalArrecadado = 0.0;
 
-  List<Map<String, dynamic>> despesas = [
-    {"nome": "Aluguel", "valor": 1200.00},
-    {"nome": "Água", "valor": 150.00},
-    {"nome": "Luz", "valor": 250.00},
-  ];
+  List<Map<String, dynamic>> despesas = [];
 
   double saldoAnterior = 0.0;
 
