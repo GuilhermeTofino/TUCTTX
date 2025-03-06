@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>TUCTTX - Tenda de Umbando Caboclo Treme Terra de Xângo</string>
+	<string>TUCTTX - Tenda de Umbanda Caboclo Treme Terra de Xângo</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

@@ -42,6 +42,7 @@ dependencies:
   google_fonts: ^6.2.1
   intl: ^0.18.0
   firebase_storage: ^12.3.6
+  supabase_flutter: ^2.8.4
   file_picker: ^8.1.4
   http: ^1.2.2
   google_sign_in: ^6.2.2
@@ -49,7 +50,7 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^27.2.4
   pdfx: ^2.8.0
   share_plus: ^10.1.2
-  open_filex: ^4.2.0 
+  open_file: ^3.3.2
   image_picker: ^1.1.2
   local_auth: ^2.1.6
   pdf: ^3.10.2
