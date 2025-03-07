@@ -73,22 +73,21 @@ class _HomeState extends State<Home> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          if (!isAdmin && isBazar)
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/perfilUsuario',
-                    arguments: nomeUsuario);
-              },
-              child: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Text(
-                  nomeUsuario != null
-                      ? nomeUsuario.substring(0, 1).toUpperCase()
-                      : "",
-                  style: const TextStyle(color: kPrimaryColor),
-                ),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/perfilUsuario',
+                  arguments: nomeUsuario);
+            },
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Text(
+                nomeUsuario != null
+                    ? nomeUsuario.substring(0, 1).toUpperCase()
+                    : "",
+                style: const TextStyle(color: kPrimaryColor),
               ),
             ),
+          ),
         ],
       ),
     );

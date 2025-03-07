@@ -224,33 +224,27 @@ class _CadastrarState extends State<Cadastrar> {
       String nomeCompleto = _nomeController.text.trim();
       List<String> nomes = nomeCompleto.split(' ');
 
-      // Verifica se há pelo menos dois nomes para criar o login
       String loginUsuario = nomes.length > 1
           ? "${nomes.first.toLowerCase()}.${nomes.last.toLowerCase()}"
-          : nomes.first.toLowerCase(); // Se houver apenas um nome, usa só ele
+          : nomes.first.toLowerCase();
 
-      // Criando o array de mensalidades com os 12 meses
-      List<dynamic> mensalidade = [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-      ];
+      // Se o usuário não preencher a data de nascimento, deixa vazia
+      String dataNascimento = _dataNascimentoController.text.trim();
+      int? idade = dataNascimento.isNotEmpty
+          ? int.tryParse(_idadeController.text.trim())
+          : null;
+
+      // Se o número de emergência não for informado, deixa vazio
+      String numeroEmergencia = _numeroEmergenciaController.text.trim();
+
+      List<dynamic> mensalidade = List.generate(12, (index) => false);
 
       Usuario novoUsuario = Usuario(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         nome: nomeCompleto,
-        dataNascimento: _dataNascimentoController.text.trim(),
-        idade: int.tryParse(_idadeController.text.trim()) ?? 0,
-        numeroEmergencia: _numeroEmergenciaController.text.trim(),
+        dataNascimento: dataNascimento.isNotEmpty ? dataNascimento : "",
+        idade: idade ?? 0,
+        numeroEmergencia: numeroEmergencia.isNotEmpty ? numeroEmergencia : "",
         tirouSanto: _tirouSanto,
         orixaFrente: _tirouSanto ? _frenteController.text.trim() : "Não Sabe",
         orixaJunto: _tirouSanto ? _juntoController.text.trim() : "Não Sabe",
@@ -265,7 +259,6 @@ class _CadastrarState extends State<Cadastrar> {
       if (erro != null) {
         setState(() => _errorMessage = erro);
       } else {
-        // Exibe o Dialog de Boas-Vindas
         _mostrarDialogBoasVindas(loginUsuario);
       }
     }

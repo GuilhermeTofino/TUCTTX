@@ -150,6 +150,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   _buildEditableTextField(Icons.phone, "Número de Emergência",
                       numeroEmergenciaController, _numeroEmergenciaFormatter),
@@ -166,59 +167,112 @@ class _PerfilUsuarioState extends State<PerfilUsuario> {
                       "Orixá Juntó", orixaJuntoController),
                   _buildEditableTextField(
                       Icons.login, "Login", loginController),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ElevatedButton(
-                      onPressed: updateUserData,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          side: const BorderSide(color: kPrimaryColor),
-                        ),
+                  ElevatedButton(
+                    onPressed: updateUserData,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        side: const BorderSide(color: kPrimaryColor),
                       ),
-                      child: Text('Salvar Alterações',
-                          style: GoogleFonts.lato(
-                              fontSize: 13, color: kPrimaryColor)),
                     ),
+                    child: Text('Salvar Alterações',
+                        style: GoogleFonts.lato(
+                            fontSize: 13, color: kPrimaryColor)),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ElevatedButton(
-                      onPressed: () async {
+                  ElevatedButton(
+                    onPressed: () async {
+                      bool? confirmDelete = await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Confirmar Exclusão'),
+                          content: const Text(
+                              'Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('Cancelar'),
+                              onPressed: () => Navigator.of(context).pop(false),
+                            ),
+                            TextButton(
+                              child: const Text('Excluir'),
+                              style: TextButton.styleFrom(
+                                  foregroundColor: Colors.red),
+                              onPressed: () => Navigator.of(context).pop(true),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirmDelete == true) {
                         try {
-                          DocumentSnapshot snapshot = await FirebaseFirestore
-                              .instance
+                          await FirebaseFirestore.instance
                               .collection('Usuarios')
                               .doc(nomeUsuario)
-                              .get();
-                          if (snapshot.exists) {
-                           List<dynamic> mensalidade = snapshot.get('mensalidade') ?? [];
+                              .delete();
 
-
-                            Navigator.pushNamed(context, '/mensalidade',
-                                arguments: mensalidade);
-                                                    }
-                        } catch (e) {
-                          print("Error fetching mensalidade: $e");
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text(
-                                    'Erro ao acessar dados de mensalidade.')),
+                                content: Text('Conta excluída com sucesso!')),
+                          );
+
+                          // Retornar para a tela de login ou inicial após a exclusão
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/login', (route) => false);
+                        } catch (e) {
+                          print("Erro ao excluir conta: $e");
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Erro ao excluir conta.')),
                           );
                         }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          side: const BorderSide(color: kPrimaryColor),
-                        ),
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.0),
                       ),
-                      child: Text('Financeiro',
-                          style: GoogleFonts.lato(
-                              fontSize: 13, color: kPrimaryColor)),
                     ),
+                    child: Text(
+                      'Excluir Conta',
+                      style:
+                          GoogleFonts.lato(fontSize: 13, color: Colors.white),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        DocumentSnapshot snapshot = await FirebaseFirestore
+                            .instance
+                            .collection('Usuarios')
+                            .doc(nomeUsuario)
+                            .get();
+                        if (snapshot.exists) {
+                          List<dynamic> mensalidade =
+                              snapshot.get('mensalidade') ?? [];
+
+                          Navigator.pushNamed(context, '/mensalidade',
+                              arguments: mensalidade);
+                        }
+                      } catch (e) {
+                        print("Error fetching mensalidade: $e");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Erro ao acessar dados de mensalidade.')),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        side: const BorderSide(color: kPrimaryColor),
+                      ),
+                    ),
+                    child: Text('Financeiro',
+                        style: GoogleFonts.lato(
+                            fontSize: 13, color: kPrimaryColor)),
                   ),
                 ],
               ),
