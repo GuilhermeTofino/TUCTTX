@@ -107,10 +107,11 @@ class _CalendarioState extends State<Calendario> {
   Widget _buildEventosDoMes(
       String mes, List<QueryDocumentSnapshot> eventosDoMes) {
     return ExpansionTile(
+      dense: true,
       shape: Border.all(color: Colors.white),
       title: Text(
         _nomeDoMes(mes),
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       initiallyExpanded:
           _expandedMonths[mes] ?? false, // Define se o mês está expandido
@@ -143,11 +144,12 @@ class _CalendarioState extends State<Calendario> {
           leading: Container(
             decoration: BoxDecoration(
               color: tagColor,
-              borderRadius: BorderRadius.circular(5.0),
+              borderRadius: BorderRadius.circular(0.0),
             ),
-            width: 5,
-            height: 50,
+            width: 10,
+            height: 60,
           ),
+          dense: true,
           title: Text(
             '${DateFormat('dd/MM').format((data as Timestamp).toDate())} - $titulo',
             style: GoogleFonts.lato(fontSize: 13),
@@ -160,18 +162,27 @@ class _CalendarioState extends State<Calendario> {
             }
           },
           trailing: Wrap(
-            spacing: 8, // Espaço entre os ícones
+            spacing: 3, // Espaço entre os ícones
             children: [
-              IconButton(
-                icon: Icon(
-                  usuarioConfirmado ? Icons.close : Icons.check,
-                  color: usuarioConfirmado ? Colors.red : Colors.green,
-                ),
-                onPressed: () =>
-                    _marcarPresenca(documentId, nomeUsuarioLogado!),
-                tooltip: usuarioConfirmado
-                    ? "Remover Presença"
-                    : "Confirmar Presença",
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildToggleButton(
+                    text: "Vou",
+                    isSelected: usuarioConfirmado,
+                    color: Colors.green,
+                    onTap: () =>
+                        _marcarPresenca(documentId, nomeUsuarioLogado!, true),
+                  ),
+                  const SizedBox(height: 3), // Espaço entre os botões
+                  _buildToggleButton(
+                    text: "Não Vou",
+                    isSelected: !usuarioConfirmado,
+                    color: Colors.red,
+                    onTap: () =>
+                        _marcarPresenca(documentId, nomeUsuarioLogado!, false),
+                  ),
+                ],
               ),
               if (isAdmin)
                 IconButton(
@@ -184,6 +195,34 @@ class _CalendarioState extends State<Calendario> {
         ),
         const Divider(),
       ],
+    );
+  }
+
+  Widget _buildToggleButton({
+    required String text,
+    required bool isSelected,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 80,
+        height: 25,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? color : Colors.grey[350],
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 
@@ -484,7 +523,8 @@ class _CalendarioState extends State<Calendario> {
     );
   }
 
-  Future<void> _marcarPresenca(String documentId, String nomeUsuario) async {
+  Future<void> _marcarPresenca(
+      String documentId, String nomeUsuario, bool vou) async {
     try {
       final documentReference =
           FirebaseFirestore.instance.collection('GiraMes').doc(documentId);
@@ -492,36 +532,23 @@ class _CalendarioState extends State<Calendario> {
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         DocumentSnapshot snapshot = await transaction.get(documentReference);
 
-        if (!snapshot.exists) {
-          throw Exception('Documento não existe!');
-        }
+        if (!snapshot.exists) throw Exception('Documento não existe!');
 
-        List<dynamic> presencas = [];
+        Map<String, dynamic> evento = snapshot.data() as Map<String, dynamic>;
+        List<dynamic> presencas = evento['presencas'] ?? [];
 
-        if (snapshot.data() != null &&
-            (snapshot.data() as Map<String, dynamic>)
-                .containsKey('presencas')) {
-          presencas = List.from(snapshot.get('presencas'));
-        }
-
-        bool usuarioJaConfirmado = presencas.contains(nomeUsuario);
-
-        if (usuarioJaConfirmado) {
-          presencas.remove(nomeUsuario);
-        } else {
-          presencas.add(nomeUsuario);
-        }
+        vou ? presencas.add(nomeUsuario) : presencas.remove(nomeUsuario);
 
         transaction.update(documentReference, {'presencas': presencas});
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(usuarioJaConfirmado
-                ? 'Presença removida com sucesso!'
-                : 'Presença confirmada com sucesso!'),
-          ),
-        );
       });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(vou ? 'Presença confirmada!' : 'Presença removida!'),
+        ),
+      );
+
+      setState(() {}); // Atualiza a UI
     } catch (e) {
       print('Erro ao marcar presença: $e');
       ScaffoldMessenger.of(context).showSnackBar(

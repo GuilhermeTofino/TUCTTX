@@ -1,7 +1,9 @@
 import 'package:app_tenda/widgets/colors.dart';
 import 'package:app_tenda/entrar.dart';
+import 'package:app_tenda/widgets/formatar_valores.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -15,7 +17,7 @@ class Financeiro extends StatefulWidget {
 class _FinanceiroState extends State<Financeiro> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final TextEditingController arrecadadoController = TextEditingController();
-  double totalArrecadado = 0.0;
+  dynamic totalArrecadado = 0.0;
 
   List<Map<String, dynamic>> despesas = [];
 
@@ -27,10 +29,13 @@ class _FinanceiroState extends State<Financeiro> {
       totalArrecadado == 0 ? 0 : (totalArrecadado / totalDespesas) * 100;
   double get saldoFinal => totalArrecadado - totalDespesas;
 
+  final NumberFormat currencyFormatter =
+      NumberFormat.currency(locale: "pt_BR", symbol: "R\$");
+
   @override
   void initState() {
     super.initState();
-    _carregarDados();
+    // _carregarDados();
   }
 
   Future<void> _carregarDados() async {
@@ -56,14 +61,19 @@ class _FinanceiroState extends State<Financeiro> {
   }
 
   void adicionarValor() {
-    double novoValor = double.tryParse(arrecadadoController.text) ?? 0.0;
+    String valorTexto =
+        arrecadadoController.text.replaceAll('.', '').replaceAll(',', '.');
+    double novoValor = double.tryParse(valorTexto) ?? 0.0;
+
     if (novoValor > 0) {
       setState(() {
         totalArrecadado += novoValor;
       });
+
       firestore.collection("financeiro").doc("dados").update({
         "totalArrecadado": totalArrecadado,
       });
+
       arrecadadoController.clear();
     }
     FocusScope.of(context).unfocus();
@@ -87,6 +97,7 @@ class _FinanceiroState extends State<Financeiro> {
             TextField(
               controller: valorController,
               keyboardType: TextInputType.number,
+              inputFormatters: [CurrencyInputFormatter()],
               decoration: const InputDecoration(labelText: "Valor (R\$)"),
             ),
           ],
@@ -99,14 +110,16 @@ class _FinanceiroState extends State<Financeiro> {
           ElevatedButton(
             onPressed: () async {
               String nome = nomeController.text.trim();
-              double? valor = double.tryParse(valorController.text);
+              String valorTexto = valorController.text
+                  .replaceAll('.', '')
+                  .replaceAll(',', '.'); // Converte para formato numérico
+              double? valor = double.tryParse(valorTexto);
 
               if (nome.isNotEmpty && valor != null && valor > 0) {
                 setState(() {
                   despesas.add({"nome": nome, "valor": valor});
                 });
 
-                // Atualiza o Firestore
                 await firestore.collection("financeiro").doc("dados").update({
                   "despesas": despesas,
                 });
@@ -200,154 +213,141 @@ ${saldoFinalCalculado >= 0 ? "✅ Saldo Positivo: R\$ ${saldoFinalCalculado.toSt
       appBar: AppBar(
         title: const Text("Financeiro"),
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _carregarDados,
-            tooltip: "Atualizar valores",
-          ),
-        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: _financeiroStream(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          var data = snapshot.data!;
+          despesas = List<Map<String, dynamic>>.from(data["despesas"] ?? []);
+          saldoAnterior = data["saldoAnterior"] ?? 0.0;
+          totalArrecadado = data["totalArrecadado"] ?? 0.0;
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: arrecadadoController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: "Adicionar valor ao Total Arrecadado",
-                      prefixText: "R\$ ",
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: arrecadadoController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          CurrencyInputFormatter()
+                        ],
+                        decoration: const InputDecoration(
+                          labelText: "Adicionar valor ao Total Arrecadado",
+                          prefixText: "R\$ ",
+                        ),
+                        enabled: isAdmin,
+                      ),
                     ),
-                    enabled: isAdmin,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: isAdmin ? adicionarValor : null,
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: isAdmin ? adicionarValor : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25.0),
                           side: BorderSide(
-                              color: isAdmin ? kPrimaryColor : Colors.grey))),
-                  child: Text("+",
-                      style: GoogleFonts.lato(
-                          fontSize: 20,
-                          color: isAdmin ? kPrimaryColor : Colors.grey)),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: despesas.length,
-                itemBuilder: (context, index) {
-                  Widget listItem = ListTile(
-                    title: Text(despesas[index]["nome"]),
-                    subtitle: Text(
-                        "R\$ ${despesas[index]["valor"].toStringAsFixed(2)}"),
-                  );
-
-                  return isAdmin
-                      ? Dismissible(
-                          key: Key(
-                              despesas[index]["nome"]), // Identificação única
-                          direction: DismissDirection
-                              .endToStart, // Arrasta para excluir
-                          background: Container(
-                            color: Colors.red,
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child:
-                                const Icon(Icons.delete, color: Colors.white),
-                          ),
-                          onDismissed: (direction) async {
-                            String nomeDespesa = despesas[index]["nome"];
-
-                            setState(() {
-                              despesas.removeAt(index);
-                            });
-
-                            // Atualizar Firestore após remoção
-                            await firestore
-                                .collection("financeiro")
-                                .doc("dados")
-                                .update({
-                              "despesas": despesas,
-                            });
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(
-                                      "$nomeDespesa removido com sucesso!")),
-                            );
-                          },
-                          child: listItem,
-                        )
-                      : listItem; // Se não for admin, apenas exibe o ListTile normal
-                },
-              ),
-            ),
-            Text("Total de Despesas: R\$ ${totalDespesas.toStringAsFixed(2)}",
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            Text("Total Arrecadado: R\$ ${totalArrecadado.toStringAsFixed(2)}",
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue)),
-            Text("Saldo Anterior: R\$ ${saldoAnterior.toStringAsFixed(2)}",
-                style: const TextStyle(fontSize: 16)),
-            Text("Saldo Final: R\$ ${saldoFinal.toStringAsFixed(2)}",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: saldoFinal >= 0 ? Colors.green : Colors.red,
-                )),
-            Text("Cobertura: ${percentualCoberto.toStringAsFixed(2)}%",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: percentualCoberto >= 100 ? Colors.green : Colors.red,
-                )),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                    onPressed: isAdmin ? adicionarDespesa : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          side: BorderSide(
+                              color: isAdmin ? kPrimaryColor : Colors.grey),
+                        ),
+                      ),
+                      child: Text("+",
+                          style: GoogleFonts.lato(
+                              fontSize: 20,
                               color: isAdmin ? kPrimaryColor : Colors.grey)),
                     ),
-                    child: Text("Nova Despesa",
-                        style: GoogleFonts.lato(
-                            fontSize: 13,
-                            color: isAdmin ? kPrimaryColor : Colors.grey))),
-                ElevatedButton(
-                  onPressed: isAdmin ? gerarRelatorio : null,
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          side: BorderSide(
-                              color: isAdmin ? kPrimaryColor : Colors.grey))),
-                  child: Text("Gerar Relatório Mês",
-                      style: GoogleFonts.lato(
-                          fontSize: 13,
-                          color: isAdmin ? kPrimaryColor : Colors.grey)),
+                  ],
                 ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: despesas.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(despesas[index]["nome"]),
+                        subtitle: Text(
+                          currencyFormatter.format(despesas[index]["valor"]),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Text(
+                    "Total de Despesas: ${currencyFormatter.format(totalDespesas)}",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(
+                    "Total Arrecadado: ${currencyFormatter.format(totalArrecadado)}",
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue)),
+                Text(
+                    "Saldo Anterior: ${currencyFormatter.format(saldoAnterior)}",
+                    style: const TextStyle(fontSize: 16)),
+                Text("Saldo Final: ${currencyFormatter.format(saldoFinal)}",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: saldoFinal >= 0 ? Colors.green : Colors.red,
+                    )),
+                Text("Cobertura: ${percentualCoberto.toStringAsFixed(2)}%",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color:
+                          percentualCoberto >= 100 ? Colors.green : Colors.red,
+                    )),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                        onPressed: isAdmin ? adicionarDespesa : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                              side: BorderSide(
+                                  color:
+                                      isAdmin ? kPrimaryColor : Colors.grey)),
+                        ),
+                        child: Text("Nova Despesa",
+                            style: GoogleFonts.lato(
+                                fontSize: 13,
+                                color: isAdmin ? kPrimaryColor : Colors.grey))),
+                    ElevatedButton(
+                      onPressed: isAdmin ? gerarRelatorio : null,
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                              side: BorderSide(
+                                  color:
+                                      isAdmin ? kPrimaryColor : Colors.grey))),
+                      child: Text("Gerar Relatório Mês",
+                          style: GoogleFonts.lato(
+                              fontSize: 13,
+                              color: isAdmin ? kPrimaryColor : Colors.grey)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
               ],
             ),
-            const SizedBox(height: 40),
-          ],
-        ),
+          );
+        },
       ),
     );
+  }
+
+  Stream<DocumentSnapshot> _financeiroStream() {
+    return firestore.collection("financeiro").doc("dados").snapshots();
   }
 }

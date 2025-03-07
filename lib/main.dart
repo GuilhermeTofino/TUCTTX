@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
-        home: const Splash(),
+        home: const Login(),
         routes: {
           '/login': (context) => const Login(),
           '/cadastrar': (context) => const Cadastrar(),
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
           '/perfilUsuario': (context) => const PerfilUsuario(),
           '/mensalidade': (context) => const Mensalidade(),
           '/detalhesFilho': (context) => const DetalhesFilho(),
-          '/bazar': (context) => BazarScreen(),
+          '/bazar': (context) => const BazarScreen(),
           '/solicitar_produto': (context) => const SolicitarProdutoScreen(),
           '/cadastro_produto': (context) => const CadastroProdutoScreen(),
         },
