@@ -27,41 +27,72 @@ class Mensalidade extends StatelessWidget {
     final now = DateTime.now();
     final currentMonth = now.month - 1;
 
+    int pagas = 0;
+    int vencidas = 0;
+    int pendentes = 0;
+
+    for (int i = 0; i < mensalidades.length; i++) {
+      if (mensalidades[i]) {
+        pagas++;
+      } else if (i < currentMonth) {
+        vencidas++;
+      } else {
+        pendentes++;
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mensalidades'),
       ),
-      body: ListView.builder(
-        itemCount: mensalidades.length,
-        itemBuilder: (context, index) {
-          final bool isPaid = mensalidades[index];
-          final String mesLabel = mesLabels[index];
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('✅ Pagas: $pagas'),
+                Text('❌ Vencidas: $vencidas'),
+                Text('⏳ Pendentes: $pendentes'),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: mensalidades.length,
+              itemBuilder: (context, index) {
+                final bool isPaid = mensalidades[index];
+                final String mesLabel = mesLabels[index];
 
-          IconData icon;
-          Color iconColor;
+                IconData icon;
+                Color iconColor;
 
-          if (index < currentMonth) {
-            icon = isPaid ? Icons.check_circle : Icons.cancel;
-            iconColor = isPaid ? Colors.green : Colors.red;
-          } else {
-            icon = isPaid ? Icons.check_circle : Icons.hourglass_bottom;
-            iconColor = isPaid ? Colors.green : Colors.amber;
-          }
+                if (index < currentMonth) {
+                  icon = isPaid ? Icons.check_circle : Icons.cancel;
+                  iconColor = isPaid ? Colors.green : Colors.red;
+                } else {
+                  icon = isPaid ? Icons.check_circle : Icons.hourglass_bottom;
+                  iconColor = isPaid ? Colors.green : Colors.amber;
+                }
 
-          return ListTile(
-            title: Text(mesLabel),
-            trailing: Icon(icon, color: iconColor),
-            onTap: (!isPaid)
-                ? () async {
-                    String pixKey = 'tucttx@gmail.com';
-                    await Clipboard.setData(ClipboardData(text: pixKey));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Chave Pix copiada!')),
-                    );
-                  }
-                : null,
-          );
-        },
+                return ListTile(
+                  title: Text(mesLabel),
+                  trailing: Icon(icon, color: iconColor),
+                  onTap: (!isPaid)
+                      ? () async {
+                          String pixKey = 'tucttx@gmail.com';
+                          await Clipboard.setData(ClipboardData(text: pixKey));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Chave Pix copiada!')),
+                          );
+                        }
+                      : null,
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

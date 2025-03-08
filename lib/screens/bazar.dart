@@ -4,6 +4,8 @@ import '../blocs/bazar_bloc.dart';
 import '../models/bazar_model.dart';
 
 class BazarScreen extends StatefulWidget {
+  const BazarScreen({super.key});
+
   @override
   _BazarScreenState createState() => _BazarScreenState();
 }
@@ -25,8 +27,9 @@ class _BazarScreenState extends State<BazarScreen> {
       body: StreamBuilder<List<ProdutoBazar>>(
         stream: _bloc.estoqueStream,
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
+          }
 
           return ListView(
             children: snapshot.data!.map((produto) {

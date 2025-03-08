@@ -2,7 +2,6 @@ import 'package:app_tenda/calendario.dart';
 import 'package:app_tenda/financeiro.dart';
 import 'package:app_tenda/grid_pdfs.dart';
 import 'package:app_tenda/vizualizador_pdf.dart';
-import 'package:app_tenda/screens/bazar.dart';
 import 'package:app_tenda/widgets/colors.dart';
 import 'package:app_tenda/demonstrativo.dart';
 import 'package:app_tenda/splash.dart';
@@ -49,7 +48,7 @@ class _HomeState extends State<Home> {
   // Constrói o AppBar
   AppBar _buildAppBar(String? nomeUsuario) {
     return AppBar(
-      toolbarHeight: 65,
+      toolbarHeight: 45,
       automaticallyImplyLeading: false,
       backgroundColor: kPrimaryColor,
       elevation: 0,
@@ -141,7 +140,7 @@ class _HomeState extends State<Home> {
           right: 0,
           child: Container(
             color: kPrimaryColor,
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(8.0),
             child: const Text(
               'TUCTTX',
               style: TextStyle(

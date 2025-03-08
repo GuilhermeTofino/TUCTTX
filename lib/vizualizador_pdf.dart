@@ -98,6 +98,7 @@ class _VisualizarPdfState extends State<VisualizarPdf> {
     return Scaffold(
       backgroundColor: kPrimaryColor,
       appBar: AppBar(
+        toolbarHeight: 30,
         backgroundColor: kPrimaryColor,
         automaticallyImplyLeading: widget.voltar,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -136,7 +137,13 @@ class _VisualizarPdfState extends State<VisualizarPdf> {
   /// 🔥 Compartilha o PDF
   void _sharePdfFile() {
     if (pdfPath != null) {
-      Share.shareXFiles([XFile(pdfPath!)]);
+      final box = context.findRenderObject() as RenderBox?;
+      Share.shareXFiles(
+        [XFile(pdfPath!)],
+        sharePositionOrigin: box != null
+            ? box.localToGlobal(Offset.zero) & box.size
+            : const Rect.fromLTWH(0, 0, 0, 100), // Define uma área padrão
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('PDF ainda carregando...')),
@@ -147,8 +154,8 @@ class _VisualizarPdfState extends State<VisualizarPdf> {
   /// 🔥 Constrói o botão de download
   Widget _buildDownloadButton() {
     return Positioned(
-      bottom: 30.0,
-      right: 16.0,
+      bottom: 40.0,
+      right: 20.0,
       child: FloatingActionButton.extended(
         onPressed: _sharePdfFile,
         heroTag: '${widget.appBarTitle}-share',

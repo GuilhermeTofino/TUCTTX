@@ -153,22 +153,22 @@ class _ListaPdfState extends State<ListaPdf> {
     );
   }
 
-  Widget _buildGridView() {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16.0),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // or 3, adjust as needed
-        crossAxisSpacing: 20,
-        mainAxisSpacing: 20,
-        childAspectRatio: 1,
-      ),
-      itemCount: _documents.length,
-      itemBuilder: (context, index) {
-        final document = _documents[index];
-        return _buildDocumentCard(document);
-      },
-    );
-  }
+  Widget _buildGridView(List<Map<String, dynamic>> documents) {
+  return GridView.builder(
+    padding: const EdgeInsets.all(16.0),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      crossAxisSpacing: 20,
+      mainAxisSpacing: 20,
+      childAspectRatio: 1,
+    ),
+    itemCount: documents.length,
+    itemBuilder: (context, index) {
+      final document = documents[index];
+      return _buildDocumentCard(document);
+    },
+  );
+}
 
   Widget _buildDocumentCard(Map<String, dynamic> document) {
     return GestureDetector(
@@ -237,19 +237,19 @@ class _ListaPdfState extends State<ListaPdf> {
   }
 
   Widget _construirCorpo(String? nomeUsuario) {
-    final pdfsFiltrados = _documents.where((pdf) {
-      return pdf['title']!.toLowerCase().contains(_searchTerm.toLowerCase());
-    }).toList();
+  final pdfsFiltrados = _documents.where((pdf) {
+    return pdf['title']!.toLowerCase().contains(_searchTerm.toLowerCase());
+  }).toList();
 
-    return _mostrarGrid
-        ? _buildGridView()
-        : widget.appBarTitle == 'Ervas' &&
-                !_leituraConfirmada &&
-                nomeUsuario != null &&
-                !isAdmin
-            ? _construirTelaConfirmacaoLeitura(nomeUsuario)
-            : _buildGridView();
-  }
+  return _mostrarGrid
+      ? _buildGridView(pdfsFiltrados) // Passar a lista filtrada
+      : widget.appBarTitle == 'Ervas' &&
+              !_leituraConfirmada &&
+              nomeUsuario != null &&
+              !isAdmin
+          ? _construirTelaConfirmacaoLeitura(nomeUsuario)
+          : _buildGridView(pdfsFiltrados);
+}
 
   Widget _construirTelaConfirmacaoLeitura(String nomeUsuario) {
     return Center(

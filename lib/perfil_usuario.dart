@@ -194,10 +194,10 @@ class _PerfilUsuarioState extends State<PerfilUsuario> {
                               onPressed: () => Navigator.of(context).pop(false),
                             ),
                             TextButton(
-                              child: const Text('Excluir'),
                               style: TextButton.styleFrom(
                                   foregroundColor: Colors.red),
                               onPressed: () => Navigator.of(context).pop(true),
+                              child: const Text('Excluir'),
                             ),
                           ],
                         ),
