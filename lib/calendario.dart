@@ -141,57 +141,96 @@ class _CalendarioState extends State<Calendario> {
 
     return Column(
       children: [
-        ListTile(
-          leading: Container(
-            decoration: BoxDecoration(
-              color: tagColor,
-              borderRadius: BorderRadius.circular(0.0),
-            ),
-            width: 10,
-            height: 60,
+        Dismissible(
+          key: UniqueKey(),
+          background: Container(
+            color: Colors.red,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 50.0),
+            child: const Icon(Icons.delete, color: Colors.white),
           ),
-          dense: true,
-          title: Text(
-            '${DateFormat('dd/MM').format((data as Timestamp).toDate())} - $titulo',
-            style: GoogleFonts.lato(fontSize: 13),
-          ),
-          onTap: () {
-            if (isAdmin) {
-              _mostrarDialogoEdicao(context, documentId, evento);
-            } else {
-              _mostrarDetalhes(context, documentId);
+          confirmDismiss: (direction) async {
+            if (!isAdmin) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content:
+                      Text('Você não tem permissão para excluir o evento.')));
+              return false;
+            }
+            return true;
+          },
+          onDismissed: (direction) async {
+            final formattedDate =
+                DateFormat('dd/MM').format((data).toDate());
+            await FirebaseFirestore.instance
+                .collection('GiraMes')
+                .doc(documentId)
+                .delete();
+            QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
+                .collection('Usuarios')
+                .where('fcm_token', isNotEqualTo: '')
+                .get();
+            for (var doc in usersSnapshot.docs) {
+              String token = doc['fcm_token'];
+              if (token.isNotEmpty) {
+                await sendFCMMessage(
+                    'Evento do dia $formattedDate foi cancelado.',
+                    'Evento Cancelado',
+                    token);
+              }
             }
           },
-          trailing: Wrap(
-            spacing: 3, // Espaço entre os ícones
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildToggleButton(
-                    text: "Vou",
-                    isSelected: usuarioConfirmado,
-                    color: Colors.green,
-                    onTap: () =>
-                        _marcarPresenca(documentId, nomeUsuarioLogado!, true),
-                  ),
-                  const SizedBox(height: 3), // Espaço entre os botões
-                  _buildToggleButton(
-                    text: "Não Vou",
-                    isSelected: !usuarioConfirmado,
-                    color: Colors.red,
-                    onTap: () =>
-                        _marcarPresenca(documentId, nomeUsuarioLogado!, false),
-                  ),
-                ],
+          child: ListTile(
+            leading: Container(
+              decoration: BoxDecoration(
+                color: tagColor,
+                borderRadius: BorderRadius.circular(0.0),
               ),
-              if (isAdmin)
-                IconButton(
-                  icon: const Icon(Icons.list, color: kPrimaryColor),
-                  onPressed: () => _mostrarPresencas(context, documentId),
-                  tooltip: "Exibir Lista de Presenças",
+              width: 10,
+              height: 60,
+            ),
+            dense: true,
+            title: Text(
+              '${DateFormat('dd/MM').format((data as Timestamp).toDate())} - $titulo',
+              style: GoogleFonts.lato(fontSize: 13),
+            ),
+            onTap: () {
+              if (isAdmin) {
+                _mostrarDialogoEdicao(context, documentId, evento);
+              } else {
+                _mostrarDetalhes(context, documentId);
+              }
+            },
+            trailing: Wrap(
+              spacing: 3, // Espaço entre os ícones
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildToggleButton(
+                      text: "Vou",
+                      isSelected: usuarioConfirmado,
+                      color: Colors.green,
+                      onTap: () =>
+                          _marcarPresenca(documentId, nomeUsuarioLogado!, true),
+                    ),
+                    const SizedBox(height: 3), // Espaço entre os botões
+                    _buildToggleButton(
+                      text: "Não Vou",
+                      isSelected: !usuarioConfirmado,
+                      color: Colors.red,
+                      onTap: () => _marcarPresenca(
+                          documentId, nomeUsuarioLogado!, false),
+                    ),
+                  ],
                 ),
-            ],
+                if (isAdmin)
+                  IconButton(
+                    icon: const Icon(Icons.list, color: kPrimaryColor),
+                    onPressed: () => _mostrarPresencas(context, documentId),
+                    tooltip: "Exibir Lista de Presenças",
+                  ),
+              ],
+            ),
           ),
         ),
         const Divider(),
@@ -367,7 +406,7 @@ class _CalendarioState extends State<Calendario> {
             ),
             TextButton(
               child: const Text('Adicionar'),
-              onPressed: () {
+              onPressed: () async {
                 String dataString = _dataController.text;
                 try {
                   DateFormat format = DateFormat('dd/MM/yyyy');
@@ -375,12 +414,33 @@ class _CalendarioState extends State<Calendario> {
                       format.parse('$dataString/${DateTime.now().year}');
                   Timestamp timestamp = Timestamp.fromDate(dateTime);
 
-                  FirebaseFirestore.instance.collection('GiraMes').add({
+                  // Adiciona o evento na coleção 'GiraMes'
+                  DocumentReference docRef = await FirebaseFirestore.instance
+                      .collection('GiraMes')
+                      .add({
                     'data': timestamp,
                     'titulo': _descricaoController.text,
                     'presencas': [],
                     'tag': _selectedTipoEvento,
                   });
+
+                  // Prepara a mensagem vibrante para o FCM
+                  String fcmTitle = "Fique de olho no calendário!";
+                  String fcmBody =
+                      "Dia ${DateFormat('dd/MM').format(dateTime)} terá ${_descricaoController.text} e será $_selectedTipoEvento, não esqueça de marcar a sua presença";
+
+                  // Consulta todos os usuários com fcm_token salvo
+                  QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
+                      .collection("Usuarios")
+                      .where("fcm_token", isNotEqualTo: "")
+                      .get();
+                  for (var doc in usersSnapshot.docs) {
+                    String token = doc["fcm_token"];
+                    if (token.isNotEmpty) {
+                      await sendFCMMessage(fcmBody, fcmTitle, token);
+                    }
+                  }
+
                   Navigator.of(context).pop();
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -546,16 +606,26 @@ class _CalendarioState extends State<Calendario> {
         vou ? presencas.add(nomeUsuario) : presencas.remove(nomeUsuario);
 
         transaction.update(documentReference, {'presencas': presencas});
-
-        // 🔥 Enviar FCM após confirmar presença com título do evento
-        if (vou) {
-          await sendFCMMessage(
-            "O Filho $nomeUsuario confirmou presença no evento: $tituloEvento",
-            "Presença Confirmada!",
-            nomeUsuario,
-          );
-        }
       });
+
+      // 🔥 Enviar FCM para administradores com fcm_token salvo, se "vou" for true
+      if (vou) {
+        QuerySnapshot adminSnapshot = await FirebaseFirestore.instance
+            .collection("Usuarios")
+            .where("funcao", isEqualTo: "administrador")
+            .where("fcm_token", isNotEqualTo: "")
+            .get();
+        for (var doc in adminSnapshot.docs) {
+          String adminToken = doc["fcm_token"];
+          if (adminToken.isNotEmpty) {
+            await sendFCMMessage(
+              "$nomeUsuario confirmou presença no rito $tituloEvento",
+              "Presença Confirmada!",
+              adminToken,
+            );
+          }
+        }
+      }
 
       // ✅ Agora `tituloEvento` está acessível aqui
       ScaffoldMessenger.of(context).showSnackBar(

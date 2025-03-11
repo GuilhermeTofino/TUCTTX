@@ -1,6 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+int id = 0;
+
 class FirebaseNotifications {
   static final FirebaseMessaging _firebaseMessaging =
       FirebaseMessaging.instance;
@@ -27,9 +29,17 @@ class FirebaseNotifications {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
     const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
     );
 
     await _flutterLocalNotificationsPlugin.initialize(
@@ -54,8 +64,10 @@ class FirebaseNotifications {
     });
   }
 
-  static Future<void> _showNotification(
-      {required String title, required String body}) async {
+  static Future<void> _showNotification({
+    required String title,
+    required String body,
+  }) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       'canal_notificacao',
@@ -65,11 +77,21 @@ class FirebaseNotifications {
       priority: Priority.high,
     );
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const DarwinNotificationDetails iosPlatformChannelSpecifics =
+        DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      presentBanner: true,
+      sound: 'default.wav',
+    );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iosPlatformChannelSpecifics);
 
     await _flutterLocalNotificationsPlugin.show(
-      0, // ID da notificação
+      id++, // ID da notificação
       title,
       body,
       platformChannelSpecifics,

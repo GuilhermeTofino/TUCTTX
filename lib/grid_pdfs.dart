@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:app_tenda/widgets/colors.dart';
 import 'package:app_tenda/entrar.dart';
 import 'package:app_tenda/widgets/custom_text_field.dart';
+import 'package:app_tenda/widgets/fcm.dart';
 import 'package:archive/archive.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -154,21 +155,21 @@ class _ListaPdfState extends State<ListaPdf> {
   }
 
   Widget _buildGridView(List<Map<String, dynamic>> documents) {
-  return GridView.builder(
-    padding: const EdgeInsets.all(16.0),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      crossAxisSpacing: 20,
-      mainAxisSpacing: 20,
-      childAspectRatio: 1,
-    ),
-    itemCount: documents.length,
-    itemBuilder: (context, index) {
-      final document = documents[index];
-      return _buildDocumentCard(document);
-    },
-  );
-}
+    return GridView.builder(
+      padding: const EdgeInsets.all(16.0),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
+        childAspectRatio: 1,
+      ),
+      itemCount: documents.length,
+      itemBuilder: (context, index) {
+        final document = documents[index];
+        return _buildDocumentCard(document);
+      },
+    );
+  }
 
   Widget _buildDocumentCard(Map<String, dynamic> document) {
     return GestureDetector(
@@ -237,19 +238,19 @@ class _ListaPdfState extends State<ListaPdf> {
   }
 
   Widget _construirCorpo(String? nomeUsuario) {
-  final pdfsFiltrados = _documents.where((pdf) {
-    return pdf['title']!.toLowerCase().contains(_searchTerm.toLowerCase());
-  }).toList();
+    final pdfsFiltrados = _documents.where((pdf) {
+      return pdf['title']!.toLowerCase().contains(_searchTerm.toLowerCase());
+    }).toList();
 
-  return _mostrarGrid
-      ? _buildGridView(pdfsFiltrados) // Passar a lista filtrada
-      : widget.appBarTitle == 'Ervas' &&
-              !_leituraConfirmada &&
-              nomeUsuario != null &&
-              !isAdmin
-          ? _construirTelaConfirmacaoLeitura(nomeUsuario)
-          : _buildGridView(pdfsFiltrados);
-}
+    return _mostrarGrid
+        ? _buildGridView(pdfsFiltrados) // Passar a lista filtrada
+        : widget.appBarTitle == 'Ervas' &&
+                !_leituraConfirmada &&
+                nomeUsuario != null &&
+                !isAdmin
+            ? _construirTelaConfirmacaoLeitura(nomeUsuario)
+            : _buildGridView(pdfsFiltrados);
+  }
 
   Widget _construirTelaConfirmacaoLeitura(String nomeUsuario) {
     return Center(
@@ -350,7 +351,6 @@ class _ListaPdfState extends State<ListaPdf> {
         String base64String = base64.encode(fileBytes);
         String base64StringCmp = compressBase64(base64String);
 
-
         String? documentName = await _getDocumentNameFromUser();
         if (documentName == null || documentName.isEmpty) {
           return;
@@ -374,6 +374,32 @@ class _ListaPdfState extends State<ListaPdf> {
         });
 
         await _loadDocuments();
+
+        String notificationTitle = '';
+        String notificationBody = '';
+        if (widget.appBarTitle == 'Biblioteca') {
+          notificationTitle = 'Novo Livro !';
+          notificationBody =
+              'O livro $documentName foi adicionado na biblioteca, que tal dar uma olhada?';
+        } else if (widget.appBarTitle == 'Faq') {
+          notificationTitle = 'Novo FAQ !';
+          notificationBody = 'O $documentName foi adicionado, dê uma olhada!';
+        } else if (widget.appBarTitle == 'Ervas') {
+          notificationTitle = 'Nova Erva!';
+          notificationBody =
+              'A nova erva $documentName foi adicionada ao material de estudo.';
+        }
+        QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
+            .collection('Usuarios')
+            .where('fcm_token', isNotEqualTo: '')
+            .get();
+        for (var doc in usersSnapshot.docs) {
+          String token = doc['fcm_token'];
+          if (token.isNotEmpty) {
+            await sendFCMMessage(notificationBody, notificationTitle, token);
+          }
+        }
+
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Documento carregado com sucesso!')),

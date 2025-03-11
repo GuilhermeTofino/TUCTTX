@@ -35,29 +35,6 @@ class _FinanceiroState extends State<Financeiro> {
   @override
   void initState() {
     super.initState();
-    // _carregarDados();
-  }
-
-  Future<void> _carregarDados() async {
-    try {
-      DocumentSnapshot snapshot =
-          await firestore.collection("financeiro").doc("dados").get();
-      if (snapshot.exists) {
-        setState(() {
-          despesas = List<Map<String, dynamic>>.from(snapshot["despesas"]);
-          saldoAnterior = snapshot["saldoAnterior"] ?? 0.0;
-          totalArrecadado = snapshot["totalArrecadado"] ?? 0.0;
-        });
-
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(content: Text("Valores atualizados com sucesso!")),
-        // );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Erro ao atualizar valores.")),
-      );
-    }
   }
 
   void adicionarValor() {
@@ -226,6 +203,8 @@ ${saldoFinalCalculado >= 0 ? "✅ Saldo Positivo: R\$ ${saldoFinalCalculado.toSt
           saldoAnterior = data["saldoAnterior"] ?? 0.0;
           totalArrecadado = data["totalArrecadado"] ?? 0.0;
 
+          despesas.sort((a, b) => a["nome"].toString().toLowerCase().compareTo(b["nome"].toString().toLowerCase()));
+
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -270,11 +249,37 @@ ${saldoFinalCalculado >= 0 ? "✅ Saldo Positivo: R\$ ${saldoFinalCalculado.toSt
                   child: ListView.builder(
                     itemCount: despesas.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(despesas[index]["nome"]),
-                        subtitle: Text(
-                          currencyFormatter.format(despesas[index]["valor"]),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                      return Dismissible(
+                        key: UniqueKey(),
+                        background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerLeft,
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: const Icon(Icons.delete, color: Colors.white),
+                        ),
+                        secondaryBackground: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.only(right: 20.0),
+                          child: const Icon(Icons.delete, color: Colors.white),
+                        ),
+                        onDismissed: (direction) {
+                          setState(() {
+                            despesas.removeAt(index);
+                          });
+                          firestore.collection("financeiro").doc("dados").update({
+                            "despesas": despesas,
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Despesa removida")),
+                          );
+                        },
+                        child: ListTile(
+                          title: Text(despesas[index]["nome"]),
+                          subtitle: Text(
+                            currencyFormatter.format(despesas[index]["valor"]),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                       );
                     },
