@@ -1,3 +1,4 @@
+import 'package:app_tenda/widgets/fcm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -530,6 +531,8 @@ class _CalendarioState extends State<Calendario> {
       final documentReference =
           FirebaseFirestore.instance.collection('GiraMes').doc(documentId);
 
+      String tituloEvento = "Evento sem nome"; // Definição inicial
+
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         DocumentSnapshot snapshot = await transaction.get(documentReference);
 
@@ -537,19 +540,33 @@ class _CalendarioState extends State<Calendario> {
 
         Map<String, dynamic> evento = snapshot.data() as Map<String, dynamic>;
         List<dynamic> presencas = evento['presencas'] ?? [];
+        tituloEvento = evento['titulo'] ??
+            'Evento sem nome'; // Atribuindo o título corretamente
 
         vou ? presencas.add(nomeUsuario) : presencas.remove(nomeUsuario);
 
         transaction.update(documentReference, {'presencas': presencas});
+
+        // 🔥 Enviar FCM após confirmar presença com título do evento
+        if (vou) {
+          await sendFCMMessage(
+            "O Filho $nomeUsuario confirmou presença no evento: $tituloEvento",
+            "Presença Confirmada!",
+            nomeUsuario,
+          );
+        }
       });
 
+      // ✅ Agora `tituloEvento` está acessível aqui
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(vou ? 'Presença confirmada!' : 'Presença removida!'),
+          content: Text(vou
+              ? 'Presença confirmada no evento: $tituloEvento!'
+              : 'Presença removida!'),
         ),
       );
 
-      setState(() {}); // Atualiza a UI
+      setState(() {});
     } catch (e) {
       print('Erro ao marcar presença: $e');
       ScaffoldMessenger.of(context).showSnackBar(
