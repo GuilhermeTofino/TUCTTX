@@ -1,4 +1,5 @@
 import 'package:app_tenda/calendario.dart';
+import 'package:app_tenda/firebase.notifications.dart';
 
 import 'package:app_tenda/screens/bazar.dart';
 import 'package:app_tenda/screens/cadastrar.dart';
@@ -10,12 +11,13 @@ import 'package:app_tenda/mensalidade.dart';
 import 'package:app_tenda/perfil_usuario.dart';
 import 'package:app_tenda/screens/cadastro_produto.dart';
 import 'package:app_tenda/solicitar_item_bazar.dart';
-import 'package:app_tenda/splash.dart';
 import 'package:app_tenda/widgets/fechar_teclado.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'firebase_options.dart';
+import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +25,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await FirebaseNotifications.initializeNotifications();
   runApp(const MyApp());
 }
 
@@ -33,7 +37,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return DismissKeyboard(
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Aplicativo TUCTTX',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           scaffoldBackgroundColor: Colors.white,
@@ -58,4 +62,9 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Mensagem recebida em segundo plano: ${message.messageId}");
 }

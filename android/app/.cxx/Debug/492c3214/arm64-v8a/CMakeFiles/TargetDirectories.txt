@@ -1,0 +1,2 @@
+/Users/guilherme.tofino/Desktop/TUCTTX/android/app/.cxx/Debug/492c3214/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/guilherme.tofino/Desktop/TUCTTX/android/app/.cxx/Debug/492c3214/arm64-v8a/CMakeFiles/rebuild_cache.dir

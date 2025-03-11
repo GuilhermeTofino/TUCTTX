@@ -87,7 +87,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
             ),
             const Spacer(),
             Text(
-              'Versão 1.0.0',
+              'Versão 1.0.1',
               style: GoogleFonts.lato(color: Colors.white),
             ),
             const SizedBox(height: 20),

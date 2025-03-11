@@ -1,6 +1,7 @@
 import 'package:app_tenda/widgets/colors.dart';
 import 'package:app_tenda/widgets/custom_text_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
@@ -90,6 +91,23 @@ class _EntrarState extends State<Entrar> {
     }
   }
 
+  Future<void> _salvarTokenFCM(String usuarioId) async {
+    try {
+      String? token = await FirebaseMessaging.instance.getToken();
+
+      if (token != null) {
+        await FirebaseFirestore.instance
+            .collection('Usuarios')
+            .doc(usuarioId)
+            .update({'fcm_token': token});
+
+        print("Token FCM salvo com sucesso: $token");
+      }
+    } catch (e) {
+      print("Erro ao salvar o token FCM: $e");
+    }
+  }
+
   // Valida o usuário salvo no banco de dados ao usar biometria
   Future<void> _validarUsuarioBiometria() async {
     if (_ultimoUsuario == null) return;
@@ -97,6 +115,7 @@ class _EntrarState extends State<Entrar> {
     final resultado = await _buscarUsuario(_ultimoUsuario!);
     if (resultado != null) {
       _definirPermissoesUsuario(resultado);
+      await _salvarTokenFCM(resultado['id']); // Atualiza o token FCM
       _redirecionarParaTelaPrincipal(resultado['nome'] ?? "");
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -116,6 +135,7 @@ class _EntrarState extends State<Entrar> {
       if (resultado != null) {
         _definirPermissoesUsuario(resultado);
         await _salvarUltimoUsuario(usuario);
+        await _salvarTokenFCM(resultado['id']); // Atualiza o token FCM
         _redirecionarParaTelaPrincipal(resultado['nome'] ?? "");
       } else {
         _mostrarAlertaUsuarioNaoEncontrado();
@@ -136,10 +156,12 @@ class _EntrarState extends State<Entrar> {
         .get();
 
     if (snapshot.docs.isNotEmpty) {
-      final userData = snapshot.docs.first.data();
+      final doc = snapshot.docs.first;
+      final userData = doc.data();
       return {
+        'id': doc.id, // Adicionamos o ID do usuário
         'nome': userData['nome'],
-        'funcao': userData['funcao'], // Captura a função correta
+        'funcao': userData['funcao'],
       };
     }
     return null;

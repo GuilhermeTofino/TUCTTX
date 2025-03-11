@@ -262,6 +262,7 @@ class _CalendarioState extends State<Calendario> {
       bottom: 70.0,
       right: 16.0,
       child: FloatingActionButton.extended(
+        heroTag: "botaoAdicionarEvento",
         onPressed: () => _mostrarDialogoAdicao(context),
         backgroundColor: Colors.white,
         icon: const Icon(Icons.add, color: kPrimaryColor),
