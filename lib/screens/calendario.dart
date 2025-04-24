@@ -5,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-import 'widgets/colors.dart';
-import '../entrar.dart';
-import '../widgets/custom_text_field.dart';
+import '../widgets/colors.dart';
+import '../../entrar.dart';
+import '../../widgets/custom_text_field.dart';
 
 class Calendario extends StatefulWidget {
   const Calendario({super.key});
@@ -19,8 +19,8 @@ class Calendario extends StatefulWidget {
 class _CalendarioState extends State<Calendario> {
   String? nomeUsuarioLogado;
   late String _mesAtual;
-  Map<String, bool> _expandedMonths =
-      {}; // Controla quais meses estão expandidos
+  Map<String, bool> _expandedMonths = {};
+  Map<String, bool> _loadingStates = {};
 
   final _dataEventoFormatter = MaskTextInputFormatter(
     mask: '##/##',
@@ -40,6 +40,33 @@ class _CalendarioState extends State<Calendario> {
     _mesAtual = DateFormat('MM').format(DateTime.now()); // Obtém o mês atual
   }
 
+  void _mostrarLegenda() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 100,
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 8),
+              _buildLegend(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,6 +75,15 @@ class _CalendarioState extends State<Calendario> {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const Text('Calendário'),
+        actions: [
+          TextButton(
+            onPressed: _mostrarLegenda,
+            child: const Text(
+              'Ver Legenda',
+              style: TextStyle(color: kPrimaryColor),
+            ),
+          ),
+        ],
       ),
       body: Stack(children: [
         _buildListaEventos(),
@@ -159,8 +195,7 @@ class _CalendarioState extends State<Calendario> {
             return true;
           },
           onDismissed: (direction) async {
-            final formattedDate =
-                DateFormat('dd/MM').format((data).toDate());
+            final formattedDate = DateFormat('dd/MM').format((data).toDate());
             await FirebaseFirestore.instance
                 .collection('GiraMes')
                 .doc(documentId)
@@ -203,26 +238,35 @@ class _CalendarioState extends State<Calendario> {
             trailing: Wrap(
               spacing: 3, // Espaço entre os ícones
               children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildToggleButton(
-                      text: "Vou",
-                      isSelected: usuarioConfirmado,
-                      color: Colors.green,
-                      onTap: () =>
-                          _marcarPresenca(documentId, nomeUsuarioLogado!, true),
-                    ),
-                    const SizedBox(height: 3), // Espaço entre os botões
-                    _buildToggleButton(
-                      text: "Não Vou",
-                      isSelected: !usuarioConfirmado,
-                      color: Colors.red,
-                      onTap: () => _marcarPresenca(
-                          documentId, nomeUsuarioLogado!, false),
-                    ),
-                  ],
-                ),
+                _loadingStates[documentId] == true
+                    ? const SizedBox(
+                        width: 80,
+                        height: 50,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2.0, color: kPrimaryColor),
+                        ),
+                      )
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildToggleButton(
+                            text: "Vou",
+                            isSelected: usuarioConfirmado,
+                            color: Colors.green,
+                            onTap: () => _marcarPresenca(
+                                documentId, nomeUsuarioLogado!, true),
+                          ),
+                          const SizedBox(height: 3), // Espaço entre os botões
+                          _buildToggleButton(
+                            text: "Não Vou",
+                            isSelected: !usuarioConfirmado,
+                            color: Colors.red,
+                            onTap: () => _marcarPresenca(
+                                documentId, nomeUsuarioLogado!, false),
+                          ),
+                        ],
+                      ),
                 if (isAdmin)
                   IconButton(
                     icon: const Icon(Icons.list, color: kPrimaryColor),
@@ -304,7 +348,8 @@ class _CalendarioState extends State<Calendario> {
       child: FloatingActionButton.extended(
         heroTag: "botaoAdicionarEvento",
         onPressed: () => _mostrarDialogoAdicao(context),
-        backgroundColor: Colors.white,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
         icon: const Icon(Icons.add, color: kPrimaryColor),
         label: Text("Adicionar Evento",
             style: GoogleFonts.lato(fontSize: 13, color: kPrimaryColor)),
@@ -312,6 +357,46 @@ class _CalendarioState extends State<Calendario> {
           borderRadius: BorderRadius.circular(25.0),
           side: const BorderSide(color: kPrimaryColor),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLegend() {
+    final legendItems = [
+      {'tag': 'Rito Aberto', 'color': Colors.green},
+      {'tag': 'Rito Fechado', 'color': Colors.red},
+      {'tag': 'Festa', 'color': Colors.orange},
+      {'tag': 'Curso', 'color': Colors.teal},
+      {'tag': 'Limpeza', 'color': Colors.blue},
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Wrap(
+        spacing: 2.0,
+        runSpacing: 2.0,
+        children: legendItems.map((item) {
+          return SizedBox(
+            width: 100,
+            child: Row(
+              children: [
+                Container(
+                  width: 10,
+                  height: 10,
+                  color: item['color'] as Color,
+                ),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    item['tag'] as String,
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -326,16 +411,8 @@ class _CalendarioState extends State<Calendario> {
         return Colors.red;
       case 'Festa':
         return Colors.orange;
-      case 'Kujiba':
-        return Colors.purple;
-      case 'Atendimento Tata':
-        return const Color.fromARGB(255, 255, 166, 195);
-      case 'Encruza':
-        return Colors.yellow;
       case 'Curso':
         return Colors.teal;
-      case 'Amaci':
-        return Colors.white;
       default:
         return Colors.grey;
     }
@@ -346,15 +423,11 @@ class _CalendarioState extends State<Calendario> {
     final TextEditingController _descricaoController = TextEditingController();
     final TextEditingController _tagController = TextEditingController();
     List<String> tiposDeEventos = [
-      'Limpeza',
       'Rito Aberto',
       'Rito Fechado',
       'Festa',
-      'Kujiba',
-      'Atendimento Tata',
-      'Encruza',
       'Curso',
-      'Amaci',
+      'Limpeza',
     ];
     String? _selectedTipoEvento;
 
@@ -381,6 +454,7 @@ class _CalendarioState extends State<Calendario> {
                 decoration: const InputDecoration(
                   labelText: 'Tipo de Evento',
                   icon: Icon(Icons.tips_and_updates),
+                  border: OutlineInputBorder(),
                 ),
                 value: _selectedTipoEvento,
                 items: tiposDeEventos.map((String value) {
@@ -553,21 +627,27 @@ class _CalendarioState extends State<Calendario> {
               }
 
               List<dynamic> presencas = snapshot.data!.get('presencas') ?? [];
+              presencas.sort((a, b) => a
+                  .toString()
+                  .toLowerCase()
+                  .compareTo(b.toString().toLowerCase()));
 
               if (presencas.isEmpty) {
                 return const Text('Ninguém confirmou presença ainda.');
               }
-
               return SizedBox(
-                height: MediaQuery.of(context).size.height * 0.5,
+                height: MediaQuery.of(context).size.height * 0.8,
                 width: MediaQuery.of(context).size.width * 0.7,
-                child: ListView.builder(
-                  itemCount: presencas.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(presencas[index]),
-                    );
-                  },
+                child: Scrollbar(
+                  thumbVisibility: true,
+                  child: ListView.builder(
+                    itemCount: presencas.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(presencas[index]),
+                      );
+                    },
+                  ),
                 ),
               );
             },
@@ -587,28 +667,24 @@ class _CalendarioState extends State<Calendario> {
 
   Future<void> _marcarPresenca(
       String documentId, String nomeUsuario, bool vou) async {
+    setState(() {
+      _loadingStates[documentId] = true;
+    });
     try {
       final documentReference =
           FirebaseFirestore.instance.collection('GiraMes').doc(documentId);
-
-      String tituloEvento = "Evento sem nome"; // Definição inicial
+      String tituloEvento = "Evento sem nome";
 
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         DocumentSnapshot snapshot = await transaction.get(documentReference);
-
         if (!snapshot.exists) throw Exception('Documento não existe!');
-
         Map<String, dynamic> evento = snapshot.data() as Map<String, dynamic>;
         List<dynamic> presencas = evento['presencas'] ?? [];
-        tituloEvento = evento['titulo'] ??
-            'Evento sem nome'; // Atribuindo o título corretamente
-
+        tituloEvento = evento['titulo'] ?? 'Evento sem nome';
         vou ? presencas.add(nomeUsuario) : presencas.remove(nomeUsuario);
-
         transaction.update(documentReference, {'presencas': presencas});
       });
 
-      // 🔥 Enviar FCM para administradores com fcm_token salvo, se "vou" for true
       if (vou) {
         QuerySnapshot adminSnapshot = await FirebaseFirestore.instance
             .collection("Usuarios")
@@ -626,8 +702,6 @@ class _CalendarioState extends State<Calendario> {
           }
         }
       }
-
-      // ✅ Agora `tituloEvento` está acessível aqui
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(vou
@@ -635,13 +709,15 @@ class _CalendarioState extends State<Calendario> {
               : 'Presença removida!'),
         ),
       );
-
-      setState(() {});
     } catch (e) {
       print('Erro ao marcar presença: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Erro ao marcar presença.')),
       );
+    } finally {
+      setState(() {
+        _loadingStates[documentId] = false;
+      });
     }
   }
 

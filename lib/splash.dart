@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:app_tenda/entrar.dart';
 import 'package:flutter/material.dart';
 import 'package:app_tenda/widgets/colors.dart';
 import 'package:app_tenda/login.dart';
@@ -46,7 +47,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
 
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const Login()));
+          context, MaterialPageRoute(builder: (context) => const Entrar()));
     });
   }
 

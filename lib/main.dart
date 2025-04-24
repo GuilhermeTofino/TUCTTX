@@ -1,4 +1,4 @@
-import 'package:app_tenda/calendario.dart';
+import 'package:app_tenda/screens/calendario.dart';
 import 'package:app_tenda/firebase.notifications.dart';
 
 import 'package:app_tenda/screens/bazar.dart';
@@ -10,6 +10,7 @@ import 'package:app_tenda/login.dart';
 import 'package:app_tenda/mensalidade.dart';
 import 'package:app_tenda/perfil_usuario.dart';
 import 'package:app_tenda/screens/cadastro_produto.dart';
+import 'package:app_tenda/screens/entidades.dart';
 import 'package:app_tenda/solicitar_item_bazar.dart';
 import 'package:app_tenda/widgets/fechar_teclado.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -45,9 +46,8 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
-        home: const Login(),
+        home: const Entrar(),
         routes: {
-          '/login': (context) => const Login(),
           '/cadastrar': (context) => const Cadastrar(),
           '/entrar': (context) => const Entrar(),
           '/tela_principal': (context) => const Home(),
@@ -58,6 +58,7 @@ class MyApp extends StatelessWidget {
           '/bazar': (context) => const BazarScreen(),
           '/solicitar_produto': (context) => const SolicitarProdutoScreen(),
           '/cadastro_produto': (context) => const CadastroProdutoScreen(),
+          '/entidades': (context) => const Entidades(),
         },
       ),
     );

@@ -1,6 +1,7 @@
-import 'package:app_tenda/calendario.dart';
+import 'package:app_tenda/screens/calendario.dart';
 import 'package:app_tenda/financeiro.dart';
 import 'package:app_tenda/grid_pdfs.dart';
+import 'package:app_tenda/screens/entidades.dart';
 import 'package:app_tenda/vizualizador_pdf.dart';
 import 'package:app_tenda/widgets/colors.dart';
 import 'package:app_tenda/demonstrativo.dart';
@@ -66,6 +67,7 @@ class _HomeState extends State<Home> {
             isAdmin || isBazar
                 ? 'Olá - $nomeUsuario (ADM)'
                 : 'Olá - $nomeUsuario',
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.lato(
               fontSize: 15,
               color: Colors.white,
@@ -131,7 +133,8 @@ class _HomeState extends State<Home> {
             Filhos(),
             Financeiro(),
             // BazarScreen(),
-            DemonstrativosScreen()
+            DemonstrativosScreen(),
+            Entidades(),
           ],
         ),
         Positioned(
@@ -200,7 +203,7 @@ class _HomeState extends State<Home> {
 
           // Caso seja usuário do bazar, adiciona Financeiro e Bazar separadamente
           // if (isBazar) _buildDrawerItem("Bazar", 10, Icons.money_rounded),
-
+          _buildDrawerItem("Entidades da Casa", 11, Icons.people),
           _buildDrawerItem("Sair", 12, Icons.exit_to_app),
         ],
       ),

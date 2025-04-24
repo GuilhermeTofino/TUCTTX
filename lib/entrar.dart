@@ -212,7 +212,9 @@ class _EntrarState extends State<Entrar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Entrar')),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -250,9 +252,24 @@ class _EntrarState extends State<Entrar> {
                 child:
                     const Text('Entrar', style: TextStyle(color: Colors.white)),
               ),
+              const SizedBox(height: 10.0),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(45),
+                  backgroundColor: Colors.white,
+                  side: const BorderSide(color: kPrimaryColor),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                  ),
+                ),
+                onPressed: () => Navigator.pushNamed(context, '/cadastrar'),
+                child: const Text('Cadastrar',
+                    style: TextStyle(color: kPrimaryColor)),
+              ),
               const SizedBox(height: 20),
-              if (_isBiometricAvailable)
-                ElevatedButton.icon(
+              Visibility(
+                visible: _ultimoUsuario != null && _isBiometricAvailable,
+                child: ElevatedButton.icon(
                   onPressed: _authenticateBiometrically,
                   icon: const Icon(Icons.fingerprint),
                   label: const Text("Entrar com Biometria / Face ID"),
@@ -261,6 +278,7 @@ class _EntrarState extends State<Entrar> {
                     foregroundColor: Colors.white,
                   ),
                 ),
+              ),
             ],
           ),
         ),
