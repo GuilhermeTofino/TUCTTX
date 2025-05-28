@@ -10,6 +10,7 @@ import 'package:app_tenda/login.dart';
 import 'package:app_tenda/mensalidade.dart';
 import 'package:app_tenda/perfil_usuario.dart';
 import 'package:app_tenda/screens/cadastro_produto.dart';
+import 'package:app_tenda/screens/calendario_novo.dart';
 import 'package:app_tenda/screens/entidades.dart';
 import 'package:app_tenda/solicitar_item_bazar.dart';
 import 'package:app_tenda/widgets/fechar_teclado.dart';
@@ -27,6 +28,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseNotifications.initializeNotifications();
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if (message.notification != null) {
+      // Exemplo: mostrar um snackbar
+      print('Mensagem recebida no foreground: ${message.notification!.title}');
+    }
+  });
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
 }
@@ -52,6 +59,7 @@ class MyApp extends StatelessWidget {
           '/entrar': (context) => const Entrar(),
           '/tela_principal': (context) => const Home(),
           '/calendario': (context) => const Calendario(),
+          '/calendario_novo': (context) => const CalendarioNovo(),
           '/perfilUsuario': (context) => const PerfilUsuario(),
           '/mensalidade': (context) => const Mensalidade(),
           '/detalhesFilho': (context) => const DetalhesFilho(),

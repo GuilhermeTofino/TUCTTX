@@ -46,16 +46,25 @@ class _EntrarState extends State<Entrar> {
     await prefs.setString('ultimo_usuario', usuario);
   }
 
-  // Verifica se o dispositivo suporta biometria
+  // Verifica se o dispositivo suporta biometria e se há tipos disponíveis
   Future<void> _checkBiometricAvailability() async {
     try {
-      bool canAuthenticate =
-          await _auth.canCheckBiometrics || await _auth.isDeviceSupported();
+      // Verifica se o dispositivo suporta autenticação biométrica/hardware
+      final bool canCheckBiometrics = await _auth.canCheckBiometrics;
+      final bool isDeviceSupported = await _auth.isDeviceSupported();
+      // Lista tipos de biometria disponíveis (Face ID, fingerprint, etc.)
+      final List<BiometricType> availableBiometrics = await _auth.getAvailableBiometrics();
+      
       setState(() {
-        _isBiometricAvailable = canAuthenticate;
+        _isBiometricAvailable = 
+            (canCheckBiometrics || isDeviceSupported) &&
+            availableBiometrics.isNotEmpty;
       });
     } on PlatformException catch (e) {
       print("Erro ao verificar biometria: $e");
+      setState(() {
+        _isBiometricAvailable = false;
+      });
     }
   }
 

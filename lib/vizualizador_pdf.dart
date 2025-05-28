@@ -1,95 +1,38 @@
-import 'package:archive/archive.dart';
+import 'package:app_tenda/widgets/colors.dart';
+import 'package:app_tenda/widgets/custom_loader.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:share_plus/share_plus.dart';
-import 'dart:convert'; // Importe o pacote dart:convert
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
-import 'widgets/colors.dart';
+class PDFViewerScreen extends StatefulWidget {
+  final String url;
+  final String nomeArquivo;
 
-class VisualizarPdf extends StatefulWidget {
-  final String appBarTitle; // Título da AppBar
-  final String? pdfAssetPath; // Caminho do PDF nos assets (agora anulável)
-  final String? base64Pdf; // String base64 do PDF (compactado ou não)
-  final bool voltar; // Mostrar botão de voltar?
-  final bool naoMostrar; // Mostrar botão de download?
-
-  const VisualizarPdf({
-    super.key,
-    required this.appBarTitle,
-    this.pdfAssetPath, // Pode ser nulo
-    this.base64Pdf, // Pode ser nulo
-    required this.voltar,
-    required this.naoMostrar,
-  });
+  const PDFViewerScreen(
+      {super.key, required this.url, required this.nomeArquivo});
 
   @override
-  State<VisualizarPdf> createState() => _VisualizarPdfState();
+  State<PDFViewerScreen> createState() => _PDFViewerScreenState();
 }
 
-class _VisualizarPdfState extends State<VisualizarPdf> {
-  String? pdfPath; // Caminho local do PDF
-  late PdfControllerPinch _pdfControllerPinch; // Controlador do PDF
+class _PDFViewerScreenState extends State<PDFViewerScreen> {
+  bool _isLoading = true;
+  late PdfControllerPinch _pdfController;
 
   @override
   void initState() {
     super.initState();
-    _loadPdf(); // Carrega o PDF
-  }
-
-  /// 🔥 Função para descompactar Base64 se necessário
-  String decompressBase64(String compressedBase64) {
-    List<int> compressed = base64.decode(compressedBase64);
-    List<int> decompressed = GZipDecoder().decodeBytes(compressed);
-    return utf8.decode(decompressed); // Retorna Base64 original
-  }
-
-  /// 🔥 Carrega o PDF de diferentes fontes: Asset, Base64 (compactado ou não)
-  Future<void> _loadPdf() async {
-    try {
-      if (widget.base64Pdf != null) {
-        String base64Decoded;
-
-        try {
-          // 🔥 Primeiro, tenta descompactar. Se falhar, assume que já está em Base64 puro.
-          base64Decoded = decompressBase64(widget.base64Pdf!);
-        } catch (_) {
-          base64Decoded = widget.base64Pdf!;
-        }
-
-        final bytes = base64Decode(base64Decoded);
-        final dir = await getApplicationDocumentsDirectory();
-        final file = File('${dir.path}/temp.pdf'); // Arquivo temporário
-        await file.writeAsBytes(bytes);
-        _setPdfPath(file.path);
-      } else if (widget.pdfAssetPath != null) {
-        // ✅ Carrega dos assets
-        final bytes = await rootBundle.load(widget.pdfAssetPath!);
-        final dir = await getApplicationDocumentsDirectory();
-        final file =
-            File('${dir.path}/${widget.pdfAssetPath!.split('/').last}');
-        await file.writeAsBytes(
-            bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
-        _setPdfPath(file.path);
-      } else {
-        // ❌ Nenhum PDF fornecido
-        print("Erro: Nenhum PDF fornecido.");
-      }
-    } catch (e) {
-      print('Erro ao carregar PDF: $e');
-    }
-  }
-
-  /// Define o caminho do PDF e inicializa o controlador
-  void _setPdfPath(String path) {
-    setState(() {
-      pdfPath = path;
-      _pdfControllerPinch = PdfControllerPinch(
-        document: PdfDocument.openFile(pdfPath!),
+    NetworkAssetBundle(Uri.parse(widget.url)).load(widget.url).then((bd) {
+      final data = bd.buffer.asUint8List();
+      _pdfController = PdfControllerPinch(
+        document: PdfDocument.openData(data),
       );
+      setState(() {
+        _isLoading = false;
+      });
     });
   }
 
@@ -98,76 +41,35 @@ class _VisualizarPdfState extends State<VisualizarPdf> {
     return Scaffold(
       backgroundColor: kPrimaryColor,
       appBar: AppBar(
-        toolbarHeight: 30,
+        title: Text(widget.nomeArquivo),
+        centerTitle: true,
         backgroundColor: kPrimaryColor,
-        automaticallyImplyLeading: widget.voltar,
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: Text(
-          widget.appBarTitle,
-          style: GoogleFonts.lato(color: Colors.white),
-        ),
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: _sharePdf,
+          ),
+        ],
       ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                pdfPath != null
-                    ? Expanded(
-                        child: PdfViewPinch(
-                          controller: _pdfControllerPinch,
-                        ),
-                      )
-                    : const Center(child: CircularProgressIndicator()),
-              ],
-            ),
-            if (!widget.naoMostrar) _buildDownloadButton(),
-          ],
-        ),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (!_isLoading) PdfViewPinch(controller: _pdfController),
+          if (_isLoading) const TucttxLoader(),
+        ],
       ),
     );
   }
 
-  @override
-  void dispose() {
-    _pdfControllerPinch.dispose();
-    super.dispose();
-  }
+  Future<void> _sharePdf() async {
+    final bd = await NetworkAssetBundle(Uri.parse(widget.url)).load(widget.url);
+    final bytes = bd.buffer.asUint8List();
 
-  /// 🔥 Compartilha o PDF
-  void _sharePdfFile() {
-    if (pdfPath != null) {
-      final box = context.findRenderObject() as RenderBox?;
-      Share.shareXFiles(
-        [XFile(pdfPath!)],
-        sharePositionOrigin: box != null
-            ? box.localToGlobal(Offset.zero) & box.size
-            : const Rect.fromLTWH(0, 0, 0, 100), // Define uma área padrão
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('PDF ainda carregando...')),
-      );
-    }
-  }
+    final tempDir = await getTemporaryDirectory();
+    final tempFile = File('${tempDir.path}/${widget.nomeArquivo}');
+    await tempFile.writeAsBytes(bytes);
 
-  /// 🔥 Constrói o botão de download
-  Widget _buildDownloadButton() {
-    return Positioned(
-      bottom: 40.0,
-      right: 20.0,
-      child: FloatingActionButton.extended(
-        onPressed: _sharePdfFile,
-        heroTag: '${widget.appBarTitle}-share',
-        backgroundColor: Colors.white,
-        icon: const Icon(Icons.download, color: kPrimaryColor),
-        label: Text("Baixar PDF",
-            style: GoogleFonts.lato(fontSize: 13, color: kPrimaryColor)),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25.0),
-          side: const BorderSide(color: kPrimaryColor),
-        ),
-      ),
-    );
+    Share.shareXFiles([XFile(tempFile.path)], text: widget.nomeArquivo);
   }
 }

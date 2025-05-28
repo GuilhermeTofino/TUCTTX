@@ -1,7 +1,8 @@
 import 'package:app_tenda/screens/calendario.dart';
 import 'package:app_tenda/financeiro.dart';
-import 'package:app_tenda/grid_pdfs.dart';
+import 'package:app_tenda/screens/calendario_novo.dart';
 import 'package:app_tenda/screens/entidades.dart';
+import 'package:app_tenda/screens/gridpdfs.dart';
 import 'package:app_tenda/vizualizador_pdf.dart';
 import 'package:app_tenda/widgets/colors.dart';
 import 'package:app_tenda/demonstrativo.dart';
@@ -101,35 +102,14 @@ class _HomeState extends State<Home> {
         IndexedStack(
           index: _selectedIndex,
           children: const [
-            Calendario(),
-            VisualizarPdf(
-              appBarTitle: 'Apostila',
-              pdfAssetPath:
-                  'images/pdfs/TENDA DE UMBANDA DO CABOCLO TREME TERRA 2023.pdf',
-              naoMostrar: false,
-              voltar: false,
-            ),
-            VisualizarPdf(
-              appBarTitle: 'Rumbê',
-              pdfAssetPath: 'images/pdfs/RUMBE TUCTTX.pdf',
-              voltar: false,
-              naoMostrar: false,
-            ),
-            ListaPdf(appBarTitle: 'FAQ'),
-            VisualizarPdf(
-              appBarTitle: 'Pontos Cantados',
-              pdfAssetPath: 'images/pdfs/TUCTTX - Pontos Cantados.pdf',
-              voltar: false,
-              naoMostrar: false,
-            ),
-            VisualizarPdf(
-              appBarTitle: 'Pontos Riscados',
-              pdfAssetPath: 'images/pdfs/APOSTILA - PONTOS RISCADOS.pdf',
-              voltar: false,
-              naoMostrar: false,
-            ),
-            ListaPdf(appBarTitle: 'Ervas'),
-            ListaPdf(appBarTitle: 'Biblioteca'),
+            CalendarioNovo(),
+            GridFilesFromFolder(folderName: 'Apostila'),
+            GridFilesFromFolder(folderName: 'Rumbê'),
+            GridFilesFromFolder(folderName: 'FAQ'),
+            GridFilesFromFolder(folderName: 'Pontos Cantados'),
+            GridFilesFromFolder(folderName: 'Pontos Riscados'),
+            GridFilesFromFolder(folderName: 'Ervas'),
+            GridFilesFromFolder(folderName: 'Biblioteca'),
             Filhos(),
             Financeiro(),
             // BazarScreen(),
@@ -170,7 +150,7 @@ class _HomeState extends State<Home> {
             decoration: const BoxDecoration(color: kPrimaryColor),
             child: Image.asset('images/logo_TUCTTX.png', fit: BoxFit.contain),
           ),
-          _buildDrawerItem('Calendário', 0, Icons.calendar_today),
+          _buildDrawerItem('CALENDÁRIO', 0, Icons.calendar_today),
 
           // Categoria Apostilas
           _buildExpansionTile(
@@ -181,10 +161,10 @@ class _HomeState extends State<Home> {
               _buildDrawerItem('RUMBÊ', 2, Icons.rule),
               _buildDrawerItem(
                   'FAQ-PERGUNTAS FREQUENTES', 3, Icons.question_answer),
-              _buildDrawerItem("Pontos Cantados", 4, Icons.graphic_eq),
-              _buildDrawerItem("Pontos Riscados", 5, Icons.edit),
-              _buildDrawerItem("Ervas", 6, Icons.compost),
-              _buildDrawerItem("Biblioteca", 7, Icons.menu_book),
+              _buildDrawerItem("PONTOS CANTADOS", 4, Icons.graphic_eq),
+              _buildDrawerItem("PONTOS RISCADOS", 5, Icons.edit),
+              _buildDrawerItem("ERVAS", 6, Icons.compost),
+              _buildDrawerItem("BIBLIOTECA", 7, Icons.menu_book),
             ],
           ),
 
@@ -194,17 +174,17 @@ class _HomeState extends State<Home> {
               title: "ADMINISTRAÇÃO",
               icon: Icons.admin_panel_settings,
               children: [
-                _buildDrawerItem("Filhos", 8, Icons.people_alt_outlined),
+                _buildDrawerItem("FILHOS", 8, Icons.people_alt_outlined),
                 // _buildDrawerItem("Bazar", 10, Icons.shopping_bag),
-                _buildDrawerItem("Financeiro", 9, Icons.attach_money),
-                _buildDrawerItem("Demonstrativos", 10, Icons.picture_as_pdf),
+                _buildDrawerItem("FINANCEIRO", 9, Icons.attach_money),
+                _buildDrawerItem("DEMONSTRATIVOS", 10, Icons.picture_as_pdf),
               ],
             ),
 
           // Caso seja usuário do bazar, adiciona Financeiro e Bazar separadamente
           // if (isBazar) _buildDrawerItem("Bazar", 10, Icons.money_rounded),
-          _buildDrawerItem("Entidades da Casa", 11, Icons.people),
-          _buildDrawerItem("Sair", 12, Icons.exit_to_app),
+          _buildDrawerItem("ENTIDADES DA TENDA", 11, Icons.people),
+          _buildDrawerItem("SAIR", 12, Icons.exit_to_app),
         ],
       ),
     );

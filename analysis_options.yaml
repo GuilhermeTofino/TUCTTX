@@ -10,8 +10,10 @@
 analyzer:
   errors:
     avoid_print: ignore
+    avoid_types_as_parameter_names: ignore
     depend_on_referenced_packages: ignore
     deprecated_member_use: ignore
+    library_private_types_in_public_api: ignore
     must_be_immutable: ignore
     no_leading_underscores_for_local_identifiers: ignore
     prefer_final_fields: ignore
