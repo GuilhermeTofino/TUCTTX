@@ -6,7 +6,6 @@ import 'package:app_tenda/screens/gridpdfs.dart';
 import 'package:app_tenda/vizualizador_pdf.dart';
 import 'package:app_tenda/widgets/colors.dart';
 import 'package:app_tenda/demonstrativo.dart';
-import 'package:app_tenda/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:app_tenda/entrar.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -142,7 +141,7 @@ class _HomeState extends State<Home> {
   // Constrói o Drawer com categorias expansíveis
   Drawer _buildDrawer(BuildContext context) {
     return Drawer(
-      width: MediaQuery.of(context).size.width * 0.70, // Responsivo
+      width: MediaQuery.of(context).size.width * 0.60, // Responsivo
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -191,20 +190,38 @@ class _HomeState extends State<Home> {
   }
 
   // Constrói um ExpansionTile para categorias do Drawer
-  Widget _buildExpansionTile(
-      {required String title,
-      required IconData icon,
-      required List<Widget> children}) {
-    return ExpansionTile(
-      leading: Icon(icon, color: kPrimaryColor),
-      title: Text(title,
-          style: GoogleFonts.lato(
-              fontSize: 14, fontWeight: FontWeight.bold, color: kPrimaryColor)),
-      trailing: const Icon(
-        Icons.arrow_drop_down,
-        color: kPrimaryColor,
-      ),
-      children: children,
+  Widget _buildExpansionTile({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+    bool initiallyExpanded = false,
+  }) {
+    bool isExpanded = initiallyExpanded;
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return ExpansionTile(
+          initiallyExpanded: isExpanded,
+          leading: Icon(icon, color: kPrimaryColor),
+          title: Text(
+            title,
+            style: GoogleFonts.lato(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: kPrimaryColor,
+            ),
+          ),
+          trailing: Icon(
+            isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+            color: kPrimaryColor,
+          ),
+          children: children,
+          onExpansionChanged: (expanded) {
+            setState(() {
+              isExpanded = expanded;
+            });
+          },
+        );
+      },
     );
   }
 
@@ -221,9 +238,9 @@ class _HomeState extends State<Home> {
           ? const Icon(Icons.arrow_forward_ios, color: kPrimaryColor)
           : null,
       onTap: () {
-        if (title == "Sair") {
+        if (title == "SAIR") {
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const Splash()),
+              MaterialPageRoute(builder: (context) => const Entrar()),
               (Route<dynamic> route) => false);
         } else {
           setState(() {

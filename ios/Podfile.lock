@@ -1199,6 +1199,8 @@ PODS:
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
+  - file_selector_ios (0.0.1):
+    - Flutter
   - Firebase/CoreOnly (11.8.0):
     - FirebaseCore (~> 11.8.0)
   - Firebase/Firestore (11.8.0):
@@ -1230,8 +1232,8 @@ PODS:
     - Flutter
   - FirebaseABTesting (11.8.0):
     - FirebaseCore (~> 11.8.0)
-  - FirebaseAppCheckInterop (11.9.0)
-  - FirebaseAuthInterop (11.9.0)
+  - FirebaseAppCheckInterop (11.12.0)
+  - FirebaseAuthInterop (11.12.0)
   - FirebaseCore (11.8.1):
     - FirebaseCoreInternal (~> 11.8.0)
     - GoogleUtilities/Environment (~> 8.0)
@@ -1281,7 +1283,7 @@ PODS:
     - GoogleUtilities/Reachability (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - nanopb (~> 3.30910.0)
-  - FirebaseSharedSwift (11.9.0)
+  - FirebaseSharedSwift (11.12.0)
   - FirebaseStorage (11.8.0):
     - FirebaseAppCheckInterop (~> 11.0)
     - FirebaseAuthInterop (~> 11.0)
@@ -1469,6 +1471,7 @@ DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
+  - file_selector_ios (from `.symlinks/plugins/file_selector_ios/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_in_app_messaging (from `.symlinks/plugins/firebase_in_app_messaging/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
@@ -1531,6 +1534,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/device_info_plus/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
+  file_selector_ios:
+    :path: ".symlinks/plugins/file_selector_ios/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_in_app_messaging:
@@ -1578,14 +1583,15 @@ SPEC CHECKSUMS:
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
   file_picker: b159e0c068aef54932bb15dc9fd1571818edaf49
+  file_selector_ios: f0670c1064a8c8450e38145d8043160105d0b97c
   Firebase: d80354ed7f6df5f9aca55e9eb47cc4b634735eaf
   firebase_core: ac395f994af4e28f6a38b59e05a88ca57abeb874
   firebase_in_app_messaging: 1ccb3cab43d1d339854437bc009a1dc1b287e6b5
   firebase_messaging: 7e223f4ee7ca053bf4ce43748e84a6d774ec9728
   firebase_storage: b31bacb1f1d7abeb753d9195e97eb5d2180e1d6f
   FirebaseABTesting: 7d6eee42b9137541eac2610e5fea3568d956707a
-  FirebaseAppCheckInterop: 9226f7217b43e99dfa0bc9f674ad8108cef89feb
-  FirebaseAuthInterop: 2a26ee1bea6d47df8048683cfa071e7da657798f
+  FirebaseAppCheckInterop: 73b173e5ec45192e2d522ad43f526a82ad10b852
+  FirebaseAuthInterop: b583210c039a60ed3f1e48865e1f3da44a796595
   FirebaseCore: 99fe0c4b44a39f37d99e6404e02009d2db5d718d
   FirebaseCoreExtension: 3d3f2017a00d06e09ab4ebe065391b0bb642565e
   FirebaseCoreInternal: df24ce5af28864660ecbd13596fc8dd3a8c34629
@@ -1594,7 +1600,7 @@ SPEC CHECKSUMS:
   FirebaseInAppMessaging: e332d3534d11bc5e4f800953dd4e1fff9866f53b
   FirebaseInstallations: 6c963bd2a86aca0481eef4f48f5a4df783ae5917
   FirebaseMessaging: 487b634ccdf6f7b7ff180fdcb2a9935490f764e8
-  FirebaseSharedSwift: 574e6a5602afe4397a55c8d4f767382d620285de
+  FirebaseSharedSwift: d2475748a2d2a36242ed13baa34b2acda846c925
   FirebaseStorage: 8eede00081a6ce904eaa8d2daa66f1e053e8e6ea
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_local_notifications: df98d66e515e1ca797af436137b4459b160ad8c9

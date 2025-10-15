@@ -45,6 +45,7 @@ class _GridFilesFromFolderState extends State<GridFilesFromFolder> {
         filteredFiles = result;
         isLoading = false;
       });
+      if (Navigator.canPop(context)) Navigator.pop(context);
     } catch (e) {
       print('Erro ao carregar arquivos: $e');
       setState(() {
@@ -74,8 +75,8 @@ class _GridFilesFromFolderState extends State<GridFilesFromFolder> {
       await ref.putFile(file);
 
       Navigator.pop(context); // fecha o loader
-      // await sendFCMToAll('Arquivo enviado',
-      //     'O arquivo "$path" foi adicionado no aplicativo para estudos.');
+      await sendFCMToAll('Livro Disponível',
+          'O livro "$path" foi adicionado no aplicativo para estudos.');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Upload concluído: $path')),
       );
@@ -131,70 +132,83 @@ class _GridFilesFromFolderState extends State<GridFilesFromFolder> {
                         ),
                       ),
                       Expanded(
-                        child: ListView.separated(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: filteredFiles.length,
-                          separatorBuilder: (context, index) => const Divider(),
-                          itemBuilder: (context, index) {
-                            final file = filteredFiles[index];
+                        child: RefreshIndicator(
+                          onRefresh: _loadFilesFromFolder,
+                          child: ListView.separated(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: filteredFiles.length,
+                            separatorBuilder: (context, index) =>
+                                const Divider(),
+                            itemBuilder: (context, index) {
+                              final file = filteredFiles[index];
 
-                            return ListTile(
-                              leading: FutureBuilder<Uint8List?>(
-                                future: file.getData(1024 * 100), // tenta obter os primeiros 100KB
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.done &&
-                                      snapshot.hasData &&
-                                      snapshot.data != null) {
-                                    return Image.memory(
-                                      snapshot.data!,
-                                      width: 40,
-                                      height: 50,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) =>
-                                          const Icon(Icons.picture_as_pdf, color: Colors.red),
-                                    );
-                                  } else {
-                                    return const Icon(Icons.picture_as_pdf, color: Colors.red);
-                                  }
-                                },
-                              ),
-                              title: Text(file.name),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.open_in_new),
-                                    onPressed: () async {
-                                      final url = await file.getDownloadURL();
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PDFViewerScreen(
-                                              url: url, nomeArquivo: file.name),
-                                        ),
+                              return ListTile(
+                                leading: FutureBuilder<Uint8List?>(
+                                  future: file.getData(1024 *
+                                      100), // tenta obter os primeiros 100KB
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                            ConnectionState.done &&
+                                        snapshot.hasData &&
+                                        snapshot.data != null) {
+                                      return Image.memory(
+                                        snapshot.data!,
+                                        width: 40,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                const Icon(Icons.picture_as_pdf,
+                                                    color: Colors.red),
                                       );
-                                    },
-                                  ),
-                                  if (isAdmin)
+                                    } else {
+                                      return const Icon(Icons.picture_as_pdf,
+                                          color: Colors.red);
+                                    }
+                                  },
+                                ),
+                                title: Text(file.name),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                     IconButton(
-                                      icon:
-                                          const Icon(Icons.delete, color: Colors.red),
+                                      icon: const Icon(Icons.open_in_new),
                                       onPressed: () async {
-                                        final storageService = StorageService();
-                                        await storageService
-                                            .deleteFile(file.fullPath);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                              content: Text(
-                                                  'Arquivo deletado: ${file.name}')),
+                                        final url = await file.getDownloadURL();
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                PDFViewerScreen(
+                                                    url: url,
+                                                    nomeArquivo: file.name),
+                                          ),
                                         );
-                                        _loadFilesFromFolder(); // Atualiza a lista após exclusão
                                       },
                                     ),
-                                ],
-                              ),
-                            );
-                          },
+                                    if (isAdmin)
+                                      IconButton(
+                                        icon: const Icon(Icons.delete,
+                                            color: Colors.red),
+                                        onPressed: () async {
+                                          final storageService =
+                                              StorageService();
+                                          await storageService
+                                              .deleteFile(file.fullPath);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                                content: Text(
+                                                    'Arquivo deletado: ${file.name}')),
+                                          );
+                                          _loadFilesFromFolder(); // Atualiza a lista após exclusão
+                                        },
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -203,6 +217,7 @@ class _GridFilesFromFolderState extends State<GridFilesFromFolder> {
       floatingActionButton: null,
     );
   }
+
   void _handleUpload() async {
     showDialog(
       context: context,
@@ -210,8 +225,8 @@ class _GridFilesFromFolderState extends State<GridFilesFromFolder> {
       builder: (context) => const Center(child: TucttxLoader()),
     );
 
-    final pickedFile = await FilePicker.platform.pickFiles(
-        type: FileType.custom, allowedExtensions: ['pdf']);
+    final pickedFile = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
 
     Navigator.pop(context); // Fecha o loader após selecionar
 

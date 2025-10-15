@@ -631,8 +631,9 @@ class _CalendarioNovoState extends State<CalendarioNovo> {
                       FutureBuilder<QuerySnapshot>(
                         future: _firestore.collection('Usuarios').get(),
                         builder: (context, snapshot) {
-                          if (!snapshot.hasData)
+                          if (!snapshot.hasData) {
                             return const CircularProgressIndicator();
+                          }
                           final filhos = snapshot.data!.docs;
                           return DropdownButtonFormField<String>(
                             value: _selectedBirthdayChild,
