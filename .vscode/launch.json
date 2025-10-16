@@ -4,21 +4,35 @@
     // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        // --- AMBIENTE DE DESENVOLVIMENTO ---
         {
-            "name": "app_tenda",
-            "request": "launch",
-            "type": "dart"
-        },
-        {
-            "name": "app_tenda (profile mode)",
+            "name": "Tucttx (Dev)",
             "request": "launch",
             "type": "dart",
+            "program": "lib/tucttx/main_dev.dart",
+            "flutterMode": "debug"
+        },
+        // --- AMBIENTE DE PRODUÇÃO ---
+        {
+            "name": "Tucttx (Prod)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/tucttx/main_prod.dart",
+            "flutterMode": "debug"
+        },
+        // --- MODOS ESPECIAIS (PROFILE E RELEASE) ---
+        {
+            "name": "Run (Prod - Profile)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_prod.dart",
             "flutterMode": "profile"
         },
         {
-            "name": "app_tenda (release mode)",
+            "name": "Run (Prod - Release)",
             "request": "launch",
             "type": "dart",
+            "program": "lib/main_prod.dart",
             "flutterMode": "release"
         }
     ]

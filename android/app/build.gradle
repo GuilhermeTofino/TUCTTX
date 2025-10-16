@@ -30,7 +30,20 @@ android {
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = 5  
-        versionName = "1.0.4"
+        versionName = "2.0.0"
+    }
+
+    // Adicione isso
+    flavorDimensions "app"
+    productFlavors {
+        dev {
+            dimension "app"
+            applicationIdSuffix ".dev" // Ex: com.appTenda.dev
+            versionNameSuffix "-dev"
+        }
+        prod {
+            dimension "app"
+        }
     }
 
     buildTypes {

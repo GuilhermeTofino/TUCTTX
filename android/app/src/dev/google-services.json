@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "781643522873",
+    "project_id": "tucttx-dev-91c61",
+    "storage_bucket": "tucttx-dev-91c61.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781643522873:android:ae09d7e0f329a3cfe1bee8",
+        "android_client_info": {
+          "package_name": "com.appTenda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ9z5VeGSf7LU-7WxWw0NkuCVmT0kzS4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
