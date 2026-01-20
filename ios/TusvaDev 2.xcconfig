@@ -1,0 +1,5 @@
+#include? "Flutter/Release.xcconfig"
+#include? "Flutter/Generated.xcconfig"
+
+APP_DISPLAY_NAME = [DEV] TUSVA
+PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.dev

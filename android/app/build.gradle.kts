@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -20,21 +19,58 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // O applicationId base será sobrescrito pelos flavors
         applicationId = "com.appTenda"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    // 1. Definir a dimensão
+    flavorDimensions.add("client")
+
+    // 2. Configurar os Product Flavors
+    productFlavors {
+        create("tucttx") {
+            dimension = "client"
+            applicationId = "com.appTenda"
+        }
+
+        create("tu7e") {
+            dimension = "client"
+            applicationId = "com.appTenda.tu7e"
+        }
+
+        create("tusva") {
+            dimension = "client"
+            applicationId = "com.appTenda.tusva"
+        }
+    }
+
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+        getByName("debug") {
+            // Permite instalar o app de DEV junto com o de PROD no mesmo celular
+            applicationIdSuffix = ".dev"
             signingConfig = signingConfigs.getByName("debug")
+        }
+        
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
+    }
+
+    // 3. Lógica para definir o Nome do App dinamicamente por Flavor e BuildType
+    applicationVariants.all {
+        val variantName = name // ex: tucttxDebug
+        val flavorName = flavorName.uppercase() // ex: TUCTTX
+        
+        if (variantName.contains("debug", ignoreCase = true)) {
+            resValue("string", "app_name", "[DEV] $flavorName")
+        } else {
+            resValue("string", "app_name", flavorName)
         }
     }
 }
