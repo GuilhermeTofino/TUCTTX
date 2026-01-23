@@ -1,33 +1,26 @@
+import 'package:app_tenda/core/config/firebase_remote_configs.dart';
 import 'package:app_tenda/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/config/app_config.dart';
 import 'core/config/tenant_factory.dart';
 import 'core/di/service_locator.dart';
-import 'firebase_options.dart';
 
 void main() async {
-  // Garante que os bindings nativos estejam prontos
   WidgetsFlutterBinding.ensureInitialized();
-
-  // 1. Captura variáveis de ambiente
-  const String tenantSlug = String.fromEnvironment('TENANT');
-  const String envRaw = String.fromEnvironment('ENV');
-  final environment = envRaw == 'prod'
-      ? AppEnvironment.prod
-      : AppEnvironment.dev;
-
-  // 2. Inicializa a configuração global do Tenant
-  AppConfig.instantiate(
-    environment: environment,
-    tenant: TenantFactory.getTenant(tenantSlug, environment),
-  );
-
-  // 3. Inicializa o Service Locator (Injeção de Dependência)
   await setupServiceLocator();
 
-  // 4. Inicializa o Firebase com as opções geradas pelo CLI
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // 1. Detecta o Tenant e Ambiente via Dart Defines (usados nos Schemes do Xcode)
+  const slug = String.fromEnvironment('TENANT');
+  const envString = String.fromEnvironment('ENV', defaultValue: 'dev');
+  final env = envString == 'prod' ? AppEnvironment.prod : AppEnvironment.dev;
+
+  // 2. Configura a Instância
+  final tenant = TenantFactory.getTenant(slug, env);
+  AppConfig.instantiate(environment: env, tenant: tenant);
+
+  // 3. Inicializa o Firebase SEM ARQUIVOS FÍSICOS
+  await Firebase.initializeApp(options: FirebaseRemoteConfigs.currentOptions);
 
   runApp(const MyApp());
 }

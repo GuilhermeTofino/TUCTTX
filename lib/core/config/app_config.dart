@@ -7,13 +7,15 @@ class TenantConfig {
   final String tenantName;
   final String tenantSlug;
   final String appTitle;
-  final Color primaryColor; // Nova propriedade
+  final Color primaryColor;
+  final String bundleId; // Adicionado para diferenciar DEV de PROD
 
   const TenantConfig({
     required this.tenantName,
     required this.tenantSlug,
     required this.appTitle,
     required this.primaryColor,
+    required this.bundleId,
   });
 }
 
