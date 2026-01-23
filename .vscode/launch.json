@@ -1,0 +1,71 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "TUCTTX (DEV)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor", "tucttx",
+                "--dart-define", "TENANT=tucttx",
+                "--dart-define", "ENV=dev"
+            ]
+        },
+        {
+            "name": "TUCTTX (PROD)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor", "tucttx",
+                "--dart-define", "TENANT=tucttx",
+                "--dart-define", "ENV=prod"
+            ]
+        },
+        {
+            "name": "TU7E (DEV)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor", "tu7e",
+                "--dart-define", "TENANT=tu7e",
+                "--dart-define", "ENV=dev"
+            ]
+        },
+        {
+            "name": "TU7E (PROD)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor", "tu7e",
+                "--dart-define", "TENANT=tu7e",
+                "--dart-define", "ENV=prod"
+            ]
+        },
+        {
+            "name": "TUSVA (DEV)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor", "tusva",
+                "--dart-define", "TENANT=tusva",
+                "--dart-define", "ENV=dev"
+            ]
+        },
+        {
+            "name": "TUSVA (PROD)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor", "tusva",
+                "--dart-define", "TENANT=tusva",
+                "--dart-define", "ENV=prod"
+            ]
+        }
+    ]
+}

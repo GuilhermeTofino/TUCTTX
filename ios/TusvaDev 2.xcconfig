@@ -3,3 +3,4 @@
 
 APP_DISPLAY_NAME = [DEV] TUSVA
 PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.dev
+FLAVOR_NAME = tusva

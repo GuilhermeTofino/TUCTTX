@@ -3,3 +3,4 @@
 
 APP_DISPLAY_NAME = [DEV] TUCTTX
 PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.dev
+FLAVOR_NAME = tucttx

@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "928032785050",
+    "project_id": "com-app-treino",
+    "storage_bucket": "com-app-treino.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928032785050:android:890f79e61b94cefeeb9523",
+        "android_client_info": {
+          "package_name": "com.appTenda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmg30Yjbvg3lY1ftbIw3GHSgcMEmYlA-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "928032785050-1gcru1n1en9l65dic0pkbsl9spa2s5tu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.appTenda",
+                "app_store_id": "6742410543"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

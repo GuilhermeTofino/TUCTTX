@@ -1,0 +1,7 @@
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/tenants/tusva/icon.png"
+  # Opcional: cor de fundo para Android Adaptive Icons
+  adaptive_icon_background: "#FFFFFF" 
+  adaptive_icon_foreground: "assets/tenants/tusva/icon.png"

@@ -1,20 +1,33 @@
+import 'package:app_tenda/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'core/config/app_config.dart';
 import 'core/config/tenant_factory.dart';
+import 'core/di/service_locator.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  // Garante que os bindings nativos estejam prontos
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Injetados via --dart-define no build
+  // 1. Captura variáveis de ambiente
   const String tenantSlug = String.fromEnvironment('TENANT');
   const String envRaw = String.fromEnvironment('ENV');
+  final environment = envRaw == 'prod'
+      ? AppEnvironment.prod
+      : AppEnvironment.dev;
 
-  final environment = envRaw == 'prod' ? AppEnvironment.prod : AppEnvironment.dev;
-  
+  // 2. Inicializa a configuração global do Tenant
   AppConfig.instantiate(
     environment: environment,
     tenant: TenantFactory.getTenant(tenantSlug, environment),
   );
+
+  // 3. Inicializa o Service Locator (Injeção de Dependência)
+  await setupServiceLocator();
+
+  // 4. Inicializa o Firebase com as opções geradas pelo CLI
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());
 }
@@ -25,30 +38,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final config = AppConfig.instance;
-    
+
     return MaterialApp(
       title: config.tenant.appTitle,
-      home: Scaffold(
-        appBar: AppBar(title: Text(config.tenant.appTitle)),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('ID do Cliente (Firebase): ${config.tenant.tenantSlug}', 
-                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              const SizedBox(height: 10),
-              Text('Ambiente: ${config.environment.name}'),
-              const Divider(),
-              const Text('Exemplo de path Firestore:'),
-              Text('tenants/${config.tenant.tenantSlug}/users/123'),
-              const SizedBox(height: 10),
-              const Text('Exemplo de Tópico FCM:'),
-              Text('topic_${config.tenant.tenantSlug}_${config.environment.name}'),
-            ],
-          ),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: config.tenant.primaryColor,
+          primary: config.tenant.primaryColor,
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: config.tenant.primaryColor,
+          foregroundColor: Colors.white,
         ),
       ),
+      home: const HomePage(),
     );
   }
 }
