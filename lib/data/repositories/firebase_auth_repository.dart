@@ -12,31 +12,31 @@ class FirebaseAuthRepository implements AuthRepository {
   @override
   Future<UserModel?> signIn(String email, String password) async {
     try {
-      // 1. Tenta o login no Firebase Auth
-      final result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final result = await _auth.signInWithEmailAndPassword(
+        email: email, 
+        password: password
+      );
+      
       final uid = result.user?.uid;
+      if (uid == null) return null;
 
-      if (uid != null) {
-        // 2. VALIDAÇÃO CRÍTICA: O usuário existe na subcoleção DESTE tenant?
-        final doc = await _firestore
-            .collection('tenants')
-            .doc(_tenantSlug)
-            .collection('users')
-            .doc(uid)
-            .get();
+      // Busca os dados do usuário no silo do Tenant
+      final doc = await _firestore
+          .collection('tenants')
+          .doc(_tenantSlug)
+          .collection('users')
+          .doc(uid)
+          .get();
 
-        if (doc.exists) {
-          return UserModel.fromMap(doc.data()!);
-        } else {
-          // Se o usuário existe no Auth mas não neste tenant, deslogamos ele
-          await signOut();
-          throw Exception("Usuário não autorizado para este aplicativo.");
-        }
+      if (doc.exists && doc.data() != null) {
+        return UserModel.fromMap(doc.data()!);
+      } else {
+        await signOut();
+        throw Exception("Acesso negado: Usuário não pertence a este aplicativo.");
       }
     } catch (e) {
       rethrow;
     }
-    return null;
   }
 
   @override
@@ -44,7 +44,19 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Stream<UserModel?> get onAuthStateChanged {
-    // Implementação simplificada para o exemplo
-    return _auth.authStateChanges().map((user) => null); 
+    // Escuta as mudanças do Firebase Auth e converte para UserModel
+    return _auth.authStateChanges().asyncMap((firebaseUser) async {
+      if (firebaseUser == null) return null;
+
+      final doc = await _firestore
+          .collection('tenants')
+          .doc(_tenantSlug)
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
+
+      if (!doc.exists) return null;
+      return UserModel.fromMap(doc.data()!);
+    });
   }
 }

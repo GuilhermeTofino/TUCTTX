@@ -1,1 +1,0 @@
- /Users/guilhermetofino/Downloads/TUCTTX/.dart_tool/flutter_build/c6de2963a9bda614fb566e937990f1f0/native_assets.json: 

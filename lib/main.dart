@@ -1,5 +1,5 @@
 import 'package:app_tenda/core/config/firebase_remote_configs.dart';
-import 'package:app_tenda/presentation/pages/home_page.dart';
+import 'package:app_tenda/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/config/app_config.dart';
@@ -45,7 +45,9 @@ class MyApp extends StatelessWidget {
           foregroundColor: Colors.white,
         ),
       ),
-      home: const HomePage(),
+      debugShowCheckedModeBanner: false,
+      initialRoute: AppRoutes.welcome,
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }
