@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'app_config.dart';
+import '../config/app_config.dart'; // Ajustado para o novo caminho
 
 class FirebaseRemoteConfigs {
-  // Credenciais Globais do seu novo projeto
+  // Credenciais Globais do projeto Firebase
   static const String _apiKey = "AIzaSyAB13hEUwX_evF2FvUHOGQ49d0IlQrtBrU";
   static const String _projectId = "tenda-white-label";
   static const String _senderId = "201327273520";
@@ -27,12 +27,20 @@ class FirebaseRemoteConfigs {
       },
     };
 
+    // Validação de segurança: verifica se o tenant e o ambiente existem no mapa
+    final tenantAppIds = appIds[tenant.tenantSlug];
+    if (tenantAppIds == null || tenantAppIds[env] == null) {
+      throw Exception(
+        "Configuração do Firebase não encontrada para o cliente: ${tenant.tenantSlug} no ambiente: $env",
+      );
+    }
+
     return FirebaseOptions(
       apiKey: _apiKey,
-      appId: appIds[tenant.tenantSlug]![env]!,
+      appId: tenantAppIds[env]!,
       messagingSenderId: _senderId,
       projectId: _projectId,
-      storageBucket: "$_projectId.firebasestorage.app",
+      storageBucket: "tenda-white-label.firebasestorage.app",
       iosBundleId: tenant.bundleId,
     );
   }

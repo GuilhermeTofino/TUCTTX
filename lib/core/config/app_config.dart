@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 
 enum AppEnvironment { dev, prod }
 
-
 class TenantConfig {
   final String tenantName;
   final String tenantSlug;
   final String appTitle;
   final Color primaryColor;
-  final String bundleId; // Adicionado para diferenciar DEV de PROD
+  final String bundleId;
 
   const TenantConfig({
     required this.tenantName,
@@ -17,6 +16,14 @@ class TenantConfig {
     required this.primaryColor,
     required this.bundleId,
   });
+
+  // Getter para garantir que o texto sobre a cor primária seja sempre visível
+  // Se a cor for clara, retorna preto; se for escura, retorna branco.
+  Color get onPrimaryColor => 
+      primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+
+  // Atalho para o caminho da logo
+  String get logoPath => 'assets/tenants/$tenantSlug/logo.png';
 }
 
 class AppConfig {
@@ -26,7 +33,12 @@ class AppConfig {
   static AppConfig? _instance;
   AppConfig._({required this.environment, required this.tenant});
 
-  static AppConfig get instance => _instance!;
+  static AppConfig get instance {
+    if (_instance == null) {
+      throw Exception("AppConfig deve ser instanciado antes do uso. Verifique o main.dart");
+    }
+    return _instance!;
+  }
 
   static void instantiate({
     required AppEnvironment environment,

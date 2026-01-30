@@ -1,5 +1,5 @@
-import 'package:app_tenda/core/config/app_config.dart';
 import 'package:flutter/material.dart';
+import 'app_config.dart';
 
 class TenantFactory {
   static TenantConfig getTenant(String slug, AppEnvironment env) {
@@ -14,8 +14,7 @@ class TenantFactory {
           tenantSlug: 'tucttx',
           appTitle: '$prefix TUCTTX',
           primaryColor: const Color(0xFF72150E),
-          bundleId:
-              'com.appTenda.$suffix', // Gera o ID correto conforme ambiente
+          bundleId: 'com.appTenda.tucttx$suffix', // Padronizado com o slug
         );
       case 'tu7e':
         return TenantConfig(
@@ -33,10 +32,8 @@ class TenantFactory {
           primaryColor: const Color(0xFFFB0101),
           bundleId: 'com.appTenda.tusva$suffix',
         );
-
-      // Repita para tu7e e tusva...
       default:
-        throw Exception('Tenant inválido');
+        throw Exception('Tenant "$slug" não encontrado na Factory.');
     }
   }
 }

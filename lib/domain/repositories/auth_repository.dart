@@ -1,8 +1,29 @@
-import '../models/user_model.dart';
+// lib/domain/repositories/auth_repository.dart
+import 'dart:io';
+
+import 'package:app_tenda/domain/models/user_model.dart';
 
 abstract class AuthRepository {
-  // Mude de User? para UserModel?
   Future<UserModel?> signIn(String email, String password);
+
+  Future<UserModel?> signUp({
+    required String name,
+    required String email,
+    required String phone,
+    required String password,
+    required String emergencyContact,
+    required bool jaTirouSanto,
+    bool jogoComTata,
+    String? orixaFrente,
+    String? orixaJunto,
+    String? alergias,
+    String? medicamentos,
+    String? condicoesMedicas,
+    String? tipoSanguineo,
+  });
+
+  Future<void> sendPasswordResetEmail(String email);
+  Future<String> uploadProfileImage(File image, String userId);
   Future<void> signOut();
   Stream<UserModel?> get onAuthStateChanged;
 }

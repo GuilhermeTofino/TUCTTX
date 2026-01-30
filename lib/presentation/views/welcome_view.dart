@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/config/app_config.dart';
+import '../../core/routes/app_routes.dart'; // Importante para a navegação
 
 class WelcomeView extends StatelessWidget {
   const WelcomeView({super.key});
@@ -9,9 +10,8 @@ class WelcomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final tenant = AppConfig.instance.tenant;
 
-    // Ajusta as cores dos ícones da barra de status (bateria, hora)
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: SystemUiOverlayStyle.dark, // Alterado para dark pois o topo é branco
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Column(
@@ -39,18 +39,24 @@ class WelcomeView extends StatelessWidget {
                       );
                     },
                     child: Image.asset(
-                      'assets/tenants/${tenant.tenantSlug}/logo.png',
+                      tenant.logoPath, // Usando o getter que criamos no AppConfig
                       width: MediaQuery.of(context).size.width * 0.6,
-                      fit: BoxFit.fitWidth,
-                      // Fallback caso a imagem não exista ainda
+                      fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) => Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.store_rounded,
-                            size: 140,
-                            color: Colors.white,
+                            size: 100,
+                            color: tenant.primaryColor, // Cor do tenant no erro
                           ),
+                          Text(
+                            tenant.tenantName,
+                            style: TextStyle(
+                              color: tenant.primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -80,47 +86,43 @@ class WelcomeView extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
+                  const Text(
                     "Seja bem-vindo a",
                     style: TextStyle(
                       fontSize: 16,
                       letterSpacing: 1.2,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     tenant.tenantName,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 40),
 
-                  // Botão Entrar (Sólido)
+                  // Botão Entrar
                   _buildMainButton(
                     context,
                     label: "ACESSAR CONTA",
-                    onPressed: () {
-                      // Navigator.pushNamed(context, '/login');
-                    },
+                    onPressed: () => Navigator.pushNamed(context, AppRoutes.login),
                     color: Colors.white,
                     textColor: tenant.primaryColor,
                   ),
 
                   const SizedBox(height: 15),
 
-                  // Botão Cadastrar (Transparente/Outlined)
+                  // Botão Cadastrar
                   _buildSecondaryButton(
                     context,
                     label: "Criar nova conta",
-                    onPressed: () {
-                      // Navigator.pushNamed(context, '/register');
-                    },
+                    onPressed: () => Navigator.pushNamed(context, AppRoutes.register),
                     textColor: Colors.white,
                   ),
                 ],
@@ -132,13 +134,8 @@ class WelcomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildMainButton(
-    BuildContext context, {
-    required String label,
-    required VoidCallback onPressed,
-    required Color color,
-    required Color textColor,
-  }) {
+  // Métodos auxiliares de botão...
+  Widget _buildMainButton(BuildContext context, {required String label, required VoidCallback onPressed, required Color color, required Color textColor}) {
     return SizedBox(
       width: double.infinity,
       height: 58,
@@ -148,28 +145,14 @@ class WelcomeView extends StatelessWidget {
           backgroundColor: color,
           foregroundColor: textColor,
           elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1,
-          ),
-        ),
+        child: Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }
 
-  Widget _buildSecondaryButton(
-    BuildContext context, {
-    required String label,
-    required VoidCallback onPressed,
-    required Color textColor,
-  }) {
+  Widget _buildSecondaryButton(BuildContext context, {required String label, required VoidCallback onPressed, required Color textColor}) {
     return SizedBox(
       width: double.infinity,
       height: 58,
@@ -179,13 +162,10 @@ class WelcomeView extends StatelessWidget {
           foregroundColor: textColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
-            side: BorderSide(color: textColor.withOpacity(0.3), width: 2),
+            side: BorderSide(color: textColor.withOpacity(0.4), width: 1.5),
           ),
         ),
-        child: Text(
-          label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
+        child: Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }

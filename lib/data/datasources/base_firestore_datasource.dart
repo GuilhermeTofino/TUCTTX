@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../core/config/app_config.dart';
+import '../../core/config/app_config.dart';
 
 abstract class BaseFirestoreDataSource {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -13,4 +13,9 @@ abstract class BaseFirestoreDataSource {
   // Ex: /tenants/tucttx/users
   CollectionReference tenantCollection(String path) => 
       tenantRoot.collection(path);
+
+  // NOVO: Atalho para um documento específico dentro de uma subcoleção do tenant
+  // Ex: /tenants/tucttx/users/UID_DO_USUARIO
+  DocumentReference tenantDocument(String collectionPath, String docId) =>
+      tenantCollection(collectionPath).doc(docId);
 }

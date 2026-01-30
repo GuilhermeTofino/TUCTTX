@@ -2,5 +2,5 @@
 #include? "Flutter/Generated.xcconfig"
 
 APP_DISPLAY_NAME = TUCTTX
-PRODUCT_BUNDLE_IDENTIFIER = com.appTenda
+PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx
 FLAVOR_NAME = tucttx
