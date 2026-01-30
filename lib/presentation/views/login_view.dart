@@ -5,6 +5,7 @@ import '../../core/di/service_locator.dart';
 import '../../core/routes/app_routes.dart';
 import '../viewmodels/register_viewmodel.dart';
 import '../widgets/custom_logo_loader.dart';
+import '../../core/services/biometric_service.dart'; // Importe seu novo serviço
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -17,7 +18,28 @@ class _LoginViewState extends State<LoginView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _viewModel = getIt<RegisterViewModel>();
+  final _biometricService = BiometricService(); // Instância do serviço
+
   bool _obscurePassword = true;
+  bool _canUseBiometrics = false; // Controle de visibilidade do botão
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometricAvailability();
+  }
+
+  // Verifica se o hardware permite e se existem credenciais salvas
+  Future<void> _checkBiometricAvailability() async {
+    final tenant = AppConfig.instance.tenant.tenantSlug;
+    final isHardwareAvailable = await _biometricService.canUseBiometrics();
+    final credentials = await _biometricService.getSavedCredentials(tenant);
+
+    setState(() {
+      // Só mostra o botão se o hardware for compatível E houver e-mail salvo
+      _canUseBiometrics = isHardwareAvailable && credentials['email'] != null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,10 +90,8 @@ class _LoginViewState extends State<LoginView> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () => _showResetPasswordSheet(
-                            context,
-                            tenant,
-                          ), // Método conectado
+                          onPressed: () =>
+                              _showResetPasswordSheet(context, tenant),
                           child: Text(
                             "Esqueceu a senha?",
                             style: TextStyle(color: tenant.primaryColor),
@@ -80,7 +100,17 @@ class _LoginViewState extends State<LoginView> {
                       ),
 
                       const SizedBox(height: 24),
-                      _buildLoginButton(tenant),
+
+                      // AREA DE BOTÕES (Normal + Biometria)
+                      Row(
+                        children: [
+                          Expanded(child: _buildLoginButton(tenant)),
+                          if (_canUseBiometrics) ...[
+                            const SizedBox(width: 12),
+                            _buildBiometricButton(tenant),
+                          ],
+                        ],
+                      ),
 
                       const SizedBox(height: 32),
                       Row(
@@ -112,6 +142,95 @@ class _LoginViewState extends State<LoginView> {
         ],
       ),
     );
+  }
+
+  // --- COMPONENTE: BOTÃO DE BIOMETRIA ---
+  Widget _buildBiometricButton(tenant) {
+    return Container(
+      height: 56,
+      width: 56,
+      decoration: BoxDecoration(
+        color: tenant.primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: IconButton(
+        icon: Icon(
+          Theme.of(context).platform == TargetPlatform.iOS
+              ? Icons.face
+              : Icons.fingerprint,
+          color: tenant.primaryColor,
+          size: 28,
+        ),
+        onPressed: _handleBiometricLogin,
+      ),
+    );
+  }
+
+  // --- LÓGICA: LOGIN BIOMÉTRICO ---
+  void _handleBiometricLogin() async {
+    final tenantSlug = AppConfig.instance.tenant.tenantSlug;
+
+    // 1. Abre o diálogo do FaceID/Digital
+    final authenticated = await _biometricService.authenticate();
+
+    if (authenticated) {
+      // 2. Busca as credenciais no cofre
+      final credentials = await _biometricService.getSavedCredentials(
+        tenantSlug,
+      );
+      final email = credentials['email'];
+      final password = credentials['password'];
+
+      if (email != null && password != null) {
+        // 3. Preenche os campos (opcional, para feedback visual)
+        _emailController.text = email;
+        _passwordController.text = password;
+
+        // 4. Dispara o login
+        _performLogin(email, password);
+      }
+    }
+  }
+
+  // --- LÓGICA: LOGIN MANUAL (ATUALIZADA) ---
+  void _handleLogin() {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Preencha todos os campos.")),
+      );
+      return;
+    }
+    _performLogin(email, password);
+  }
+
+  // Centraliza a chamada para a ViewModel
+  void _performLogin(String email, String password) async {
+    final tenantSlug = AppConfig.instance.tenant.tenantSlug;
+    final success = await _viewModel.signIn(email, password);
+
+    if (success && mounted) {
+      // LOGIN DEU CERTO: Salva/Atualiza as credenciais no cofre para a próxima vez
+      await _biometricService.saveCredentials(email, password, tenantSlug);
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.home,
+        (route) => false,
+      );
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            _viewModel.errorMessage ??
+                "Erro ao entrar. Verifique suas credenciais.",
+          ),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
   }
 
   // --- NOVO MÉTODO: RECUPERAÇÃO DE SENHA PREMIUM ---
@@ -314,37 +433,5 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
-  }
-
-  void _handleLogin() async {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Preencha todos os campos.")),
-      );
-      return;
-    }
-
-    final success = await _viewModel.signIn(
-      _emailController.text.trim(),
-      _passwordController.text.trim(),
-    );
-
-    if (success && mounted) {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        AppRoutes.home,
-        (route) => false,
-      );
-    } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _viewModel.errorMessage ??
-                "Erro ao entrar. Verifique suas credenciais.",
-          ),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-    }
   }
 }

@@ -32,7 +32,9 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
         return UserModel.fromMap(doc.data() as Map<String, dynamic>);
       } else {
         await signOut();
-        throw Exception("Acesso negado: Usuário não pertence a este aplicativo.");
+        throw Exception(
+          "Acesso negado: Usuário não pertence a este aplicativo.",
+        );
       }
     } catch (e) {
       dev.log("Erro no SignIn: $e");
@@ -48,7 +50,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
       // 1. Instância forçada com o bucket que você ativou
       final storage = FirebaseStorage.instanceFor(
         app: Firebase.app(),
-        bucket: "tenda-white-label.firebasestorage.app", 
+        bucket: "tenda-white-label.firebasestorage.app",
       );
 
       // 2. Referência do arquivo
@@ -111,7 +113,19 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
     String? tipoSanguineo,
   }) async {
     try {
-      dev.log("--- INICIANDO SIGNUP ---");
+      // VALIDAÇÃO MANUAL DE CAMPOS OBRIGATÓRIOS
+      if (name.trim().isEmpty ||
+          email.trim().isEmpty ||
+          phone.trim().isEmpty ||
+          emergencyContact.trim().isEmpty) {
+        throw Exception("Por favor, preencha todos os campos obrigatórios.");
+      }
+
+      if (password.length < 6) {
+        throw Exception("A senha deve ter pelo menos 6 caracteres.");
+      }
+
+      dev.log("--- INICIANDO SIGNUP VALIDADO ---");
 
       final result = await _auth.createUserWithEmailAndPassword(
         email: email,

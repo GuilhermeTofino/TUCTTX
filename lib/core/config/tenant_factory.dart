@@ -15,6 +15,7 @@ class TenantFactory {
           appTitle: '$prefix TUCTTX',
           primaryColor: const Color(0xFF72150E),
           bundleId: 'com.appTenda.tucttx$suffix', // Padronizado com o slug
+          responsavel: 'Pai Ricardo'
         );
       case 'tu7e':
         return TenantConfig(
@@ -23,6 +24,7 @@ class TenantFactory {
           appTitle: '$prefix TU7E',
           primaryColor: const Color(0xFF62A24F),
           bundleId: 'com.appTenda.tu7e$suffix',
+          responsavel: 'Pai Mauricio'
         );
       case 'tusva':
         return TenantConfig(
@@ -31,6 +33,7 @@ class TenantFactory {
           appTitle: '$prefix TUSVA',
           primaryColor: const Color(0xFFFB0101),
           bundleId: 'com.appTenda.tusva$suffix',
+          responsavel: 'Mãe Gabi'
         );
       default:
         throw Exception('Tenant "$slug" não encontrado na Factory.');

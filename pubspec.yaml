@@ -41,6 +41,8 @@ dependencies:
   firebase_auth: ^6.1.4
   image_picker: ^1.0.0
   firebase_storage: ^13.0.6
+  local_auth: ^2.3.0
+  flutter_secure_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:

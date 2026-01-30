@@ -456,7 +456,7 @@ class _HomeViewState extends State<HomeView> {
       return const Color(0xFF2196F3); // Azul ou Vermelho (depende da vertente)
     if (name.contains('oxum'))
       return const Color(0xFFFFD700); // Dourado/Amarelo
-    if (name.contains('iemanjá') || name.contains('iemanja'))
+    if (name.contains('iemanjá') || name.contains('iemanja') || name.contains('yemanjá'))
       return const Color(0xFF00BCD4); // Azul Claro
     if (name.contains('oxóssi') || name.contains('oxossi'))
       return const Color(0xFF4CAF50); // Verde
@@ -467,7 +467,7 @@ class _HomeViewState extends State<HomeView> {
     if (name.contains('omolu') || name.contains('obaluaiê'))
       return const Color(0xFF212121); // Preto/Palha
     if (name.contains('nanã')) return const Color(0xFF9C27B0); // Lilás/Roxo
-    if (name.contains('oxalá')) return const Color(0xFF9E9E9E); // Branco/Prata
+    if (name.contains('oxalá') || name.contains('oxaguian')) return const Color(0xFF9E9E9E); // Branco/Prata
 
     return Colors.grey; // Cor padrão para nomes não reconhecidos
   }

@@ -8,6 +8,7 @@ class TenantConfig {
   final String appTitle;
   final Color primaryColor;
   final String bundleId;
+  final String responsavel;
 
   const TenantConfig({
     required this.tenantName,
@@ -15,6 +16,7 @@ class TenantConfig {
     required this.appTitle,
     required this.primaryColor,
     required this.bundleId,
+    required this.responsavel,
   });
 
   // Getter para garantir que o texto sobre a cor primária seja sempre visível
