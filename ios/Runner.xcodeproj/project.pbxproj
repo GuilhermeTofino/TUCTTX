@@ -43,11 +43,17 @@
 
 /* Begin PBXFileReference section */
 		03D067632ECF73CEF7C617D6 /* Pods-RunnerTests.release-tu7e.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tu7e.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tu7e.xcconfig"; sourceTree = "<group>"; };
+		0D2857AAEE8F926A4A6C3400 /* Pods-Runner.release-tucttxdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tucttxdev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tucttxdev.xcconfig"; sourceTree = "<group>"; };
 		0E8D81554B86EFD928228622 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1140A85A4FD66BB74A28B1EC /* Pods-Runner.release-tusvadev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tusvadev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tusvadev.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		1A521285F593B705FEDED539 /* Pods-RunnerTests.debug-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tusvaprod.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tusvaprod.xcconfig"; sourceTree = "<group>"; };
+		1AD718932419A694EE13D2E8 /* Pods-RunnerTests.release-tusvadev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tusvadev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tusvadev.xcconfig"; sourceTree = "<group>"; };
 		1CF7C15AE9B10748E3F39E14 /* Pods-Runner.debug-tu7e.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tu7e.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tu7e.xcconfig"; sourceTree = "<group>"; };
+		275865A4E9D473D1C0BCF6ED /* Pods-RunnerTests.release-tucttxprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tucttxprod.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tucttxprod.xcconfig"; sourceTree = "<group>"; };
 		2D391A390FFD12CEC9EBD726 /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
+		3079473CEE8DAC8C85930768 /* Pods-Runner.release-tu7edev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tu7edev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tu7edev.xcconfig"; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		38F4B3545CCFBCBF061BA16F /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -55,11 +61,15 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		4A14DF73561550E500A4C135 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		4B87054E934156D48D8D3068 /* Pods-RunnerTests.debug-tusva.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tusva.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tusva.xcconfig"; sourceTree = "<group>"; };
+		7474E6A84FF458B96385FAF5 /* Pods-RunnerTests.release-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tusvaprod.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tusvaprod.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		75CF8F7718E64AACD7AE5F1D /* Pods-Runner.debug-tu7eprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tu7eprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tu7eprod.xcconfig"; sourceTree = "<group>"; };
 		796217D90DEDBC9166EF9430 /* Pods-RunnerTests.release-tucttx.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tucttx.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tucttx.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		7B50EAF0489BFA6AB327E000 /* Pods-Runner.debug-tucttxdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tucttxdev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tucttxdev.xcconfig"; sourceTree = "<group>"; };
 		7F18EABE7FB3F0625DB7D0A9 /* Pods-RunnerTests.debug-tucttx.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tucttx.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tucttx.xcconfig"; sourceTree = "<group>"; };
+		948B12C3949CDBA587881CFE /* Pods-Runner.release-tu7eprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tu7eprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tu7eprod.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* .app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = .app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,24 +77,43 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9B38272EA2E7B95F14DA2D95 /* Pods-RunnerTests.release-tucttxdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tucttxdev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tucttxdev.xcconfig"; sourceTree = "<group>"; };
+		9E1C0806FF3B790F7ABDB544 /* Pods-Runner.debug-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tusvaprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tusvaprod.xcconfig"; sourceTree = "<group>"; };
+		9EA0B2A316E2DDB832AA6395 /* Pods-RunnerTests.debug-tucttxdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tucttxdev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tucttxdev.xcconfig"; sourceTree = "<group>"; };
+		A382CEFF8AA085122E2B7485 /* Pods-Runner.release-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tusvaprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tusvaprod.xcconfig"; sourceTree = "<group>"; };
 		A48308E07FD5E7589F7AFE26 /* Pods-RunnerTests.release-tusva.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tusva.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tusva.xcconfig"; sourceTree = "<group>"; };
-		AF9DF29CCB1F96B71A3F6B59 /* Pods-RunnerTests.debug-tu7e.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tu7e.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tu7e.xcconfig"; sourceTree = "<group>"; };
-		AFF1D67E4A23B54F78836AB3 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		A7BE8BBF471A83F2FD1A0446 /* Pods-Runner.debug-tucttxprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tucttxprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tucttxprod.xcconfig"; sourceTree = "<group>"; };
+		AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxProdRelease.xcconfig; sourceTree = "<group>"; };
+		AF2F614712F5BE70781ED75D /* tusvaDevDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaDevDebug.xcconfig; sourceTree = "<group>"; };
+		AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxProdDebug.xcconfig; sourceTree = "<group>"; };
+		AF5993D612E5A2AB843D4E23 /* tusvaProdRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaProdRelease.xcconfig; sourceTree = "<group>"; };
+		AF622B35D9367CA89DFAA458 /* tu7eProdRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eProdRelease.xcconfig; sourceTree = "<group>"; };
+		AF90857BDFFA0AA0204BECA8 /* tusvaProdDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaProdDebug.xcconfig; sourceTree = "<group>"; };
+		AFB162AC7DFD311251D6434F /* tu7eDevDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eDevDebug.xcconfig; sourceTree = "<group>"; };
+		AFB28180C4523581EF33B8C4 /* tu7eProdDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eProdDebug.xcconfig; sourceTree = "<group>"; };
+		AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxDevRelease.xcconfig; sourceTree = "<group>"; };
+		AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxDevDebug.xcconfig; sourceTree = "<group>"; };
+		AFF2D34A4216505EF4AC35A0 /* tu7eDevRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eDevRelease.xcconfig; sourceTree = "<group>"; };
+		AFFC70FC69EC583981AE0FFA /* tusvaDevRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaDevRelease.xcconfig; sourceTree = "<group>"; };
+		B0B3560D8F53193B9330C000 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		B24BBDAE3B987D06A685AA55 /* Pods-Runner.debug-tusvadev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tusvadev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tusvadev.xcconfig"; sourceTree = "<group>"; };
 		B3AD1E26BDCD5069099CE1CB /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		B554FB7F7599DB28F3976F3D /* Pods-Runner.release-tu7e.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tu7e.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tu7e.xcconfig"; sourceTree = "<group>"; };
-		B87FC49D2F20372D00C93C20 /* Tu7eDev 2.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Tu7eDev 2.xcconfig"; sourceTree = "<group>"; };
-		B87FC49E2F20372D00C93C20 /* Tu7eProd 2.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Tu7eProd 2.xcconfig"; sourceTree = "<group>"; };
-		B87FC49F2F20372D00C93C20 /* TucttxDev 2.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "TucttxDev 2.xcconfig"; sourceTree = "<group>"; };
-		B87FC4A02F20372D00C93C20 /* TucttxProd 2.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "TucttxProd 2.xcconfig"; sourceTree = "<group>"; };
-		B87FC4A12F20372D00C93C20 /* TusvaDev 2.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "TusvaDev 2.xcconfig"; sourceTree = "<group>"; };
-		B87FC4A22F20372D00C93C20 /* TusvaProd 2.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "TusvaProd 2.xcconfig"; sourceTree = "<group>"; };
 		B890DF732F23DAD0008B88BA /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Main.strings"; sourceTree = "<group>"; };
 		B890DF742F23DAD0008B88BA /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		BCCC8A1DFFDD2C7765DC87AA /* Pods-Runner.debug-tusva.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tusva.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tusva.xcconfig"; sourceTree = "<group>"; };
+		C21FEB1A99ADEB74FB3B4A8F /* Pods-RunnerTests.release-tu7eprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tu7eprod.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tu7eprod.xcconfig"; sourceTree = "<group>"; };
+		C5A44DD5538DE1F7C0F0F71A /* Pods-RunnerTests.debug-tu7eprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tu7eprod.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tu7eprod.xcconfig"; sourceTree = "<group>"; };
 		C9ED1AAFCB0EA989FEA28D67 /* Pods-Runner.release-tucttx.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tucttx.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tucttx.xcconfig"; sourceTree = "<group>"; };
+		CC3D1C79DDF783A7792B6B6B /* Pods-Runner.release-tucttxprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tucttxprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tucttxprod.xcconfig"; sourceTree = "<group>"; };
+		D0A1D6FEA1DF21A09AC6B7D8 /* Pods-RunnerTests.debug-tucttxprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tucttxprod.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tucttxprod.xcconfig"; sourceTree = "<group>"; };
+		EB4D6B31786522123484830A /* Pods-RunnerTests.debug-tu7edev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tu7edev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tu7edev.xcconfig"; sourceTree = "<group>"; };
 		EB7944490294086F88AD5618 /* Pods-Runner.release-tusva.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tusva.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tusva.xcconfig"; sourceTree = "<group>"; };
+		EB7E5B82382857D3DE4CF357 /* Pods-RunnerTests.debug-tusvadev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tusvadev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tusvadev.xcconfig"; sourceTree = "<group>"; };
+		EB8873080A8530FD711E6C79 /* Pods-Runner.debug-tu7edev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tu7edev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tu7edev.xcconfig"; sourceTree = "<group>"; };
 		EFF85CA72037B89F783380AA /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		FE7514004010A023757CC670 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FF1F6889E3798DD2AB60EC6F /* Pods-RunnerTests.release-tu7edev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tu7edev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tu7edev.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,7 +139,6 @@
 		02F467AACEC306246168B036 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				AFF1D67E4A23B54F78836AB3 /* Pods-Runner.debug.xcconfig */,
 				BCCC8A1DFFDD2C7765DC87AA /* Pods-Runner.debug-tusva.xcconfig */,
 				1CF7C15AE9B10748E3F39E14 /* Pods-Runner.debug-tu7e.xcconfig */,
 				392BA08982E1271C8F657C91 /* Pods-Runner.debug-tucttx.xcconfig */,
@@ -121,13 +149,37 @@
 				4A14DF73561550E500A4C135 /* Pods-Runner.profile.xcconfig */,
 				0E8D81554B86EFD928228622 /* Pods-RunnerTests.debug.xcconfig */,
 				4B87054E934156D48D8D3068 /* Pods-RunnerTests.debug-tusva.xcconfig */,
-				AF9DF29CCB1F96B71A3F6B59 /* Pods-RunnerTests.debug-tu7e.xcconfig */,
 				7F18EABE7FB3F0625DB7D0A9 /* Pods-RunnerTests.debug-tucttx.xcconfig */,
 				2D391A390FFD12CEC9EBD726 /* Pods-RunnerTests.release.xcconfig */,
 				A48308E07FD5E7589F7AFE26 /* Pods-RunnerTests.release-tusva.xcconfig */,
 				03D067632ECF73CEF7C617D6 /* Pods-RunnerTests.release-tu7e.xcconfig */,
 				796217D90DEDBC9166EF9430 /* Pods-RunnerTests.release-tucttx.xcconfig */,
 				B3AD1E26BDCD5069099CE1CB /* Pods-RunnerTests.profile.xcconfig */,
+				B24BBDAE3B987D06A685AA55 /* Pods-Runner.debug-tusvadev.xcconfig */,
+				9E1C0806FF3B790F7ABDB544 /* Pods-Runner.debug-tusvaprod.xcconfig */,
+				EB8873080A8530FD711E6C79 /* Pods-Runner.debug-tu7edev.xcconfig */,
+				75CF8F7718E64AACD7AE5F1D /* Pods-Runner.debug-tu7eprod.xcconfig */,
+				7B50EAF0489BFA6AB327E000 /* Pods-Runner.debug-tucttxdev.xcconfig */,
+				A7BE8BBF471A83F2FD1A0446 /* Pods-Runner.debug-tucttxprod.xcconfig */,
+				A382CEFF8AA085122E2B7485 /* Pods-Runner.release-tusvaprod.xcconfig */,
+				1140A85A4FD66BB74A28B1EC /* Pods-Runner.release-tusvadev.xcconfig */,
+				948B12C3949CDBA587881CFE /* Pods-Runner.release-tu7eprod.xcconfig */,
+				3079473CEE8DAC8C85930768 /* Pods-Runner.release-tu7edev.xcconfig */,
+				CC3D1C79DDF783A7792B6B6B /* Pods-Runner.release-tucttxprod.xcconfig */,
+				0D2857AAEE8F926A4A6C3400 /* Pods-Runner.release-tucttxdev.xcconfig */,
+				EB7E5B82382857D3DE4CF357 /* Pods-RunnerTests.debug-tusvadev.xcconfig */,
+				1A521285F593B705FEDED539 /* Pods-RunnerTests.debug-tusvaprod.xcconfig */,
+				EB4D6B31786522123484830A /* Pods-RunnerTests.debug-tu7edev.xcconfig */,
+				C5A44DD5538DE1F7C0F0F71A /* Pods-RunnerTests.debug-tu7eprod.xcconfig */,
+				9EA0B2A316E2DDB832AA6395 /* Pods-RunnerTests.debug-tucttxdev.xcconfig */,
+				D0A1D6FEA1DF21A09AC6B7D8 /* Pods-RunnerTests.debug-tucttxprod.xcconfig */,
+				7474E6A84FF458B96385FAF5 /* Pods-RunnerTests.release-tusvaprod.xcconfig */,
+				1AD718932419A694EE13D2E8 /* Pods-RunnerTests.release-tusvadev.xcconfig */,
+				C21FEB1A99ADEB74FB3B4A8F /* Pods-RunnerTests.release-tu7eprod.xcconfig */,
+				FF1F6889E3798DD2AB60EC6F /* Pods-RunnerTests.release-tu7edev.xcconfig */,
+				275865A4E9D473D1C0BCF6ED /* Pods-RunnerTests.release-tucttxprod.xcconfig */,
+				9B38272EA2E7B95F14DA2D95 /* Pods-RunnerTests.release-tucttxdev.xcconfig */,
+				B0B3560D8F53193B9330C000 /* Pods-Runner.debug.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -152,12 +204,18 @@
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
-				B87FC49D2F20372D00C93C20 /* Tu7eDev 2.xcconfig */,
-				B87FC49E2F20372D00C93C20 /* Tu7eProd 2.xcconfig */,
-				B87FC49F2F20372D00C93C20 /* TucttxDev 2.xcconfig */,
-				B87FC4A02F20372D00C93C20 /* TucttxProd 2.xcconfig */,
-				B87FC4A12F20372D00C93C20 /* TusvaDev 2.xcconfig */,
-				B87FC4A22F20372D00C93C20 /* TusvaProd 2.xcconfig */,
+				AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */,
+				AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */,
+				AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */,
+				AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */,
+				AFB162AC7DFD311251D6434F /* tu7eDevDebug.xcconfig */,
+				AFF2D34A4216505EF4AC35A0 /* tu7eDevRelease.xcconfig */,
+				AFB28180C4523581EF33B8C4 /* tu7eProdDebug.xcconfig */,
+				AF622B35D9367CA89DFAA458 /* tu7eProdRelease.xcconfig */,
+				AF2F614712F5BE70781ED75D /* tusvaDevDebug.xcconfig */,
+				AFFC70FC69EC583981AE0FFA /* tusvaDevRelease.xcconfig */,
+				AF90857BDFFA0AA0204BECA8 /* tusvaProdDebug.xcconfig */,
+				AF5993D612E5A2AB843D4E23 /* tusvaProdRelease.xcconfig */,
 				3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */,
 				9740EEB21CF90195004384FC /* Debug.xcconfig */,
 				7AFA3C8E1D35360C0083082E /* Release.xcconfig */,
@@ -508,7 +566,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-$(FLAVOR_NAME)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
@@ -695,7 +753,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-$(FLAVOR_NAME)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
@@ -720,7 +778,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-$(FLAVOR_NAME)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
@@ -740,10 +798,12 @@
 			};
 			name = Release;
 		};
-		B87FC4782F202E7100C93C20 /* Debug-tucttx */ = {
+		B87FC4782F202E7100C93C20 /* Debug-tucttxDev */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -776,6 +836,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tucttxDev;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -793,20 +854,24 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = "Debug-tucttx";
+			name = "Debug-tucttxDev";
 		};
-		B87FC4792F202E7100C93C20 /* Debug-tucttx */ = {
+		B87FC4792F202E7100C93C20 /* Debug-tucttxDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B87FC49F2F20372D00C93C20 /* TucttxDev 2.xcconfig */;
+			baseConfigurationReference = AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-$(FLAVOR_NAME)";
+				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tucttxDev;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
@@ -814,37 +879,42 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.dev;
 				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Debug-tucttx";
+			name = "Debug-tucttxDev";
 		};
-		B87FC47A2F202E7100C93C20 /* Debug-tucttx */ = {
+		B87FC47A2F202E7100C93C20 /* Debug-tucttxDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7F18EABE7FB3F0625DB7D0A9 /* Pods-RunnerTests.debug-tucttx.xcconfig */;
+			baseConfigurationReference = AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tucttxDev;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.RunnerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
-			name = "Debug-tucttx";
+			name = "Debug-tucttxDev";
 		};
-		B87FC47B2F202E8200C93C20 /* Debug-tu7e */ = {
+		B87FC47B2F202E8200C93C20 /* Debug-tu7eDev */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = "[DEV] TU7E";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -877,6 +947,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tu7eDev;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -894,20 +965,24 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = "Debug-tu7e";
+			name = "Debug-tu7eDev";
 		};
-		B87FC47C2F202E8200C93C20 /* Debug-tu7e */ = {
+		B87FC47C2F202E8200C93C20 /* Debug-tu7eDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B87FC49D2F20372D00C93C20 /* Tu7eDev 2.xcconfig */;
+			baseConfigurationReference = AFB162AC7DFD311251D6434F /* tu7eDevDebug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-$(FLAVOR_NAME)";
+				APP_DISPLAY_NAME = "[DEV] TU7E";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tu7eDev;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
@@ -915,37 +990,42 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e.dev;
 				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Debug-tu7e";
+			name = "Debug-tu7eDev";
 		};
-		B87FC47D2F202E8200C93C20 /* Debug-tu7e */ = {
+		B87FC47D2F202E8200C93C20 /* Debug-tu7eDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF9DF29CCB1F96B71A3F6B59 /* Pods-RunnerTests.debug-tu7e.xcconfig */;
+			baseConfigurationReference = AFB162AC7DFD311251D6434F /* tu7eDevDebug.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TU7E";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tu7eDev;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.RunnerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
-			name = "Debug-tu7e";
+			name = "Debug-tu7eDev";
 		};
-		B87FC47E2F202E8900C93C20 /* Debug-tusva */ = {
+		B87FC47E2F202E8900C93C20 /* Debug-tusvaDev */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = "[DEV] TUSVA";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -978,6 +1058,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tusvaDev;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -995,20 +1076,24 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = "Debug-tusva";
+			name = "Debug-tusvaDev";
 		};
-		B87FC47F2F202E8900C93C20 /* Debug-tusva */ = {
+		B87FC47F2F202E8900C93C20 /* Debug-tusvaDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B87FC4A12F20372D00C93C20 /* TusvaDev 2.xcconfig */;
+			baseConfigurationReference = AF2F614712F5BE70781ED75D /* tusvaDevDebug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-$(FLAVOR_NAME)";
+				APP_DISPLAY_NAME = "[DEV] TUSVA";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tusvaDev;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
@@ -1016,37 +1101,42 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.dev;
 				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Debug-tusva";
+			name = "Debug-tusvaDev";
 		};
-		B87FC4802F202E8900C93C20 /* Debug-tusva */ = {
+		B87FC4802F202E8900C93C20 /* Debug-tusvaDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4B87054E934156D48D8D3068 /* Pods-RunnerTests.debug-tusva.xcconfig */;
+			baseConfigurationReference = AF2F614712F5BE70781ED75D /* tusvaDevDebug.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TUSVA";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tusvaDev;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.RunnerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
-			name = "Debug-tusva";
+			name = "Debug-tusvaDev";
 		};
-		B87FC4812F202E9300C93C20 /* Release-tucttx */ = {
+		B87FC4812F202E9300C93C20 /* Release-tucttxProd */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = TUCTTX;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1079,6 +1169,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tucttxProd;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1089,6 +1180,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1096,17 +1189,19 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = "Release-tucttx";
+			name = "Release-tucttxProd";
 		};
-		B87FC4822F202E9300C93C20 /* Release-tucttx */ = {
+		B87FC4822F202E9300C93C20 /* Release-tucttxProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B87FC4A02F20372D00C93C20 /* TucttxProd 2.xcconfig */;
+			baseConfigurationReference = AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-$(FLAVOR_NAME)";
+				APP_DISPLAY_NAME = TUCTTX;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tucttxProd;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
@@ -1114,35 +1209,39 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.appTenda.tucttx;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx;
 				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Release-tucttx";
+			name = "Release-tucttxProd";
 		};
-		B87FC4832F202E9300C93C20 /* Release-tucttx */ = {
+		B87FC4832F202E9300C93C20 /* Release-tucttxProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 796217D90DEDBC9166EF9430 /* Pods-RunnerTests.release-tucttx.xcconfig */;
+			baseConfigurationReference = AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = TUCTTX;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tucttxProd;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.RunnerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
-			name = "Release-tucttx";
+			name = "Release-tucttxProd";
 		};
-		B87FC4842F202E9A00C93C20 /* Release-tu7e */ = {
+		B87FC4842F202E9A00C93C20 /* Release-tu7eProd */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = TU7E;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1175,6 +1274,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tu7eProd;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1185,6 +1285,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1192,17 +1294,19 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = "Release-tu7e";
+			name = "Release-tu7eProd";
 		};
-		B87FC4852F202E9A00C93C20 /* Release-tu7e */ = {
+		B87FC4852F202E9A00C93C20 /* Release-tu7eProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B87FC49E2F20372D00C93C20 /* Tu7eProd 2.xcconfig */;
+			baseConfigurationReference = AF622B35D9367CA89DFAA458 /* tu7eProdRelease.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-$(FLAVOR_NAME)";
+				APP_DISPLAY_NAME = TU7E;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tu7eProd;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
@@ -1210,34 +1314,39 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e;
 				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Release-tu7e";
+			name = "Release-tu7eProd";
 		};
-		B87FC4862F202E9A00C93C20 /* Release-tu7e */ = {
+		B87FC4862F202E9A00C93C20 /* Release-tu7eProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 03D067632ECF73CEF7C617D6 /* Pods-RunnerTests.release-tu7e.xcconfig */;
+			baseConfigurationReference = AF622B35D9367CA89DFAA458 /* tu7eProdRelease.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = TU7E;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tu7eProd;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.RunnerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
-			name = "Release-tu7e";
+			name = "Release-tu7eProd";
 		};
-		B87FC4872F202EA100C93C20 /* Release-tusva */ = {
+		B87FC4872F202EA100C93C20 /* Release-tusvaProd */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = TUSVA;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1270,6 +1379,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tusvaProd;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1280,6 +1390,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1287,17 +1399,19 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = "Release-tusva";
+			name = "Release-tusvaProd";
 		};
-		B87FC4882F202EA100C93C20 /* Release-tusva */ = {
+		B87FC4882F202EA100C93C20 /* Release-tusvaProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B87FC4A22F20372D00C93C20 /* TusvaProd 2.xcconfig */;
+			baseConfigurationReference = AF5993D612E5A2AB843D4E23 /* tusvaProdRelease.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-$(FLAVOR_NAME)";
+				APP_DISPLAY_NAME = TUSVA;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tusvaProd;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
@@ -1305,29 +1419,680 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva;
 				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Release-tusva";
+			name = "Release-tusvaProd";
 		};
-		B87FC4892F202EA100C93C20 /* Release-tusva */ = {
+		B87FC4892F202EA100C93C20 /* Release-tusvaProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A48308E07FD5E7589F7AFE26 /* Pods-RunnerTests.release-tusva.xcconfig */;
+			baseConfigurationReference = AF5993D612E5A2AB843D4E23 /* tusvaProdRelease.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = TUSVA;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tusvaProd;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.RunnerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
-			name = "Release-tusva";
+			name = "Release-tusvaProd";
+		};
+		E87FC4812F202E9300C93C20 /* Release-tucttxDev */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tucttxDev;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release-tucttxDev";
+		};
+		E87FC4822F202E9300C93C20 /* Release-tucttxDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = NJR26DLW5V;
+				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tucttxDev;
+				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release-tucttxDev";
+		};
+		E87FC4832F202E9300C93C20 /* Release-tucttxDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tucttxDev;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = "Release-tucttxDev";
+		};
+		E87FC4842F202E9A00C93C20 /* Release-tu7eDev */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = "[DEV] TU7E";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tu7eDev;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release-tu7eDev";
+		};
+		E87FC4852F202E9A00C93C20 /* Release-tu7eDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AFF2D34A4216505EF4AC35A0 /* tu7eDevRelease.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TU7E";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = NJR26DLW5V;
+				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tu7eDev;
+				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release-tu7eDev";
+		};
+		E87FC4862F202E9A00C93C20 /* Release-tu7eDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AFF2D34A4216505EF4AC35A0 /* tu7eDevRelease.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TU7E";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tu7eDev;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = "Release-tu7eDev";
+		};
+		E87FC4872F202EA100C93C20 /* Release-tusvaDev */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = "[DEV] TUSVA";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tusvaDev;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release-tusvaDev";
+		};
+		E87FC4882F202EA100C93C20 /* Release-tusvaDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AFFC70FC69EC583981AE0FFA /* tusvaDevRelease.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TUSVA";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = NJR26DLW5V;
+				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tusvaDev;
+				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release-tusvaDev";
+		};
+		E87FC4892F202EA100C93C20 /* Release-tusvaDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AFFC70FC69EC583981AE0FFA /* tusvaDevRelease.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TUSVA";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tusvaDev;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.dev;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = "Release-tusvaDev";
+		};
+		F87FC4782F202E7100C93C20 /* Debug-tucttxProd */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = TUCTTX;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tucttxProd;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug-tucttxProd";
+		};
+		F87FC4792F202E7100C93C20 /* Debug-tucttxProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = TUCTTX;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = NJR26DLW5V;
+				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tucttxProd;
+				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Debug-tucttxProd";
+		};
+		F87FC47A2F202E7100C93C20 /* Debug-tucttxProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = TUCTTX;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tucttxProd;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = "Debug-tucttxProd";
+		};
+		F87FC47B2F202E8200C93C20 /* Debug-tu7eProd */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = TU7E;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tu7eProd;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug-tu7eProd";
+		};
+		F87FC47C2F202E8200C93C20 /* Debug-tu7eProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AFB28180C4523581EF33B8C4 /* tu7eProdDebug.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = TU7E;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = NJR26DLW5V;
+				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tu7eProd;
+				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Debug-tu7eProd";
+		};
+		F87FC47D2F202E8200C93C20 /* Debug-tu7eProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AFB28180C4523581EF33B8C4 /* tu7eProdDebug.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = TU7E;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tu7eProd;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = "Debug-tu7eProd";
+		};
+		F87FC47E2F202E8900C93C20 /* Debug-tusvaProd */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = TUSVA;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLAVOR_NAME = tusvaProd;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug-tusvaProd";
+		};
+		F87FC47F2F202E8900C93C20 /* Debug-tusvaProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AF90857BDFFA0AA0204BECA8 /* tusvaProdDebug.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = TUSVA;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = NJR26DLW5V;
+				ENABLE_BITCODE = NO;
+				FLAVOR_NAME = tusvaProd;
+				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Debug-tusvaProd";
+		};
+		F87FC4802F202E8900C93C20 /* Debug-tusvaProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AF90857BDFFA0AA0204BECA8 /* tusvaProdDebug.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = TUSVA;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				FLAVOR_NAME = tusvaProd;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva;
+				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = "Debug-tusvaProd";
 		};
 /* End XCBuildConfiguration section */
 
@@ -1336,13 +2101,19 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				331C8088294A63A400263BE5 /* Debug */,
-				B87FC4802F202E8900C93C20 /* Debug-tusva */,
-				B87FC47D2F202E8200C93C20 /* Debug-tu7e */,
-				B87FC47A2F202E7100C93C20 /* Debug-tucttx */,
+				B87FC4802F202E8900C93C20 /* Debug-tusvaDev */,
+				F87FC4802F202E8900C93C20 /* Debug-tusvaProd */,
+				B87FC47D2F202E8200C93C20 /* Debug-tu7eDev */,
+				F87FC47D2F202E8200C93C20 /* Debug-tu7eProd */,
+				B87FC47A2F202E7100C93C20 /* Debug-tucttxDev */,
+				F87FC47A2F202E7100C93C20 /* Debug-tucttxProd */,
 				331C8089294A63A400263BE5 /* Release */,
-				B87FC4892F202EA100C93C20 /* Release-tusva */,
-				B87FC4862F202E9A00C93C20 /* Release-tu7e */,
-				B87FC4832F202E9300C93C20 /* Release-tucttx */,
+				B87FC4892F202EA100C93C20 /* Release-tusvaProd */,
+				E87FC4892F202EA100C93C20 /* Release-tusvaDev */,
+				B87FC4862F202E9A00C93C20 /* Release-tu7eProd */,
+				E87FC4862F202E9A00C93C20 /* Release-tu7eDev */,
+				B87FC4832F202E9300C93C20 /* Release-tucttxProd */,
+				E87FC4832F202E9300C93C20 /* Release-tucttxDev */,
 				331C808A294A63A400263BE5 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1352,13 +2123,19 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				97C147031CF9000F007C117D /* Debug */,
-				B87FC47E2F202E8900C93C20 /* Debug-tusva */,
-				B87FC47B2F202E8200C93C20 /* Debug-tu7e */,
-				B87FC4782F202E7100C93C20 /* Debug-tucttx */,
+				B87FC47E2F202E8900C93C20 /* Debug-tusvaDev */,
+				F87FC47E2F202E8900C93C20 /* Debug-tusvaProd */,
+				B87FC47B2F202E8200C93C20 /* Debug-tu7eDev */,
+				F87FC47B2F202E8200C93C20 /* Debug-tu7eProd */,
+				B87FC4782F202E7100C93C20 /* Debug-tucttxDev */,
+				F87FC4782F202E7100C93C20 /* Debug-tucttxProd */,
 				97C147041CF9000F007C117D /* Release */,
-				B87FC4872F202EA100C93C20 /* Release-tusva */,
-				B87FC4842F202E9A00C93C20 /* Release-tu7e */,
-				B87FC4812F202E9300C93C20 /* Release-tucttx */,
+				B87FC4872F202EA100C93C20 /* Release-tusvaProd */,
+				E87FC4872F202EA100C93C20 /* Release-tusvaDev */,
+				B87FC4842F202E9A00C93C20 /* Release-tu7eProd */,
+				E87FC4842F202E9A00C93C20 /* Release-tu7eDev */,
+				B87FC4812F202E9300C93C20 /* Release-tucttxProd */,
+				E87FC4812F202E9300C93C20 /* Release-tucttxDev */,
 				249021D3217E4FDB00AE95B9 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1368,13 +2145,19 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				97C147061CF9000F007C117D /* Debug */,
-				B87FC47F2F202E8900C93C20 /* Debug-tusva */,
-				B87FC47C2F202E8200C93C20 /* Debug-tu7e */,
-				B87FC4792F202E7100C93C20 /* Debug-tucttx */,
+				B87FC47F2F202E8900C93C20 /* Debug-tusvaDev */,
+				F87FC47F2F202E8900C93C20 /* Debug-tusvaProd */,
+				B87FC47C2F202E8200C93C20 /* Debug-tu7eDev */,
+				F87FC47C2F202E8200C93C20 /* Debug-tu7eProd */,
+				B87FC4792F202E7100C93C20 /* Debug-tucttxDev */,
+				F87FC4792F202E7100C93C20 /* Debug-tucttxProd */,
 				97C147071CF9000F007C117D /* Release */,
-				B87FC4882F202EA100C93C20 /* Release-tusva */,
-				B87FC4852F202E9A00C93C20 /* Release-tu7e */,
-				B87FC4822F202E9300C93C20 /* Release-tucttx */,
+				B87FC4882F202EA100C93C20 /* Release-tusvaProd */,
+				E87FC4882F202EA100C93C20 /* Release-tusvaDev */,
+				B87FC4852F202E9A00C93C20 /* Release-tu7eProd */,
+				E87FC4852F202E9A00C93C20 /* Release-tu7eDev */,
+				B87FC4822F202E9300C93C20 /* Release-tucttxProd */,
+				E87FC4822F202E9300C93C20 /* Release-tucttxDev */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;

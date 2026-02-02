@@ -5,13 +5,22 @@ abstract class BaseFirestoreDataSource {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   // Atalho para acessar a coleção raiz do tenant atual
-  // Ex: /tenants/tucttx/
-  DocumentReference get tenantRoot => 
-      firestore.collection('tenants').doc(AppConfig.instance.tenant.tenantSlug);
+  // Ex: /environments/dev/tenants/tucttx/
+  DocumentReference get tenantRoot {
+    final env = AppConfig.instance.environment == AppEnvironment.dev
+        ? 'dev'
+        : 'prod';
+
+    return firestore
+        .collection('environments')
+        .doc(env)
+        .collection('tenants')
+        .doc(AppConfig.instance.tenant.tenantSlug);
+  }
 
   // Atalho para subcoleções do tenant
   // Ex: /tenants/tucttx/users
-  CollectionReference tenantCollection(String path) => 
+  CollectionReference tenantCollection(String path) =>
       tenantRoot.collection(path);
 
   // NOVO: Atalho para um documento específico dentro de uma subcoleção do tenant

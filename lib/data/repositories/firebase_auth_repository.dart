@@ -65,7 +65,18 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
         bucket: "tenda-white-label.firebasestorage.app",
       );
 
-      final storageRef = storage.ref().child('profiles').child(userId);
+      final env = AppConfig.instance.environment == AppEnvironment.dev
+          ? 'dev'
+          : 'prod';
+
+      final storageRef = storage
+          .ref()
+          .child('environments')
+          .child(env)
+          .child('tenants')
+          .child(_tenantSlug)
+          .child('profiles')
+          .child(userId);
       final bytes = await image.readAsBytes();
 
       final metadata = SettableMetadata(

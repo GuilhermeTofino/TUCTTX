@@ -8,7 +8,7 @@
             "program": "lib/main.dart",
             "args": [
                 "--flavor",
-                "tucttx",
+                "tucttxDev",
                 "--dart-define",
                 "TENANT=tucttx",
                 "--dart-define",
@@ -24,7 +24,7 @@
             "program": "lib/main.dart",
             "args": [
                 "--flavor",
-                "tucttx",
+                "tucttxProd",
                 "--dart-define",
                 "TENANT=tucttx",
                 "--dart-define",
@@ -40,7 +40,7 @@
             "program": "lib/main.dart",
             "args": [
                 "--flavor",
-                "tu7e",
+                "tu7eDev",
                 "--dart-define",
                 "TENANT=tu7e",
                 "--dart-define",
@@ -56,7 +56,7 @@
             "program": "lib/main.dart",
             "args": [
                 "--flavor",
-                "tu7e",
+                "tu7eProd",
                 "--dart-define",
                 "TENANT=tu7e",
                 "--dart-define",
@@ -72,7 +72,7 @@
             "program": "lib/main.dart",
             "args": [
                 "--flavor",
-                "tusva",
+                "tusvaDev",
                 "--dart-define",
                 "TENANT=tusva",
                 "--dart-define",
@@ -88,7 +88,7 @@
             "program": "lib/main.dart",
             "args": [
                 "--flavor",
-                "tusva",
+                "tusvaProd",
                 "--dart-define",
                 "TENANT=tusva",
                 "--dart-define",

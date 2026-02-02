@@ -35,17 +35,29 @@ android {
 
     // 2. Configurar os Product Flavors
     productFlavors {
-        create("tucttx") {
+        create("tucttxDev") {
+            dimension = "client"
+            applicationId = "com.appTenda.tucttx.dev"
+        }
+        create("tucttxProd") {
             dimension = "client"
             applicationId = "com.appTenda"
         }
 
-        create("tu7e") {
+        create("tu7eDev") {
+            dimension = "client"
+            applicationId = "com.appTenda.tu7e.dev"
+        }
+        create("tu7eProd") {
             dimension = "client"
             applicationId = "com.appTenda.tu7e"
         }
 
-        create("tusva") {
+        create("tusvaDev") {
+            dimension = "client"
+            applicationId = "com.appTenda.tusva.dev"
+        }
+        create("tusvaProd") {
             dimension = "client"
             applicationId = "com.appTenda.tusva"
         }
@@ -53,8 +65,6 @@ android {
 
     buildTypes {
         getByName("debug") {
-            // Permite instalar o app de DEV junto com o de PROD no mesmo celular
-            applicationIdSuffix = ".dev"
             signingConfig = signingConfigs.getByName("debug")
         }
         
@@ -67,14 +77,12 @@ android {
 
     // 3. Lógica para definir o Nome do App dinamicamente por Flavor e BuildType
     applicationVariants.all {
-        val variantName = name // ex: tucttxDebug
-        val flavorName = flavorName.uppercase() // ex: TUCTTX
+        val flavor = flavorName // ex: tucttxDev
+        val isDev = flavor.contains("Dev")
+        val baseName = flavor.replace("Dev", "").replace("Prod", "").uppercase()
         
-        if (variantName.contains("debug", ignoreCase = true)) {
-            resValue("string", "app_name", "[DEV] $flavorName")
-        } else {
-            resValue("string", "app_name", flavorName)
-        }
+        val displayName = if (isDev) "[DEV] $baseName" else baseName
+        resValue("string", "app_name", displayName)
     }
 }
 
