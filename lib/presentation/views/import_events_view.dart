@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../core/config/app_config.dart';
 import '../../core/di/service_locator.dart';
 import '../viewmodels/import_events_viewmodel.dart';
@@ -151,35 +153,59 @@ class _ImportEventsViewState extends State<ImportEventsView> {
             child: ListenableBuilder(
               listenable: _viewModel,
               builder: (context, _) {
-                return SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _viewModel.isProcessing
-                        ? null
-                        : () => _viewModel.processText(_textController.text),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: tenant.primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                return Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: _viewModel.isProcessing ? null : _pickImage,
+                        icon: const Icon(Icons.camera_enhance_outlined),
+                        label: const Text("Escanear Escala/Calendário (Foto)"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: tenant.primaryColor,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          elevation: 0,
+                          side: BorderSide(color: tenant.primaryColor),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
                       ),
                     ),
-                    child: _viewModel.isProcessing
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text(
-                            "Analisar com Gemini IA",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _viewModel.isProcessing
+                            ? null
+                            : () =>
+                                  _viewModel.processText(_textController.text),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: tenant.primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                  ),
+                        ),
+                        child: _viewModel.isProcessing
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                "Analisar Texto",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -294,6 +320,121 @@ class _ImportEventsViewState extends State<ImportEventsView> {
       ),
     );
     Navigator.pop(context); // Retorna ao CalendarView
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final tenant = AppConfig.instance.tenant;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                "Selecionar Imagem",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Escolha a fonte da imagem da escala ou calendário",
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildOptionButton(
+                    context,
+                    label: "Galeria",
+                    icon: Icons.photo_library_outlined,
+                    color: Colors.purple,
+                    onTap: () async {
+                      Navigator.pop(context);
+                      final XFile? image = await picker.pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 70,
+                      );
+                      if (image != null) {
+                        _viewModel.processImage(File(image.path));
+                      }
+                    },
+                  ),
+                  _buildOptionButton(
+                    context,
+                    label: "Câmera",
+                    icon: Icons.camera_alt_outlined,
+                    color: tenant.primaryColor,
+                    onTap: () async {
+                      Navigator.pop(context);
+                      final XFile? image = await picker.pickImage(
+                        source: ImageSource.camera,
+                        imageQuality: 70,
+                      );
+                      if (image != null) {
+                        _viewModel.processImage(File(image.path));
+                      }
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildOptionButton(
+    BuildContext context, {
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 32),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildSectionTitle(String title) {

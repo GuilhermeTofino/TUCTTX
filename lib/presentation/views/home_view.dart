@@ -24,38 +24,55 @@ class _HomeViewState extends State<HomeView> {
     _viewModel.loadCurrentUser();
   }
 
-  // --- LOGICA DE MENUS DINÂMICOS ---
-  List<Map<String, dynamic>> _getMenus(
-    BuildContext context,
-    UserModel user,
-    dynamic tenant,
-  ) {
-    return [
-      {
-        'title': 'Trabalhos',
-        'icon': Icons.calendar_today_outlined,
-        'color': tenant.primaryColor,
-        'action': () => Navigator.pushNamed(context, AppRoutes.calendar),
-      },
-      {
-        'title': 'Financeiro',
-        'icon': Icons.account_balance_wallet_outlined,
-        'color': Colors.green,
-        'action': () => _showComingSoonSnackBar(),
-      },
-      {
-        'title': 'Saúde',
-        'icon': Icons.health_and_safety_outlined,
-        'color': Colors.redAccent,
-        'action': () => _showHealthDetailsSheet(context, user),
-      },
-      {
-        'title': 'Documentos',
-        'icon': Icons.description_outlined,
-        'color': Colors.blue,
-        'action': () => _showComingSoonSnackBar(),
-      },
-    ];
+  // --- HELPERS PARA MENUS DINÂMICOS ---
+
+  IconData _mapIcon(String iconKey) {
+    switch (iconKey) {
+      case 'calendar':
+        return Icons.calendar_today_outlined;
+      case 'finance':
+        return Icons.account_balance_wallet_outlined;
+      case 'health':
+        return Icons.health_and_safety_outlined;
+      case 'documents':
+        return Icons.description_outlined;
+      default:
+        return Icons.help_outline; // Ícone padrão para desconhecidos
+    }
+  }
+
+  Color _mapColor(String colorKey, dynamic tenant) {
+    switch (colorKey) {
+      case 'primary':
+        return tenant.primaryColor;
+      case 'green':
+        return Colors.green;
+      case 'red':
+        return Colors.redAccent;
+      case 'blue':
+        return Colors.blue;
+      default:
+        // Tenta parsear hex se não for chave conhecida (ex: #FF0000)
+        if (colorKey.startsWith('#')) {
+          return Color(int.parse(colorKey.replaceFirst('#', '0xFF')));
+        }
+        return tenant.primaryColor;
+    }
+  }
+
+  void _handleAction(String action, BuildContext context, UserModel user) {
+    if (action == 'route:/calendar') {
+      Navigator.pushNamed(context, AppRoutes.calendar);
+    } else if (action == 'internal:health') {
+      _showHealthDetailsSheet(context, user);
+    } else if (action == 'internal:coming_soon') {
+      _showComingSoonSnackBar();
+    } else {
+      // Ação desconhecida
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Ação inválida ou não implementada.")),
+      );
+    }
   }
 
   @override
@@ -174,7 +191,14 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildAnimatedMenuGrid(UserModel user, tenant) {
-    final menus = _getMenus(context, user, tenant);
+    final menus = _viewModel.menus;
+
+    if (menus.isEmpty && !_viewModel.isLoading) {
+      return const Padding(
+        padding: EdgeInsets.all(24.0),
+        child: Center(child: Text("Nenhum menu disponível.")),
+      );
+    }
 
     return GridView.builder(
       shrinkWrap: true,
@@ -186,6 +210,7 @@ class _HomeViewState extends State<HomeView> {
       ),
       itemCount: menus.length,
       itemBuilder: (context, index) {
+        final menu = menus[index];
         return TweenAnimationBuilder<double>(
           duration: Duration(milliseconds: 400 + (index * 150)),
           tween: Tween(begin: 0.0, end: 1.0),
@@ -200,10 +225,10 @@ class _HomeViewState extends State<HomeView> {
             );
           },
           child: _buildMenuCard(
-            menus[index]['title'] as String,
-            menus[index]['icon'] as IconData,
-            menus[index]['color'] as Color,
-            menus[index]['action'] as VoidCallback,
+            menu.title,
+            _mapIcon(menu.icon),
+            _mapColor(menu.color, tenant),
+            () => _handleAction(menu.action, context, user),
           ),
         );
       },

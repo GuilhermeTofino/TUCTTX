@@ -1,13 +1,20 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../core/di/service_locator.dart';
+import '../../domain/models/menu_option_model.dart';
 import '../../domain/models/user_model.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/repositories/menu_repository.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final AuthRepository _authRepository = getIt<AuthRepository>();
+  final MenuRepository _menuRepository = getIt<MenuRepository>();
+
   UserModel? _currentUser;
   UserModel? get currentUser => _currentUser;
+
+  List<MenuOptionModel> _menus = [];
+  List<MenuOptionModel> get menus => _menus;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -19,12 +26,27 @@ class HomeViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    // O onAuthStateChanged já nos dá o UserModel completo
     _authRepository.onAuthStateChanged.listen((user) {
       _currentUser = user;
+      if (user != null) {
+        // Assim que tivermos o usuário (e o tenant slug dele), carregamos os menus
+        loadMenus(user.tenantSlug);
+      } else {
+        _isLoading = false;
+        notifyListeners();
+      }
+    });
+  }
+
+  Future<void> loadMenus(String tenantId) async {
+    try {
+      _menus = await _menuRepository.getMenus(tenantId);
+    } catch (e) {
+      debugPrint("Erro ao carregar menus: $e");
+    } finally {
       _isLoading = false;
       notifyListeners();
-    });
+    }
   }
 
   Future<void> signOut() async {

@@ -36,6 +36,7 @@ class EventRepository {
             'description': eventData['description'],
             'tenantId':
                 tenantId, // Mantendo redundância se útil para queries futuras
+            'cleaningCrew': eventData['cleaningCrew'], // Salva a lista de nomes
             'createdAt': FieldValue.serverTimestamp(),
           });
     } catch (e) {

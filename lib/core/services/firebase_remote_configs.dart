@@ -14,7 +14,8 @@ class FirebaseRemoteConfigs {
     // MAPA AUTOMÁTICO DE APP IDs
     final Map<String, Map<AppEnvironment, String>> appIds = {
       'tucttx': {
-        AppEnvironment.dev: '1:201327273520:ios:d0115f9ebc723ab3a56ff5',
+        // ID atualizado conforme firebase.json
+        AppEnvironment.dev: '1:201327273520:ios:9f4f613b5ab70956a56ff5',
         AppEnvironment.prod: '1:201327273520:ios:a379a2131bb5a361a56ff5',
       },
       'tu7e': {

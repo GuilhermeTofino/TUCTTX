@@ -29,6 +29,18 @@ service cloud.firestore {
       }
       
       // -----------------------------------------------------------------------
+      // MENUS SUBCOLLECTION
+      // Path: /tenants/{tenantId}/menus/{menuId}
+      // -----------------------------------------------------------------------
+      match /menus/{menuId} {
+        // Authenticated users can read the menu configuration
+        allow read: if request.auth != null;
+        
+        // Write access restricted to admins (future) or disabled for now
+        allow write: if false; 
+      }
+
+      // -----------------------------------------------------------------------
       // EVENTS SUBCOLLECTION
       // Path: /tenants/{tenantId}/events/{eventId}
       // -----------------------------------------------------------------------

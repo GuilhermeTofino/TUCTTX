@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../core/services/ai_event_parser.dart';
 import '../../domain/repositories/event_repository.dart';
@@ -23,6 +24,24 @@ class ImportEventsViewModel extends ChangeNotifier {
       _previewEvents = await _aiParser.parseWhatsAppText(text);
     } catch (e) {
       debugPrint("Erro IA: $e");
+    } finally {
+      _isProcessing = false;
+      notifyListeners();
+    }
+  }
+
+  // 1.1 Processa imagem (Escala de faxina/calendário)
+  Future<void> processImage(File image) async {
+    _isProcessing = true;
+    notifyListeners();
+
+    try {
+      final events = await _aiParser.parseImage(image);
+      _previewEvents.addAll(
+        events,
+      ); // Adiciona aos existentes ou começa nova lista
+    } catch (e) {
+      debugPrint("Erro IA Imagem: $e");
     } finally {
       _isProcessing = false;
       notifyListeners();

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class AIEventParser {
@@ -15,10 +16,21 @@ class AIEventParser {
           items: Schema.object(
             properties: {
               'title': Schema.string(description: 'Nome da gira ou evento'),
-              'date': Schema.string(description: 'Data e hora no formato ISO8601'),
+              'date': Schema.string(
+                description: 'Data e hora no formato ISO8601',
+              ),
               // Removemos o enumValues/enumShapes para evitar erro de compilação
-              'type': Schema.string(description: 'Tipo: Pública, Fechada, Festa ou Desenvolvimento'),
-              'description': Schema.string(description: 'Resumo do que ocorrerá'),
+              'type': Schema.string(
+                description: 'Tipo: Pública, Fechada, Festa ou Desenvolvimento',
+              ),
+              'description': Schema.string(
+                description: 'Resumo do que ocorrerá',
+              ),
+              'cleaningCrew': Schema.array(
+                items: Schema.string(),
+                description:
+                    'Lista de nomes das pessoas responsáveis pela faxina neste dia',
+              ),
             },
             requiredProperties: ['title', 'date', 'type', 'description'],
           ),
@@ -31,7 +43,8 @@ class AIEventParser {
     if (text.trim().isEmpty) return [];
 
     // Reforçamos os ENUMS aqui no Prompt, já que o Schema deu erro de parâmetro
-    final prompt = '''
+    final prompt =
+        '''
     Você é um assistente de terreiro de Umbanda experiente.
     Extraia os eventos do texto abaixo e retorne um JSON.
     
@@ -39,6 +52,7 @@ class AIEventParser {
     1. O campo "type" DEVE ser obrigatoriamente um destes: "Pública", "Fechada", "Festa" ou "Desenvolvimento".
     2. Use o ano de 2026 para as datas.
     3. Formate a data no padrão ISO8601 (Ex: 2026-05-20T20:00:00).
+    4. Se houver menção de "Equipe de Faxina" ou nomes listados para limpeza, preencha o campo "cleaningCrew".
 
     Texto do WhatsApp: "$text"
     ''';
@@ -46,13 +60,51 @@ class AIEventParser {
     try {
       final content = [Content.text(prompt)];
       final response = await _model.generateContent(content);
-      
+
       if (response.text == null) throw Exception("Resposta vazia");
-      
+
       final List<dynamic> parsedData = jsonDecode(response.text!);
       return parsedData.map((item) => Map<String, dynamic>.from(item)).toList();
     } catch (e) {
       print("Erro no Parsing: $e");
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> parseImage(File imageFile) async {
+    final imageBytes = await imageFile.readAsBytes();
+
+    final prompt = '''
+    Analise esta imagem de escala/calendário de terreiro.
+    Identifique os eventos (Giras, Reuniões) e as Equipes de Faxina.
+    
+    REGRAS:
+    1. "type" deve ser: "Pública", "Fechada", "Festa" ou "Desenvolvimento". Se não estiver claro, use "Pública".
+    2. Data no formato ISO8601. Assuma o ano atual (2026) se não especificado.
+    3. Para dias de "Faxina" ou que tenham nomes de pessoas listados em colunas específicas (geralmente abaixo de uma data ou nome de gira), crie um evento. 
+       - Se for apenas faxina, o título pode ser "Faxina".
+       - Se for uma Gira com nomes associados, coloque os nomes no campo "cleaningCrew".
+    4. Retorne apenas JSON válido.
+    ''';
+
+    try {
+      final content = [
+        Content.multi([TextPart(prompt), DataPart('image/jpeg', imageBytes)]),
+      ];
+
+      final response = await _model.generateContent(content);
+
+      if (response.text == null) throw Exception("Resposta vazia da IA");
+
+      // Sanitização básica caso a IA retorne markdown
+      String jsonText = response.text!
+          .replaceAll('```json', '')
+          .replaceAll('```', '');
+
+      final List<dynamic> parsedData = jsonDecode(jsonText);
+      return parsedData.map((item) => Map<String, dynamic>.from(item)).toList();
+    } catch (e) {
+      print("Erro no Parsing de Imagem: $e");
       return [];
     }
   }

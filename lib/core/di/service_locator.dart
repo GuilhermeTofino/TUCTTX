@@ -9,6 +9,8 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../../data/repositories/firebase_auth_repository.dart';
 import '../../data/repositories/firebase_user_repository.dart';
+import 'package:app_tenda/domain/repositories/menu_repository.dart';
+import 'package:app_tenda/data/repositories/firebase_menu_repository.dart';
 import '../../presentation/viewmodels/welcome_viewmodel.dart';
 
 final getIt = GetIt.instance;
@@ -18,6 +20,7 @@ Future<void> setupServiceLocator() async {
   getIt.registerLazySingleton<AuthRepository>(() => FirebaseAuthRepository());
   getIt.registerLazySingleton<UserRepository>(() => FirebaseUserRepository());
   getIt.registerLazySingleton<EventRepository>(() => EventRepository());
+  getIt.registerLazySingleton<MenuRepository>(() => FirebaseMenuRepository());
 
   // ---- Services ----
   // Registrado como Singleton para manter a mesma instância gerenciando tokens
@@ -25,9 +28,13 @@ Future<void> setupServiceLocator() async {
   //   () => NotificationService(getIt<UserRepository>()),
   // );
 
-  getIt.registerLazySingleton<AIEventParser>(
-    () => AIEventParser('AIzaSyD-0x0havmKrBfPq6aBLGEVDSTrKOtE92Y'),
-  );
+  const geminiKey = String.fromEnvironment('GEMINI_API_KEY');
+  if (geminiKey.isEmpty) {
+    // Fallback para dev ou erro descritivo
+    print("ALERTA: GEMINI_API_KEY não configurada. A IA não funcionará.");
+  }
+
+  getIt.registerLazySingleton<AIEventParser>(() => AIEventParser(geminiKey));
 
   // ---- ViewModels ----
   getIt.registerFactory(() => WelcomeViewModel(getIt<AuthRepository>()));

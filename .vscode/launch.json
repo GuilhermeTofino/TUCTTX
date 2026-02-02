@@ -7,9 +7,14 @@
             "type": "dart",
             "program": "lib/main.dart",
             "args": [
-                "--flavor", "tucttx",
-                "--dart-define", "TENANT=tucttx",
-                "--dart-define", "ENV=dev"
+                "--flavor",
+                "tucttx",
+                "--dart-define",
+                "TENANT=tucttx",
+                "--dart-define",
+                "ENV=dev",
+                "--dart-define",
+                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
             ]
         },
         {
@@ -18,9 +23,14 @@
             "type": "dart",
             "program": "lib/main.dart",
             "args": [
-                "--flavor", "tucttx",
-                "--dart-define", "TENANT=tucttx",
-                "--dart-define", "ENV=prod"
+                "--flavor",
+                "tucttx",
+                "--dart-define",
+                "TENANT=tucttx",
+                "--dart-define",
+                "ENV=prod",
+                "--dart-define",
+                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
             ]
         },
         {
@@ -29,9 +39,14 @@
             "type": "dart",
             "program": "lib/main.dart",
             "args": [
-                "--flavor", "tu7e",
-                "--dart-define", "TENANT=tu7e",
-                "--dart-define", "ENV=dev"
+                "--flavor",
+                "tu7e",
+                "--dart-define",
+                "TENANT=tu7e",
+                "--dart-define",
+                "ENV=dev",
+                "--dart-define",
+                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
             ]
         },
         {
@@ -40,9 +55,14 @@
             "type": "dart",
             "program": "lib/main.dart",
             "args": [
-                "--flavor", "tu7e",
-                "--dart-define", "TENANT=tu7e",
-                "--dart-define", "ENV=prod"
+                "--flavor",
+                "tu7e",
+                "--dart-define",
+                "TENANT=tu7e",
+                "--dart-define",
+                "ENV=prod",
+                "--dart-define",
+                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
             ]
         },
         {
@@ -51,9 +71,14 @@
             "type": "dart",
             "program": "lib/main.dart",
             "args": [
-                "--flavor", "tusva",
-                "--dart-define", "TENANT=tusva",
-                "--dart-define", "ENV=dev"
+                "--flavor",
+                "tusva",
+                "--dart-define",
+                "TENANT=tusva",
+                "--dart-define",
+                "ENV=dev",
+                "--dart-define",
+                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
             ]
         },
         {
@@ -62,9 +87,14 @@
             "type": "dart",
             "program": "lib/main.dart",
             "args": [
-                "--flavor", "tusva",
-                "--dart-define", "TENANT=tusva",
-                "--dart-define", "ENV=prod"
+                "--flavor",
+                "tusva",
+                "--dart-define",
+                "TENANT=tusva",
+                "--dart-define",
+                "ENV=prod",
+                "--dart-define",
+                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
             ]
         }
     ]

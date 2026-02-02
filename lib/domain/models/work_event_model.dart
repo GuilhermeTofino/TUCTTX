@@ -7,6 +7,7 @@ class WorkEvent {
   final String type; // Ex: 'Pública', 'Fechada', 'Festa'
   final String? description;
   final String tenantId;
+  final List<String>? cleaningCrew; // Lista de nomes para a faxina
 
   WorkEvent({
     required this.id,
@@ -15,6 +16,7 @@ class WorkEvent {
     required this.type,
     this.description,
     required this.tenantId,
+    this.cleaningCrew,
   });
 
   // Converte os dados do Firebase para o nosso modelo
@@ -27,6 +29,9 @@ class WorkEvent {
       type: data['type'] ?? 'Pública',
       description: data['description'],
       tenantId: data['tenantId'] ?? '',
+      cleaningCrew: data['cleaningCrew'] != null
+          ? List<String>.from(data['cleaningCrew'])
+          : null,
     );
   }
 }

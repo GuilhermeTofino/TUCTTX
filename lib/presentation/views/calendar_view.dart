@@ -404,6 +404,61 @@ class _CalendarViewState extends State<CalendarView> {
                     DateFormat('HH:mm').format(event.date),
                   ),
                   _buildDetailRow(Icons.label_outline, "Tipo", event.type),
+                  // Seção de Faxina (Nova)
+                  if (event.cleaningCrew != null &&
+                      event.cleaningCrew!.isNotEmpty) ...[
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Divider(),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.cleaning_services_outlined,
+                          color: tenant.primaryColor,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "Equipe de Faxina",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: event.cleaningCrew!.map<Widget>((name) {
+                        return Chip(
+                          label: Text(name),
+                          backgroundColor:
+                              Colors.blue[50], // Azul clarinho para diferenciar
+                          labelStyle: TextStyle(
+                            color: Colors.blue[800],
+                            fontWeight: FontWeight.bold,
+                          ),
+                          avatar: CircleAvatar(
+                            backgroundColor: Colors.blue[100],
+                            child: Text(
+                              name.isNotEmpty ? name[0].toUpperCase() : '?',
+                              style: TextStyle(
+                                color: Colors.blue[800],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                          side: BorderSide.none,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+
                   if (event.description != null &&
                       event.description!.isNotEmpty) ...[
                     const Padding(
