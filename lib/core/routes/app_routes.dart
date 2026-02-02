@@ -1,3 +1,4 @@
+import 'package:app_tenda/presentation/views/admin/menu_management_view.dart';
 import 'package:app_tenda/presentation/views/calendar_view.dart';
 import 'package:app_tenda/presentation/views/home_view.dart';
 import 'package:app_tenda/presentation/views/login_view.dart';
@@ -14,6 +15,7 @@ class AppRoutes {
   static const String register = '/register';
   static const String home = '/home';
   static const String calendar = '/calendar';
+  static const String menuManagement = '/menu-management';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -33,7 +35,8 @@ class AppRoutes {
       case calendar:
         return MaterialPageRoute(builder: (_) => const CalendarView());
 
-      
+      case menuManagement:
+        return MaterialPageRoute(builder: (_) => const MenuManagementView());
 
       default:
         return _errorRoute("Rota não encontrada: ${settings.name}");

@@ -174,17 +174,40 @@ class _HomeViewState extends State<HomeView> {
             ),
           ],
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () => _viewModel.signOut().then(
-              (_) => Navigator.pushReplacementNamed(context, AppRoutes.login),
+        Row(
+          children: [
+            if (user.role == 'admin')
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.settings_outlined,
+                      color: Colors.white,
+                    ),
+                    onPressed: () =>
+                        Navigator.pushNamed(context, AppRoutes.menuManagement),
+                  ),
+                ),
+              ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.logout, color: Colors.white),
+                onPressed: () => _viewModel.signOut().then(
+                  (_) =>
+                      Navigator.pushReplacementNamed(context, AppRoutes.login),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );

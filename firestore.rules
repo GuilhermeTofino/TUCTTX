@@ -30,7 +30,8 @@ service cloud.firestore {
         // -----------------------------------------------------------------------
         match /menus/{menuId} {
           allow read: if request.auth != null;
-          allow write: if false; 
+          allow write: if request.auth != null && 
+            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
         }
 
         // -----------------------------------------------------------------------
@@ -39,7 +40,8 @@ service cloud.firestore {
         // -----------------------------------------------------------------------
         match /events/{eventId} {
           allow read: if request.auth != null;
-          allow write: if request.auth != null;
+          allow write: if request.auth != null && 
+            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
           
           match /confirmations/{userId} {
             allow read: if request.auth != null;

@@ -22,4 +22,22 @@ class FirebaseMenuRepository extends BaseFirestoreDataSource
       throw Exception("Erro ao buscar menus: $e");
     }
   }
+
+  @override
+  Future<void> saveMenu(MenuOptionModel menu) async {
+    try {
+      await tenantDocument('menus', menu.id).set(menu.toMap());
+    } catch (e) {
+      throw Exception("Erro ao salvar menu: $e");
+    }
+  }
+
+  @override
+  Future<void> deleteMenu(String menuId) async {
+    try {
+      await tenantDocument('menus', menuId).delete();
+    } catch (e) {
+      throw Exception("Erro ao excluir menu: $e");
+    }
+  }
 }

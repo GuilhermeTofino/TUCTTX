@@ -14,7 +14,7 @@
                 "--dart-define",
                 "ENV=dev",
                 "--dart-define",
-                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
+                "GEMINI_API_KEY=AIzaSyAd2Epz3JQ-G2uXCPy1GNDip7rZoobJPr0"
             ]
         },
         {
@@ -30,7 +30,7 @@
                 "--dart-define",
                 "ENV=prod",
                 "--dart-define",
-                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
+                "GEMINI_API_KEY=AIzaSyAd2Epz3JQ-G2uXCPy1GNDip7rZoobJPr0"
             ]
         },
         {
@@ -46,7 +46,7 @@
                 "--dart-define",
                 "ENV=dev",
                 "--dart-define",
-                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
+                "GEMINI_API_KEY=AIzaSyAd2Epz3JQ-G2uXCPy1GNDip7rZoobJPr0"
             ]
         },
         {
@@ -62,7 +62,7 @@
                 "--dart-define",
                 "ENV=prod",
                 "--dart-define",
-                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
+                "GEMINI_API_KEY=AIzaSyAd2Epz3JQ-G2uXCPy1GNDip7rZoobJPr0"
             ]
         },
         {
@@ -78,7 +78,7 @@
                 "--dart-define",
                 "ENV=dev",
                 "--dart-define",
-                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
+                "GEMINI_API_KEY=AIzaSyAd2Epz3JQ-G2uXCPy1GNDip7rZoobJPr0"
             ]
         },
         {
@@ -94,7 +94,7 @@
                 "--dart-define",
                 "ENV=prod",
                 "--dart-define",
-                "GEMINI_API_KEY=AIzaSyDxmh7VMg268RWSmRUNVjXQxq2S-dd_9Lo"
+                "GEMINI_API_KEY=AIzaSyAd2Epz3JQ-G2uXCPy1GNDip7rZoobJPr0"
             ]
         }
     ]
