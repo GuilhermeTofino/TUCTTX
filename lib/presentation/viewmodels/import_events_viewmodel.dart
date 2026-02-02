@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../core/services/ai_event_parser.dart';
 import '../../domain/repositories/event_repository.dart';
+import '../../core/di/service_locator.dart';
+import '../../core/services/push_trigger_service.dart';
 
 class ImportEventsViewModel extends ChangeNotifier {
   final AIEventParser _aiParser;
@@ -60,6 +62,13 @@ class ImportEventsViewModel extends ChangeNotifier {
       for (var eventMap in _previewEvents) {
         await _repository.addEvent(eventMap, tenantId);
       }
+
+      // Notifica todos através da fila do Firestore
+      getIt<PushTriggerService>().notifyNewEvent(
+        _previewEvents.length > 1
+            ? "Novas datas disponíveis"
+            : _previewEvents.first['title'] ?? "Nova Gira",
+      );
 
       _previewEvents = []; // Limpa a lista após o sucesso
       _isProcessing = false;

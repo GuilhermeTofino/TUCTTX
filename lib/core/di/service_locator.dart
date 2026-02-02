@@ -5,13 +5,17 @@ import 'package:app_tenda/presentation/viewmodels/home_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/import_events_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/register_viewmodel.dart';
 import 'package:get_it/get_it.dart';
-import '../../domain/repositories/auth_repository.dart';
-import '../../domain/repositories/user_repository.dart';
-import '../../data/repositories/firebase_auth_repository.dart';
-import '../../data/repositories/firebase_user_repository.dart';
+import 'package:app_tenda/domain/repositories/auth_repository.dart';
+import 'package:app_tenda/domain/repositories/user_repository.dart';
+import 'package:app_tenda/data/repositories/firebase_auth_repository.dart';
+import 'package:app_tenda/data/repositories/firebase_user_repository.dart';
 import 'package:app_tenda/domain/repositories/menu_repository.dart';
 import 'package:app_tenda/data/repositories/firebase_menu_repository.dart';
-import '../../presentation/viewmodels/welcome_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/welcome_viewmodel.dart';
+import 'package:app_tenda/domain/repositories/notification_repository.dart';
+import 'package:app_tenda/data/repositories/firebase_notification_repository.dart';
+import 'package:app_tenda/core/services/notification_service.dart';
+import 'package:app_tenda/core/services/push_trigger_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -21,16 +25,18 @@ Future<void> setupServiceLocator() async {
   getIt.registerLazySingleton<UserRepository>(() => FirebaseUserRepository());
   getIt.registerLazySingleton<EventRepository>(() => EventRepository());
   getIt.registerLazySingleton<MenuRepository>(() => FirebaseMenuRepository());
+  getIt.registerLazySingleton<NotificationRepository>(
+    () => FirebaseNotificationRepository(),
+  );
 
   // ---- Services ----
-  // Registrado como Singleton para manter a mesma instância gerenciando tokens
-  // getIt.registerLazySingleton<NotificationService>(
-  //   () => NotificationService(getIt<UserRepository>()),
-  // );
+  getIt.registerLazySingleton<NotificationService>(
+    () => NotificationService(getIt<NotificationRepository>()),
+  );
+  getIt.registerLazySingleton<PushTriggerService>(() => PushTriggerService());
 
   const geminiKey = String.fromEnvironment('GEMINI_API_KEY');
   if (geminiKey.isEmpty) {
-    // Fallback para dev ou erro descritivo
     print("ALERTA: GEMINI_API_KEY não configurada. A IA não funcionará.");
   }
 
@@ -38,11 +44,7 @@ Future<void> setupServiceLocator() async {
 
   // ---- ViewModels ----
   getIt.registerFactory(() => WelcomeViewModel(getIt<AuthRepository>()));
-
-  // Alterado para LazySingleton para que o listener do onAuthStateChanged
-  // (que captura o token via NotificationService) permaneça ativo durante o app
   getIt.registerLazySingleton(() => RegisterViewModel(getIt<AuthRepository>()));
-
   getIt.registerLazySingleton<HomeViewModel>(() => HomeViewModel());
 
   getIt.registerFactory<CalendarViewModel>(

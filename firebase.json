@@ -1,1 +1,43 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"tenda-white-label","appId":"1:201327273520:android:d28db4ea7ebc82b8a56ff5","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"tenda-white-label","appId":"1:201327273520:ios:9f4f613b5ab70956a56ff5","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"tenda-white-label","configurations":{"android":"1:201327273520:android:d28db4ea7ebc82b8a56ff5","ios":"1:201327273520:ios:9f4f613b5ab70956a56ff5"}}}}}}
+{
+    "functions": [
+        {
+            "source": "functions",
+            "codebase": "default",
+            "ignore": [
+                "node_modules",
+                ".git",
+                "firebase-debug.log",
+                "firestore-debug.log",
+                "ui-debug.log"
+            ]
+        }
+    ],
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "tenda-white-label",
+                    "appId": "1:201327273520:android:d28db4ea7ebc82b8a56ff5",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "ios": {
+                "default": {
+                    "projectId": "tenda-white-label",
+                    "appId": "1:201327273520:ios:9f4f613b5ab70956a56ff5",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "tenda-white-label",
+                    "configurations": {
+                        "android": "1:201327273520:android:d28db4ea7ebc82b8a56ff5",
+                        "ios": "1:201327273520:ios:9f4f613b5ab70956a56ff5"
+                    }
+                }
+            }
+        }
+    }
+}

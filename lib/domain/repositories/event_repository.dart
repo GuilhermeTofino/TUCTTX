@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/datasources/base_firestore_datasource.dart';
 import '../models/work_event_model.dart';
+import '../repositories/user_repository.dart';
+import '../../core/di/service_locator.dart';
+import '../../core/services/push_trigger_service.dart';
+import 'package:intl/intl.dart';
 
 class EventRepository extends BaseFirestoreDataSource {
   Future<List<WorkEvent>> getEventsByTenant(String tenantId) async {
@@ -29,6 +33,46 @@ class EventRepository extends BaseFirestoreDataSource {
       });
     } catch (e) {
       throw Exception("Erro ao inserir no Firestore: $e");
+    }
+
+    // Se houver uma equipe de faxina, tentamos notificar cada membro
+    if (eventData['cleaningCrew'] != null &&
+        (eventData['cleaningCrew'] as List).isNotEmpty) {
+      _triggerCleaningNotifications(
+        List<String>.from(eventData['cleaningCrew']),
+        DateTime.parse(eventData['date']),
+      );
+    }
+  }
+
+  Future<void> _triggerCleaningNotifications(
+    List<String> names,
+    DateTime date,
+  ) async {
+    try {
+      final userRepository = getIt<UserRepository>();
+      final pushService = getIt<PushTriggerService>();
+      final allUsers = await userRepository.getAllUsers();
+      final formattedDate = DateFormat('dd/MM (EEEE)', 'pt_BR').format(date);
+
+      for (var name in names) {
+        // Busca o usuário pelo nome (ignora case e espaços extras)
+        final user = allUsers.where((u) {
+          return u.name.toLowerCase().trim() == name.toLowerCase().trim();
+        }).firstOrNull;
+
+        if (user != null &&
+            user.fcmTokens != null &&
+            user.fcmTokens!.isNotEmpty) {
+          await pushService.notifyCleaningDuty(
+            userId: user.id,
+            userTokens: user.fcmTokens!,
+            date: formattedDate,
+          );
+        }
+      }
+    } catch (e) {
+      print("Erro ao disparar notificações de faxina: $e");
     }
   }
 

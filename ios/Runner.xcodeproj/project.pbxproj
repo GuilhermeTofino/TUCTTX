@@ -83,22 +83,23 @@
 		A382CEFF8AA085122E2B7485 /* Pods-Runner.release-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tusvaprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tusvaprod.xcconfig"; sourceTree = "<group>"; };
 		A48308E07FD5E7589F7AFE26 /* Pods-RunnerTests.release-tusva.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tusva.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tusva.xcconfig"; sourceTree = "<group>"; };
 		A7BE8BBF471A83F2FD1A0446 /* Pods-Runner.debug-tucttxprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tucttxprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tucttxprod.xcconfig"; sourceTree = "<group>"; };
-		AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxProdRelease.xcconfig; sourceTree = "<group>"; };
-		AF2F614712F5BE70781ED75D /* tusvaDevDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaDevDebug.xcconfig; sourceTree = "<group>"; };
-		AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxProdDebug.xcconfig; sourceTree = "<group>"; };
-		AF5993D612E5A2AB843D4E23 /* tusvaProdRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaProdRelease.xcconfig; sourceTree = "<group>"; };
-		AF622B35D9367CA89DFAA458 /* tu7eProdRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eProdRelease.xcconfig; sourceTree = "<group>"; };
-		AF90857BDFFA0AA0204BECA8 /* tusvaProdDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaProdDebug.xcconfig; sourceTree = "<group>"; };
-		AFB162AC7DFD311251D6434F /* tu7eDevDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eDevDebug.xcconfig; sourceTree = "<group>"; };
-		AFB28180C4523581EF33B8C4 /* tu7eProdDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eProdDebug.xcconfig; sourceTree = "<group>"; };
-		AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxDevRelease.xcconfig; sourceTree = "<group>"; };
-		AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxDevDebug.xcconfig; sourceTree = "<group>"; };
-		AFF2D34A4216505EF4AC35A0 /* tu7eDevRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eDevRelease.xcconfig; sourceTree = "<group>"; };
-		AFFC70FC69EC583981AE0FFA /* tusvaDevRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaDevRelease.xcconfig; sourceTree = "<group>"; };
+		AF13ED41936AE33D00AF4A77 /* Flutter/tucttxProdRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxProdRelease.xcconfig; sourceTree = "<group>"; };
+		AF2F614712F5BE70781ED75D /* Flutter/tusvaDevDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaDevDebug.xcconfig; sourceTree = "<group>"; };
+		AF38C3903B0C21790D9A8B73 /* Flutter/tucttxProdDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxProdDebug.xcconfig; sourceTree = "<group>"; };
+		AF5993D612E5A2AB843D4E23 /* Flutter/tusvaProdRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaProdRelease.xcconfig; sourceTree = "<group>"; };
+		AF622B35D9367CA89DFAA458 /* Flutter/tu7eProdRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eProdRelease.xcconfig; sourceTree = "<group>"; };
+		AF90857BDFFA0AA0204BECA8 /* Flutter/tusvaProdDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaProdDebug.xcconfig; sourceTree = "<group>"; };
+		AFB162AC7DFD311251D6434F /* Flutter/tu7eDevDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eDevDebug.xcconfig; sourceTree = "<group>"; };
+		AFB28180C4523581EF33B8C4 /* Flutter/tu7eProdDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eProdDebug.xcconfig; sourceTree = "<group>"; };
+		AFE777F22CC8546E34304B4B /* Flutter/tucttxDevRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxDevRelease.xcconfig; sourceTree = "<group>"; };
+		AFED5D23BEAE3733C2179850 /* Flutter/tucttxDevDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tucttxDevDebug.xcconfig; sourceTree = "<group>"; };
+		AFF2D34A4216505EF4AC35A0 /* Flutter/tu7eDevRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tu7eDevRelease.xcconfig; sourceTree = "<group>"; };
+		AFFC70FC69EC583981AE0FFA /* Flutter/tusvaDevRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Flutter/tusvaDevRelease.xcconfig; sourceTree = "<group>"; };
 		B0B3560D8F53193B9330C000 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		B24BBDAE3B987D06A685AA55 /* Pods-Runner.debug-tusvadev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tusvadev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tusvadev.xcconfig"; sourceTree = "<group>"; };
 		B3AD1E26BDCD5069099CE1CB /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		B554FB7F7599DB28F3976F3D /* Pods-Runner.release-tu7e.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tu7e.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tu7e.xcconfig"; sourceTree = "<group>"; };
+		B88502992F30FA7D0065CC70 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		B890DF732F23DAD0008B88BA /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Main.strings"; sourceTree = "<group>"; };
 		B890DF742F23DAD0008B88BA /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		BCCC8A1DFFDD2C7765DC87AA /* Pods-Runner.debug-tusva.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tusva.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tusva.xcconfig"; sourceTree = "<group>"; };
@@ -204,18 +205,18 @@
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
-				AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */,
-				AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */,
-				AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */,
-				AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */,
-				AFB162AC7DFD311251D6434F /* tu7eDevDebug.xcconfig */,
-				AFF2D34A4216505EF4AC35A0 /* tu7eDevRelease.xcconfig */,
-				AFB28180C4523581EF33B8C4 /* tu7eProdDebug.xcconfig */,
-				AF622B35D9367CA89DFAA458 /* tu7eProdRelease.xcconfig */,
-				AF2F614712F5BE70781ED75D /* tusvaDevDebug.xcconfig */,
-				AFFC70FC69EC583981AE0FFA /* tusvaDevRelease.xcconfig */,
-				AF90857BDFFA0AA0204BECA8 /* tusvaProdDebug.xcconfig */,
-				AF5993D612E5A2AB843D4E23 /* tusvaProdRelease.xcconfig */,
+				AFED5D23BEAE3733C2179850 /* Flutter/tucttxDevDebug.xcconfig */,
+				AFE777F22CC8546E34304B4B /* Flutter/tucttxDevRelease.xcconfig */,
+				AF38C3903B0C21790D9A8B73 /* Flutter/tucttxProdDebug.xcconfig */,
+				AF13ED41936AE33D00AF4A77 /* Flutter/tucttxProdRelease.xcconfig */,
+				AFB162AC7DFD311251D6434F /* Flutter/tu7eDevDebug.xcconfig */,
+				AFF2D34A4216505EF4AC35A0 /* Flutter/tu7eDevRelease.xcconfig */,
+				AFB28180C4523581EF33B8C4 /* Flutter/tu7eProdDebug.xcconfig */,
+				AF622B35D9367CA89DFAA458 /* Flutter/tu7eProdRelease.xcconfig */,
+				AF2F614712F5BE70781ED75D /* Flutter/tusvaDevDebug.xcconfig */,
+				AFFC70FC69EC583981AE0FFA /* Flutter/tusvaDevRelease.xcconfig */,
+				AF90857BDFFA0AA0204BECA8 /* Flutter/tusvaProdDebug.xcconfig */,
+				AF5993D612E5A2AB843D4E23 /* Flutter/tusvaProdRelease.xcconfig */,
 				3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */,
 				9740EEB21CF90195004384FC /* Debug.xcconfig */,
 				7AFA3C8E1D35360C0083082E /* Release.xcconfig */,
@@ -248,6 +249,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				B88502992F30FA7D0065CC70 /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
@@ -294,6 +296,7 @@
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				7934C0B85BB4F485358DB0CF /* [CP] Embed Pods Frameworks */,
+				33829FDDF4C8B93BA30A83BB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -365,6 +368,27 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		33829FDDF4C8B93BA30A83BB /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		3B06AD1E1E4923F5004D2608 /* Thin Binary */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -411,9 +435,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -568,6 +596,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -755,6 +784,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -780,6 +810,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -863,11 +894,12 @@
 		};
 		B87FC4792F202E7100C93C20 /* Debug-tucttxDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */;
+			baseConfigurationReference = AFED5D23BEAE3733C2179850 /* Flutter/tucttxDevDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUCTTX";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -890,7 +922,7 @@
 		};
 		B87FC47A2F202E7100C93C20 /* Debug-tucttxDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */;
+			baseConfigurationReference = AFED5D23BEAE3733C2179850 /* Flutter/tucttxDevDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUCTTX";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
@@ -974,11 +1006,12 @@
 		};
 		B87FC47C2F202E8200C93C20 /* Debug-tu7eDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFB162AC7DFD311251D6434F /* tu7eDevDebug.xcconfig */;
+			baseConfigurationReference = AFB162AC7DFD311251D6434F /* Flutter/tu7eDevDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TU7E";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -1001,7 +1034,7 @@
 		};
 		B87FC47D2F202E8200C93C20 /* Debug-tu7eDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFB162AC7DFD311251D6434F /* tu7eDevDebug.xcconfig */;
+			baseConfigurationReference = AFB162AC7DFD311251D6434F /* Flutter/tu7eDevDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TU7E";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
@@ -1085,11 +1118,12 @@
 		};
 		B87FC47F2F202E8900C93C20 /* Debug-tusvaDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF2F614712F5BE70781ED75D /* tusvaDevDebug.xcconfig */;
+			baseConfigurationReference = AF2F614712F5BE70781ED75D /* Flutter/tusvaDevDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUSVA";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -1112,7 +1146,7 @@
 		};
 		B87FC4802F202E8900C93C20 /* Debug-tusvaDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF2F614712F5BE70781ED75D /* tusvaDevDebug.xcconfig */;
+			baseConfigurationReference = AF2F614712F5BE70781ED75D /* Flutter/tusvaDevDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUSVA";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
@@ -1193,11 +1227,12 @@
 		};
 		B87FC4822F202E9300C93C20 /* Release-tucttxProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */;
+			baseConfigurationReference = AF13ED41936AE33D00AF4A77 /* Flutter/tucttxProdRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUCTTX;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -1219,7 +1254,7 @@
 		};
 		B87FC4832F202E9300C93C20 /* Release-tucttxProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */;
+			baseConfigurationReference = AF13ED41936AE33D00AF4A77 /* Flutter/tucttxProdRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUCTTX;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
@@ -1298,11 +1333,12 @@
 		};
 		B87FC4852F202E9A00C93C20 /* Release-tu7eProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF622B35D9367CA89DFAA458 /* tu7eProdRelease.xcconfig */;
+			baseConfigurationReference = AF622B35D9367CA89DFAA458 /* Flutter/tu7eProdRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TU7E;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -1324,7 +1360,7 @@
 		};
 		B87FC4862F202E9A00C93C20 /* Release-tu7eProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF622B35D9367CA89DFAA458 /* tu7eProdRelease.xcconfig */;
+			baseConfigurationReference = AF622B35D9367CA89DFAA458 /* Flutter/tu7eProdRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TU7E;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
@@ -1403,11 +1439,12 @@
 		};
 		B87FC4882F202EA100C93C20 /* Release-tusvaProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF5993D612E5A2AB843D4E23 /* tusvaProdRelease.xcconfig */;
+			baseConfigurationReference = AF5993D612E5A2AB843D4E23 /* Flutter/tusvaProdRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUSVA;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -1429,7 +1466,7 @@
 		};
 		B87FC4892F202EA100C93C20 /* Release-tusvaProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF5993D612E5A2AB843D4E23 /* tusvaProdRelease.xcconfig */;
+			baseConfigurationReference = AF5993D612E5A2AB843D4E23 /* Flutter/tusvaProdRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUSVA;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
@@ -1508,11 +1545,12 @@
 		};
 		E87FC4822F202E9300C93C20 /* Release-tucttxDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */;
+			baseConfigurationReference = AFE777F22CC8546E34304B4B /* Flutter/tucttxDevRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUCTTX";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -1534,7 +1572,7 @@
 		};
 		E87FC4832F202E9300C93C20 /* Release-tucttxDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */;
+			baseConfigurationReference = AFE777F22CC8546E34304B4B /* Flutter/tucttxDevRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUCTTX";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
@@ -1613,11 +1651,12 @@
 		};
 		E87FC4852F202E9A00C93C20 /* Release-tu7eDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFF2D34A4216505EF4AC35A0 /* tu7eDevRelease.xcconfig */;
+			baseConfigurationReference = AFF2D34A4216505EF4AC35A0 /* Flutter/tu7eDevRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TU7E";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -1639,7 +1678,7 @@
 		};
 		E87FC4862F202E9A00C93C20 /* Release-tu7eDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFF2D34A4216505EF4AC35A0 /* tu7eDevRelease.xcconfig */;
+			baseConfigurationReference = AFF2D34A4216505EF4AC35A0 /* Flutter/tu7eDevRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TU7E";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
@@ -1718,11 +1757,12 @@
 		};
 		E87FC4882F202EA100C93C20 /* Release-tusvaDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFFC70FC69EC583981AE0FFA /* tusvaDevRelease.xcconfig */;
+			baseConfigurationReference = AFFC70FC69EC583981AE0FFA /* Flutter/tusvaDevRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUSVA";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -1744,7 +1784,7 @@
 		};
 		E87FC4892F202EA100C93C20 /* Release-tusvaDev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFFC70FC69EC583981AE0FFA /* tusvaDevRelease.xcconfig */;
+			baseConfigurationReference = AFFC70FC69EC583981AE0FFA /* Flutter/tusvaDevRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUSVA";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
@@ -1826,11 +1866,12 @@
 		};
 		F87FC4792F202E7100C93C20 /* Debug-tucttxProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */;
+			baseConfigurationReference = AF38C3903B0C21790D9A8B73 /* Flutter/tucttxProdDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUCTTX;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -1853,7 +1894,7 @@
 		};
 		F87FC47A2F202E7100C93C20 /* Debug-tucttxProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */;
+			baseConfigurationReference = AF38C3903B0C21790D9A8B73 /* Flutter/tucttxProdDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUCTTX;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
@@ -1937,11 +1978,12 @@
 		};
 		F87FC47C2F202E8200C93C20 /* Debug-tu7eProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFB28180C4523581EF33B8C4 /* tu7eProdDebug.xcconfig */;
+			baseConfigurationReference = AFB28180C4523581EF33B8C4 /* Flutter/tu7eProdDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TU7E;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -1964,7 +2006,7 @@
 		};
 		F87FC47D2F202E8200C93C20 /* Debug-tu7eProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFB28180C4523581EF33B8C4 /* tu7eProdDebug.xcconfig */;
+			baseConfigurationReference = AFB28180C4523581EF33B8C4 /* Flutter/tu7eProdDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TU7E;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
@@ -2048,11 +2090,12 @@
 		};
 		F87FC47F2F202E8900C93C20 /* Debug-tusvaProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF90857BDFFA0AA0204BECA8 /* tusvaProdDebug.xcconfig */;
+			baseConfigurationReference = AF90857BDFFA0AA0204BECA8 /* Flutter/tusvaProdDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUSVA;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = NJR26DLW5V;
 				ENABLE_BITCODE = NO;
@@ -2075,7 +2118,7 @@
 		};
 		F87FC4802F202E8900C93C20 /* Debug-tusvaProd */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF90857BDFFA0AA0204BECA8 /* tusvaProdDebug.xcconfig */;
+			baseConfigurationReference = AF90857BDFFA0AA0204BECA8 /* Flutter/tusvaProdDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUSVA;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";

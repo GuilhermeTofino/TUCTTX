@@ -5,6 +5,7 @@ import '../../domain/models/menu_option_model.dart';
 import '../../domain/models/user_model.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/menu_repository.dart';
+import '../../core/services/notification_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final AuthRepository _authRepository = getIt<AuthRepository>();
@@ -29,6 +30,15 @@ class HomeViewModel extends ChangeNotifier {
     _authRepository.onAuthStateChanged.listen((user) {
       _currentUser = user;
       if (user != null) {
+        // Captura e salva o token de notificação deste dispositivo
+        getIt<NotificationService>().saveDeviceToken(user.id);
+
+        // Inscreve o usuário nos tópicos do terreiro (ex: tucttx_dev_all)
+        getIt<NotificationService>().subscribeToTenantTopics(
+          user.tenantSlug,
+          const String.fromEnvironment('ENV', defaultValue: 'dev'),
+        );
+
         // Assim que tivermos o usuário (e o tenant slug dele), carregamos os menus
         loadMenus(user.tenantSlug);
       } else {

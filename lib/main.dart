@@ -10,6 +10,15 @@ import 'core/services/firebase_remote_configs.dart';
 import 'core/routes/app_routes.dart';
 import 'core/di/service_locator.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'core/services/notification_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Inicializa o Firebase apenas se necessário em background
+  await Firebase.initializeApp(options: FirebaseRemoteConfigs.currentOptions);
+  print("Mensagem em background recebida: ${message.messageId}");
+}
 
 void main() async {
   try {
@@ -49,7 +58,11 @@ void main() async {
       print("Erro na inicialização do Firebase: $e");
     }
 
-    // 5. Configurações de Firestore e Storage
+    // 5. Inicializa Notificações
+    await getIt<NotificationService>().initialize();
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    // 6. Configurações de Firestore e Storage
     FirebaseFirestore.instance.settings = const Settings(
       persistenceEnabled: true,
       cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
