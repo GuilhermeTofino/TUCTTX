@@ -7,6 +7,10 @@ class UserModel {
   final String tenantSlug;
   final DateTime? createdAt;
   final String? photoUrl;
+  final String role;
+  
+  // NOVO CAMPO: Lista de tokens para notificações
+  final List<String>? fcmTokens; 
 
   // Campos de Fundamento
   final bool jaTirouSanto;
@@ -29,6 +33,8 @@ class UserModel {
     required this.tenantSlug,
     this.createdAt,
     this.photoUrl,
+    this.role = 'user',
+    this.fcmTokens, // Adicionado aqui
     required this.jaTirouSanto,
     this.jogoComTata = false,
     this.orixaFrente,
@@ -39,7 +45,8 @@ class UserModel {
     this.tipoSanguineo,
   });
 
-  // --- O MÉTODO QUE FALTAVA ---
+  bool get isAdmin => role == 'admin';
+
   UserModel copyWith({
     String? id,
     String? name,
@@ -49,6 +56,8 @@ class UserModel {
     String? tenantSlug,
     DateTime? createdAt,
     String? photoUrl,
+    String? role,
+    List<String>? fcmTokens, // Adicionado aqui
     bool? jaTirouSanto,
     bool? jogoComTata,
     String? orixaFrente,
@@ -67,6 +76,8 @@ class UserModel {
       tenantSlug: tenantSlug ?? this.tenantSlug,
       createdAt: createdAt ?? this.createdAt,
       photoUrl: photoUrl ?? this.photoUrl,
+      role: role ?? this.role,
+      fcmTokens: fcmTokens ?? this.fcmTokens, // Adicionado aqui
       jaTirouSanto: jaTirouSanto ?? this.jaTirouSanto,
       jogoComTata: jogoComTata ?? this.jogoComTata,
       orixaFrente: orixaFrente ?? this.orixaFrente,
@@ -88,6 +99,8 @@ class UserModel {
       'tenantSlug': tenantSlug,
       'createdAt': createdAt?.toIso8601String(),
       'photoUrl': photoUrl,
+      'role': role,
+      'fcmTokens': fcmTokens, // Adicionado aqui
       'jaTirouSanto': jaTirouSanto,
       'jogoComTata': jogoComTata,
       'orixaFrente': orixaFrente,
@@ -117,6 +130,8 @@ class UserModel {
       tipoSanguineo: map['tipoSanguineo'],
       createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt']) : null,
       photoUrl: map['photoUrl'],
+      role: map['role'] ?? 'user',
+      fcmTokens: map['fcmTokens'] != null ? List<String>.from(map['fcmTokens']) : null, // Adicionado aqui
     );
   }
 }

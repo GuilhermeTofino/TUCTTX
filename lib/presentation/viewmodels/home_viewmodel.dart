@@ -31,29 +31,26 @@ class HomeViewModel extends ChangeNotifier {
     await _authRepository.signOut();
   }
 
-  Future<bool> updateProfilePicture(File imageFile) async {
-    if (_currentUser == null) return false;
-
+  // Na HomeViewModel
+  Future<bool> updateProfilePicture(File file) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      // 1. Faz o upload para o Firebase Storage e pega a URL
-      // _authRepository deve ter o método que criamos anteriormente
-      final String newPhotoUrl = await _authRepository.uploadProfileImage(
-        imageFile,
+      // Reutiliza a lógica de upload que criamos no Repository
+      final String newUrl = await _authRepository.uploadProfileImage(
+        file,
         _currentUser!.id,
       );
 
-      // 2. Atualiza o objeto local para a foto mudar na hora na tela
-      _currentUser = _currentUser!.copyWith(photoUrl: newPhotoUrl);
+      // Atualiza o estado local para refletir na UI imediatamente
+      _currentUser = _currentUser!.copyWith(photoUrl: newUrl);
 
       _isLoading = false;
       notifyListeners();
       return true;
     } catch (e) {
       _isLoading = false;
-      _errorMessage = e.toString();
       notifyListeners();
       return false;
     }

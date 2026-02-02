@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:app_tenda/presentation/widgets/custom_logo_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,6 +24,40 @@ class _HomeViewState extends State<HomeView> {
     _viewModel.loadCurrentUser();
   }
 
+  // --- LOGICA DE MENUS DINÂMICOS ---
+  List<Map<String, dynamic>> _getMenus(
+    BuildContext context,
+    UserModel user,
+    dynamic tenant,
+  ) {
+    return [
+      {
+        'title': 'Trabalhos',
+        'icon': Icons.calendar_today_outlined,
+        'color': tenant.primaryColor,
+        'action': () => Navigator.pushNamed(context, AppRoutes.calendar),
+      },
+      {
+        'title': 'Financeiro',
+        'icon': Icons.account_balance_wallet_outlined,
+        'color': Colors.green,
+        'action': () => _showComingSoonSnackBar(),
+      },
+      {
+        'title': 'Saúde',
+        'icon': Icons.health_and_safety_outlined,
+        'color': Colors.redAccent,
+        'action': () => _showHealthDetailsSheet(context, user),
+      },
+      {
+        'title': 'Documentos',
+        'icon': Icons.description_outlined,
+        'color': Colors.blue,
+        'action': () => _showComingSoonSnackBar(),
+      },
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final tenant = AppConfig.instance.tenant;
@@ -42,21 +75,22 @@ class _HomeViewState extends State<HomeView> {
           backgroundColor: const Color(0xFFF8F9FA),
           body: Column(
             children: [
-              // --- ÁREA FIXA (HEADER + CARD) ---
               _buildFixedTopSection(user, tenant),
-
-              // --- ÁREA ROÁVEL (MENUS) ---
               Expanded(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.all(24.0),
+                  // MUDANÇA 1: Diminuímos o padding superior de 24 para 12 (ou 8)
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildSectionTitle("Menu Principal"),
-                      const SizedBox(height: 16),
-                      _buildAnimatedMenuGrid(tenant),
-                      const SizedBox(height: 40),
+
+                      // MUDANÇA 2: Diminuímos o SizedBox de 16 para 8
+                      const SizedBox(height: 0),
+
+                      _buildAnimatedMenuGrid(user, tenant),
+                      const SizedBox(height: 0),
                     ],
                   ),
                 ),
@@ -68,7 +102,6 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  // Widget que agrupa o fundo colorido e o card de identidade fixos
   Widget _buildFixedTopSection(UserModel user, tenant) {
     return Container(
       width: double.infinity,
@@ -108,18 +141,18 @@ class _HomeViewState extends State<HomeView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Axé, ${user.name.split(' ')[0]}",
+              "Olá, ${user.name.split(' ')[0]}",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: tenant.onPrimaryColor,
+                color: Colors.white,
               ),
             ),
             Text(
-              "Seus fundamentos estão em dia",
+              "Bem-vindo(a)",
               style: TextStyle(
-                fontSize: 14,
-                color: tenant.onPrimaryColor.withOpacity(0.8),
+                color: Colors.white.withOpacity(0.9),
+                fontSize: 13,
               ),
             ),
           ],
@@ -130,9 +163,9 @@ class _HomeViewState extends State<HomeView> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: Icon(Icons.logout, color: tenant.onPrimaryColor),
+            icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () => _viewModel.signOut().then(
-              (_) => Navigator.pushReplacementNamed(context, AppRoutes.welcome),
+              (_) => Navigator.pushReplacementNamed(context, AppRoutes.login),
             ),
           ),
         ),
@@ -140,30 +173,8 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  // Grid que aplica a animação em cascata nos cards
-  Widget _buildAnimatedMenuGrid(tenant) {
-    final menus = [
-      {
-        'title': 'Trabalhos',
-        'icon': Icons.calendar_today_outlined,
-        'color': tenant.primaryColor,
-      },
-      {
-        'title': 'Mensalidades',
-        'icon': Icons.account_balance_wallet_outlined,
-        'color': Colors.green,
-      },
-      {
-        'title': 'Saúde',
-        'icon': Icons.health_and_safety_outlined,
-        'color': Colors.redAccent,
-      },
-      {
-        'title': 'Documentos',
-        'icon': Icons.description_outlined,
-        'color': Colors.blue,
-      },
-    ];
+  Widget _buildAnimatedMenuGrid(UserModel user, tenant) {
+    final menus = _getMenus(context, user, tenant);
 
     return GridView.builder(
       shrinkWrap: true,
@@ -175,7 +186,6 @@ class _HomeViewState extends State<HomeView> {
       ),
       itemCount: menus.length,
       itemBuilder: (context, index) {
-        // Lógica de delay para o efeito cascata
         return TweenAnimationBuilder<double>(
           duration: Duration(milliseconds: 400 + (index * 150)),
           tween: Tween(begin: 0.0, end: 1.0),
@@ -193,14 +203,144 @@ class _HomeViewState extends State<HomeView> {
             menus[index]['title'] as String,
             menus[index]['icon'] as IconData,
             menus[index]['color'] as Color,
+            menus[index]['action'] as VoidCallback,
           ),
         );
       },
     );
   }
 
-  // --- MÉTODOS AUXILIARES E VISUAIS ---
+  Widget _buildMenuCard(
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(24),
+          onTap: onTap,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 28, color: color),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
+  // --- MODAL DE SAÚDE ---
+  void _showHealthDetailsSheet(BuildContext context, UserModel user) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Dados de Saúde",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            _buildHealthInfoRow(
+              Icons.bloodtype,
+              "Tipo Sanguíneo",
+              user.tipoSanguineo ?? "N/I",
+            ),
+            _buildHealthInfoRow(
+              Icons.warning_amber,
+              "Alergias",
+              user.alergias?.isEmpty ?? true
+                  ? "Nenhuma informada"
+                  : user.alergias!,
+            ),
+            _buildHealthInfoRow(
+              Icons.medication,
+              "Medicamentos",
+              user.medicamentos?.isEmpty ?? true
+                  ? "Nenhum informado"
+                  : user.medicamentos!,
+            ),
+            _buildHealthInfoRow(
+              Icons.favorite_border,
+              "Condições",
+              user.condicoesMedicas?.isEmpty ?? true
+                  ? "Nenhuma informada"
+                  : user.condicoesMedicas!,
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHealthInfoRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.redAccent, size: 24),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- IDENTITY CARD ---
   Widget _buildIdentityCard(UserModel user, tenant) {
     return Container(
       width: double.infinity,
@@ -233,10 +373,6 @@ class _HomeViewState extends State<HomeView> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      "Filho de Santo",
-                      style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                    ),
                   ],
                 ),
               ),
@@ -250,61 +386,16 @@ class _HomeViewState extends State<HomeView> {
               _buildOrixaItem(
                 "Frente",
                 user.orixaFrente ?? "A definir",
-                _getOrixaColor(user.orixaFrente), // <-- COR DINÂMICA
+                _getOrixaColor(user.orixaFrente),
               ),
               _buildOrixaItem(
                 "Juntó",
                 user.orixaJunto ?? "A definir",
-                _getOrixaColor(user.orixaJunto), // <-- COR DINÂMICA
+                _getOrixaColor(user.orixaJunto),
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMenuCard(String title, IconData icon, Color color) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.grey[100]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(24),
-          onTap: () {},
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, size: 28, color: color),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -324,7 +415,6 @@ class _HomeViewState extends State<HomeView> {
           child: CircleAvatar(
             radius: 30,
             backgroundColor: const Color(0xFFF1F3F5),
-            // Se o usuário tiver photoUrl, carrega a imagem, senão mostra o ícone
             backgroundImage: user.photoUrl != null
                 ? NetworkImage(user.photoUrl!)
                 : null,
@@ -333,12 +423,11 @@ class _HomeViewState extends State<HomeView> {
                 : null,
           ),
         ),
-        // Botão de Editar Foto
         Positioned(
           right: 0,
           bottom: 0,
           child: GestureDetector(
-            onTap: () => _pickAndUploadImage(), // Vamos criar este método
+            onTap: _pickAndUploadImage,
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
@@ -358,6 +447,42 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  // --- AUXILIARES ---
+  void _showComingSoonSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Funcionalidade em breve!"),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 50,
+    );
+
+    if (image != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Enviando foto...")));
+      final success = await _viewModel.updateProfilePicture(File(image.path));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              success ? "Foto atualizada!" : "Erro ao enviar foto.",
+            ),
+            backgroundColor: success ? Colors.green : Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  // Seus métodos _buildOrixaItem, _buildBloodBadge, _buildSectionTitle, _darken e _getOrixaColor permanecem os mesmos...
   Widget _buildOrixaItem(String label, String name, Color color) {
     return Column(
       children: [
@@ -415,60 +540,26 @@ class _HomeViewState extends State<HomeView> {
         .toColor();
   }
 
-  Future<void> _pickAndUploadImage() async {
-    final ImagePicker picker = ImagePicker();
-
-    // 1. O usuário escolhe a imagem (galeria ou câmera)
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 50, // Comprime para não pesar no Firebase
-    );
-
-    if (image != null) {
-      // 2. Mostra um feedback de carregamento (opcional, mas recomendado)
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Enviando foto...")));
-
-      // 3. Chama a ViewModel para fazer o upload pesado
-      // Precisaremos criar este método 'updateProfilePicture' na HomeViewModel
-      final success = await _viewModel.updateProfilePicture(File(image.path));
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              success ? "Foto atualizada!" : "Erro ao enviar foto.",
-            ),
-            backgroundColor: success ? Colors.green : Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
   Color _getOrixaColor(String? orixaName) {
     if (orixaName == null) return Colors.grey;
-
     final name = orixaName.toLowerCase();
-
-    if (name.contains('ogum'))
-      return const Color(0xFF2196F3); // Azul ou Vermelho (depende da vertente)
-    if (name.contains('oxum'))
-      return const Color(0xFFFFD700); // Dourado/Amarelo
-    if (name.contains('iemanjá') || name.contains('iemanja') || name.contains('yemanjá'))
-      return const Color(0xFF00BCD4); // Azul Claro
+    if (name.contains('ogum')) return const Color(0xFF2196F3);
+    if (name.contains('oxum')) return const Color(0xFFFFD700);
+    if (name.contains('iemanjá') ||
+        name.contains('iemanja') ||
+        name.contains('yemanjá'))
+      return const Color(0xFF00BCD4);
     if (name.contains('oxóssi') || name.contains('oxossi'))
-      return const Color(0xFF4CAF50); // Verde
-    if (name.contains('iansã') || name.contains('iansa'))
-      return const Color(0xFFB71C1C); // Vermelho/Vinho
+      return const Color(0xFF4CAF50);
+    if (name.contains('iansã') ||
+        name.contains('iansa') ||
+        name.contains('yansã'))
+      return const Color(0xFFB71C1C);
     if (name.contains('xangô') || name.contains('xango'))
-      return const Color(0xFF795548); // Marrom
-    if (name.contains('omolu') || name.contains('obaluaiê'))
-      return const Color(0xFF212121); // Preto/Palha
-    if (name.contains('nanã')) return const Color(0xFF9C27B0); // Lilás/Roxo
-    if (name.contains('oxalá') || name.contains('oxaguian')) return const Color(0xFF9E9E9E); // Branco/Prata
-
-    return Colors.grey; // Cor padrão para nomes não reconhecidos
+      return const Color(0xFF795548);
+    if (name.contains('nanã')) return const Color(0xFF9C27B0);
+    if (name.contains('oxalá') || name.contains('oxaguian'))
+      return const Color(0xFFBDBDBD);
+    return Colors.grey;
   }
 }

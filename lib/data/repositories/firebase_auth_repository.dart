@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -12,7 +11,6 @@ import '../datasources/base_firestore_datasource.dart';
 class FirebaseAuthRepository extends BaseFirestoreDataSource
     implements AuthRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _tenantSlug = AppConfig.instance.tenant.tenantSlug;
 
   @override
@@ -26,6 +24,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
       final uid = result.user?.uid;
       if (uid == null) return null;
 
+      // Busca o perfil completo incluindo o campo 'role'
       final doc = await tenantDocument('users', uid).get();
 
       if (doc.exists && doc.data() != null) {
@@ -43,52 +42,46 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
   }
 
   @override
+  Future<UserModel?> getCurrentUserProfile(String uid) async {
+    try {
+      final doc = await tenantDocument('users', uid).get();
+      if (doc.exists && doc.data() != null) {
+        return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+      }
+      return null;
+    } catch (e) {
+      dev.log("Erro ao buscar perfil atual: $e");
+      return null;
+    }
+  }
+
+  @override
   Future<String> uploadProfileImage(File image, String userId) async {
     try {
       dev.log("Iniciando processo de upload para o usuário: $userId");
 
-      // 1. Instância forçada com o bucket que você ativou
       final storage = FirebaseStorage.instanceFor(
         app: Firebase.app(),
         bucket: "tenda-white-label.firebasestorage.app",
       );
 
-      // 2. Referência do arquivo
       final storageRef = storage.ref().child('profiles').child(userId);
-
-      // 3. Conversão para Bytes (Resolve erros de permissão de arquivo no iOS)
       final bytes = await image.readAsBytes();
 
-      dev.log("Subindo bytes para o Storage...");
-
-      // 4. Upload usando putData com metadados explícitos
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',
         customMetadata: {'userId': userId, 'tenant': _tenantSlug},
       );
 
-      // Aqui é onde o erro 'unauthorized' acontece se as regras não baterem
       final uploadTask = await storageRef.putData(bytes, metadata);
-
-      // 5. Pegamos a URL pública
       final downloadUrl = await uploadTask.ref.getDownloadURL();
-      dev.log("URL de download gerada: $downloadUrl");
 
-      // 6. Atualização no Firestore seguindo a hierarquia de Tenants
       if (_tenantSlug.isEmpty) {
         throw Exception("Slug do Tenant não identificado.");
       }
 
-      dev.log("Atualizando Firestore: tenants/$_tenantSlug/users/$userId");
+      await tenantDocument('users', userId).update({'photoUrl': downloadUrl});
 
-      await _firestore
-          .collection('tenants')
-          .doc(_tenantSlug)
-          .collection('users')
-          .doc(userId)
-          .update({'photoUrl': downloadUrl});
-
-      dev.log("Processo finalizado com sucesso!");
       return downloadUrl;
     } catch (e) {
       dev.log("FALHA NO REPOSITÓRIO: $e");
@@ -111,9 +104,9 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
     String? medicamentos,
     String? condicoesMedicas,
     String? tipoSanguineo,
+    String role = 'user', // Suporte para definição de cargo no cadastro
   }) async {
     try {
-      // VALIDAÇÃO MANUAL DE CAMPOS OBRIGATÓRIOS
       if (name.trim().isEmpty ||
           email.trim().isEmpty ||
           phone.trim().isEmpty ||
@@ -151,6 +144,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
         condicoesMedicas: condicoesMedicas,
         tipoSanguineo: tipoSanguineo,
         createdAt: DateTime.now(),
+        role: role, // Atribui o role (padrão 'user')
       );
 
       await tenantDocument('users', uid).set(newUser.toMap());
@@ -180,6 +174,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
         if (!doc.exists) return null;
         return UserModel.fromMap(doc.data() as Map<String, dynamic>);
       } catch (e) {
+        dev.log("Erro no stream de auth: $e");
         return null;
       }
     });

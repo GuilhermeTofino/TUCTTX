@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // =========================================================================
+    // TENANTS COLLECTION (Root for all multitenancy data)
+    // =========================================================================
+    match /tenants/{tenantId} {
+      // 1. Tenant Configuration
+      // Public read access allowed for the app to load theme/config before login.
+      allow read: if true;
+      
+      // -----------------------------------------------------------------------
+      // USERS SUBCOLLECTION
+      // Path: /tenants/{tenantId}/users/{userId}
+      // -----------------------------------------------------------------------
+      match /users/{userId} {
+        // Authenticated users can read user profiles (e.g. to see who is attending an event)
+        allow read: if request.auth != null;
+        
+        // Users can create/update only their own profile
+        // - Create: During sign up
+        // - Update: Changing photo, phone, etc.
+        allow create: if request.auth != null; 
+        allow update: if request.auth != null && request.auth.uid == userId;
+        
+        // Only admins can delete users (future implementation)
+        allow delete: if false; 
+      }
+      
+      // -----------------------------------------------------------------------
+      // EVENTS SUBCOLLECTION
+      // Path: /tenants/{tenantId}/events/{eventId}
+      // -----------------------------------------------------------------------
+      match /events/{eventId} {
+        // Authenticated users can view all events
+        allow read: if request.auth != null;
+        
+        // WRITE PERMISSIONS
+        // Currently allowing any authenticated user to create/edit events.
+        // TODO: Restrict this to admins only in the future (e.g., check resource.data.role == 'admin')
+        allow write: if request.auth != null;
+        
+        // ---------------------------------------------------------------------
+        // EVENT CONFIRMATIONS SUBCOLLECTION
+        // Path: /tenants/{tenantId}/events/{eventId}/confirmations/{userId}
+        // ---------------------------------------------------------------------
+        match /confirmations/{userId} {
+          // Authenticated users can read the attendance list
+          allow read: if request.auth != null;
+          
+          // Users can only confirm/remove THEIR OWN presence
+          // The document ID ({userId}) must match the authenticated user's UID
+          allow write: if request.auth != null && request.auth.uid == userId;
+        }
+      }
+    }
+    
+    // =========================================================================
+    // LEGACY / DEPRECATED PATHS
+    // =========================================================================
+    // Blocking access to root /events to ensure data consistency with the new structure.
+    match /events/{eventId} {
+      allow read, write: if false;
+    }
+  }
+}

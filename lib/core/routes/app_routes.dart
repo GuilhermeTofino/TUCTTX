@@ -1,3 +1,4 @@
+import 'package:app_tenda/presentation/views/calendar_view.dart';
 import 'package:app_tenda/presentation/views/home_view.dart';
 import 'package:app_tenda/presentation/views/login_view.dart';
 import 'package:app_tenda/presentation/views/register_view.dart';
@@ -11,7 +12,8 @@ class AppRoutes {
   static const String welcome = '/';
   static const String login = '/login';
   static const String register = '/register';
-  static const String home = '/home'; // Adicionado para a Home após o login
+  static const String home = '/home';
+  static const String calendar = '/calendar';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -27,6 +29,11 @@ class AppRoutes {
 
       case home:
         return MaterialPageRoute(builder: (_) => const HomeView());
+
+      case calendar:
+        return MaterialPageRoute(builder: (_) => const CalendarView());
+
+      
 
       default:
         return _errorRoute("Rota não encontrada: ${settings.name}");
