@@ -47,9 +47,13 @@ class _MenuEditModalState extends State<MenuEditModal> {
 
   final List<Map<String, dynamic>> _availableActions = [
     {'name': 'Abrir Calendário', 'key': 'route:/calendar'},
+    {'name': 'Central Financeira', 'key': 'internal:finance'},
     {'name': 'Dados de Saúde', 'key': 'internal:health'},
     {'name': 'Em Breve (Aviso)', 'key': 'internal:coming_soon'},
+    {'name': 'Customizada (Rota)', 'key': 'custom'},
   ];
+
+  final _customRouteController = TextEditingController();
 
   @override
   void initState() {
@@ -62,23 +66,27 @@ class _MenuEditModalState extends State<MenuEditModal> {
     if (widget.menu != null) {
       _selectedIcon = widget.menu!.icon;
       _selectedColor = widget.menu!.color;
-      _selectedAction = widget.menu!.action;
+
+      // Se a ação não estiver na lista padrão, é customizada
+      final isPredefined = _availableActions.any(
+        (a) => a['key'] == widget.menu!.action,
+      );
+      if (isPredefined) {
+        _selectedAction = widget.menu!.action;
+      } else {
+        _selectedAction = 'custom';
+        _customRouteController.text = widget.menu!.action;
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Blindagem: Garante que os valores selecionados existem nas listas atuais
-    // Se não existirem (ex: dados antigos ou erro de sync), volta para o padrão seguro.
+    // Blindagem
     final String currentIcon =
         _availableIcons.any((i) => i['key'] == _selectedIcon)
         ? _selectedIcon
         : 'help_outline';
-
-    final String currentAction =
-        _availableActions.any((a) => a['key'] == _selectedAction)
-        ? _selectedAction
-        : 'internal:coming_soon';
 
     return Container(
       padding: EdgeInsets.only(
@@ -139,7 +147,7 @@ class _MenuEditModalState extends State<MenuEditModal> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: currentAction,
+                value: _selectedAction,
                 decoration: const InputDecoration(
                   labelText: "Ação ao Clicar",
                   border: OutlineInputBorder(),
@@ -154,6 +162,21 @@ class _MenuEditModalState extends State<MenuEditModal> {
                     .toList(),
                 onChanged: (v) => setState(() => _selectedAction = v!),
               ),
+              if (_selectedAction == 'custom') ...[
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _customRouteController,
+                  decoration: const InputDecoration(
+                    labelText: "Rota/Ação Manual (ex: route:/perfil)",
+                    border: OutlineInputBorder(),
+                    hintText: "route:/nome_da_rota",
+                  ),
+                  validator: (v) =>
+                      _selectedAction == 'custom' && (v?.isEmpty ?? true)
+                      ? "Obrigatório para ação customizada"
+                      : null,
+                ),
+              ],
               const SizedBox(height: 16),
               TextFormField(
                 controller: _orderController,
@@ -177,12 +200,16 @@ class _MenuEditModalState extends State<MenuEditModal> {
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                      final finalAction = _selectedAction == 'custom'
+                          ? _customRouteController.text
+                          : _selectedAction;
+
                       final menu = MenuOptionModel(
                         id: widget.menu?.id ?? const Uuid().v4(),
                         title: _titleController.text,
                         icon: _selectedIcon,
                         color: _selectedColor,
-                        action: _selectedAction,
+                        action: finalAction,
                         order: int.tryParse(_orderController.text) ?? 999,
                         isEnabled: true,
                       );

@@ -6,9 +6,11 @@ import '../viewmodels/calendar_viewmodel.dart';
 import '../viewmodels/register_viewmodel.dart';
 import '../widgets/custom_logo_loader.dart';
 import 'import_events_view.dart';
+import '../widgets/admin/event_edit_modal.dart';
 
 class CalendarView extends StatefulWidget {
-  const CalendarView({super.key});
+  final bool isAdminMode;
+  const CalendarView({super.key, this.isAdminMode = false});
 
   @override
   State<CalendarView> createState() => _CalendarViewState();
@@ -45,7 +47,8 @@ class _CalendarViewState extends State<CalendarView> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       // Trava lógica: O botão só é renderizado se o usuário logado for admin
-      floatingActionButton: _authVM.isAdmin
+      // Só mostra o botão de importar se estiver no modo Admin Hub E for admin
+      floatingActionButton: (widget.isAdminMode && _authVM.isAdmin)
           ? FloatingActionButton(
               onPressed: () async {
                 await Navigator.push(
@@ -121,16 +124,18 @@ class _CalendarViewState extends State<CalendarView> {
             alignment: Alignment.centerLeft,
           ),
           const SizedBox(height: 10),
-          const Text(
-            "Cronograma",
-            style: TextStyle(
+          Text(
+            widget.isAdminMode ? "Gerenciar Escalas" : "Cronograma",
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 32,
               fontWeight: FontWeight.bold,
             ),
           ),
           Text(
-            "Giras e trabalhos do terreiro",
+            widget.isAdminMode
+                ? "Gestão de eventos e escalas"
+                : "Giras e trabalhos do terreiro",
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),
               fontSize: 16,
@@ -316,192 +321,255 @@ class _CalendarViewState extends State<CalendarView> {
     );
   }
 
-  void _showEventDetailsBottomSheet(event, tenant) {
+  void _showEventDetailsBottomSheet(originalEvent, tenant) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            ),
-          ),
-          padding: const EdgeInsets.all(24),
-          child: StreamBuilder<List<Map<String, dynamic>>>(
-            stream: _viewModel.getConfirmations(tenant.tenantSlug, event.id),
-            builder: (context, snapshot) {
-              final attendees = snapshot.data ?? [];
-              final currentUser = _authVM.currentUser;
-              final isConfirmed =
-                  currentUser != null &&
-                  attendees.any((a) => a['id'] == currentUser.id);
+        return ListenableBuilder(
+          listenable: _viewModel,
+          builder: (context, _) {
+            // Busca o evento atualizado da lista para garantir reatividade
+            // Se não encontrar (ex: deletado), usa o original como fallback
+            final event = _viewModel.events.firstWhere(
+              (e) => e.id == originalEvent.id,
+              orElse: () => originalEvent,
+            );
 
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 50,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              padding: const EdgeInsets.all(24),
+              child: StreamBuilder<List<Map<String, dynamic>>>(
+                stream: _viewModel.getConfirmations(
+                  tenant.tenantSlug,
+                  event.id,
+                ),
+                builder: (context, snapshot) {
+                  final attendees = snapshot.data ?? [];
+                  final currentUser = _authVM.currentUser;
+                  final isConfirmed =
+                      currentUser != null &&
+                      attendees.any((a) => a['id'] == currentUser.id);
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: tenant.primaryColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Icon(
-                          Icons.event_note,
-                          color: tenant.primaryColor,
-                          size: 28,
+                      Center(
+                        child: Container(
+                          width: 50,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              event.title,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: tenant.primaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              DateFormat(
-                                "EEEE, d 'de' MMMM",
-                                'pt_BR',
-                              ).format(event.date),
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
+                            child: Icon(
+                              Icons.event_note,
+                              color: tenant.primaryColor,
+                              size: 28,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        event.title,
+                                        style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    if (widget.isAdminMode)
+                                      IconButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          _showEditModal(
+                                            event,
+                                            tenant.tenantSlug,
+                                          );
+                                        },
+                                        icon: Icon(
+                                          Icons.edit_outlined,
+                                          color: tenant.primaryColor,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  DateFormat(
+                                    "EEEE, d 'de' MMMM",
+                                    'pt_BR',
+                                  ).format(event.date),
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      _buildDetailRow(
+                        Icons.access_time,
+                        "Horário",
+                        DateFormat('HH:mm').format(event.date),
+                      ),
+                      _buildDetailRow(Icons.label_outline, "Tipo", event.type),
+                      // Seção de Faxina (Nova)
+                      if (event.cleaningCrew != null &&
+                          event.cleaningCrew!.isNotEmpty) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Divider(),
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.cleaning_services_outlined,
+                              color: tenant.primaryColor,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              "Equipe de Faxina",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  _buildDetailRow(
-                    Icons.access_time,
-                    "Horário",
-                    DateFormat('HH:mm').format(event.date),
-                  ),
-                  _buildDetailRow(Icons.label_outline, "Tipo", event.type),
-                  // Seção de Faxina (Nova)
-                  if (event.cleaningCrew != null &&
-                      event.cleaningCrew!.isNotEmpty) ...[
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Divider(),
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.cleaning_services_outlined,
-                          color: tenant.primaryColor,
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: event.cleaningCrew!.map<Widget>((name) {
+                            final isConfirmed =
+                                event.confirmedAttendance?.contains(name) ??
+                                false;
+                            final color = isConfirmed
+                                ? Colors.green
+                                : Colors.blue;
+                            final isAdmin =
+                                widget.isAdminMode && _authVM.isAdmin;
+
+                            return ActionChip(
+                              label: Text(name),
+                              backgroundColor: color[50],
+                              labelStyle: TextStyle(
+                                color: color[800],
+                                fontWeight: FontWeight.bold,
+                              ),
+                              avatar: CircleAvatar(
+                                backgroundColor: color[100],
+                                child: isConfirmed
+                                    ? Icon(
+                                        Icons.check,
+                                        size: 14,
+                                        color: color[800],
+                                      )
+                                    : Text(
+                                        name.isNotEmpty
+                                            ? name[0].toUpperCase()
+                                            : '?',
+                                        style: TextStyle(
+                                          color: color[800],
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                              ),
+                              side: BorderSide.none,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              onPressed: isAdmin
+                                  ? () {
+                                      _viewModel.toggleAttendance(
+                                        tenant.tenantSlug,
+                                        event.id,
+                                        name,
+                                        isConfirmed,
+                                      );
+                                    }
+                                  : null, // Apenas admin pode clicar
+                            );
+                          }).toList(),
                         ),
-                        const SizedBox(width: 8),
+                      ],
+
+                      if (event.description != null &&
+                          event.description!.isNotEmpty) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Divider(),
+                        ),
                         const Text(
-                          "Equipe de Faxina",
+                          "Detalhes",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        const SizedBox(height: 8),
+                        Text(
+                          event.description!,
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                            height: 1.5,
+                            fontSize: 15,
+                          ),
+                        ),
                       ],
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: event.cleaningCrew!.map<Widget>((name) {
-                        return Chip(
-                          label: Text(name),
-                          backgroundColor:
-                              Colors.blue[50], // Azul clarinho para diferenciar
-                          labelStyle: TextStyle(
-                            color: Colors.blue[800],
-                            fontWeight: FontWeight.bold,
-                          ),
-                          avatar: CircleAvatar(
-                            backgroundColor: Colors.blue[100],
-                            child: Text(
-                              name.isNotEmpty ? name[0].toUpperCase() : '?',
-                              style: TextStyle(
-                                color: Colors.blue[800],
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                          side: BorderSide.none,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
 
-                  if (event.description != null &&
-                      event.description!.isNotEmpty) ...[
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Divider(),
-                    ),
-                    const Text(
-                      "Detalhes",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Divider(),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      event.description!,
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                        height: 1.5,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ],
 
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Divider(),
-                  ),
+                      // Seção de Presença (Escondida para Admin em Modo Gestão)
+                      if (!widget.isAdminMode)
+                        _buildAttendanceSection(
+                          event,
+                          attendees,
+                          tenant,
+                          currentUser,
+                          isConfirmed,
+                        ),
 
-                  // Seção de Presença
-                  _buildAttendanceSection(
-                    event,
-                    attendees,
-                    tenant,
-                    currentUser,
-                    isConfirmed,
-                  ),
-
-                  const SizedBox(height: 30),
-                ],
-              );
-            },
-          ),
+                      const SizedBox(height: 30),
+                    ],
+                  );
+                },
+              ),
+            );
+          },
         );
       },
     );
@@ -668,6 +736,25 @@ class _CalendarViewState extends State<CalendarView> {
             style: TextStyle(color: Colors.grey, fontSize: 16),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showEditModal(event, String tenantId) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => EventEditModal(
+        event: event,
+        onSave: (data) async {
+          Navigator.pop(context);
+          await _viewModel.updateEvent(event.id, data, tenantId);
+        },
+        onDelete: () async {
+          Navigator.pop(context);
+          await _viewModel.deleteEvent(event.id, tenantId, event.title);
+        },
       ),
     );
   }

@@ -43,6 +43,19 @@ class PushTriggerService extends BaseFirestoreDataSource {
     );
   }
 
+  /// Notifica todos os usuários sobre o cancelamento de uma gira.
+  Future<void> notifyEventCancelled(String eventTitle) async {
+    final tenantId = AppConfig.instance.tenant.tenantSlug;
+    final env = AppConfig.instance.environment.name;
+
+    await _enqueueNotification(
+      topic: '${tenantId}_${env}_all',
+      title: '🚫 Gira Cancelada',
+      body: 'A gira "$eventTitle" foi removida do calendário ou cancelada.',
+      data: {'type': 'event_cancelled'},
+    );
+  }
+
   /// Notifica um usuário específico sobre sua escala de faxina.
   Future<void> notifyCleaningDuty({
     required String userId,
@@ -57,6 +70,40 @@ class PushTriggerService extends BaseFirestoreDataSource {
       body:
           'Olá! Você foi escalado para a faxina no dia $date. Contamos com você!',
       data: {'type': 'cleaning_duty', 'date': date},
+    );
+  }
+
+  /// Notifica sobre mensalidade em atraso.
+  Future<void> notifyLateFee({
+    required String userName,
+    required List<String> userTokens,
+    required String month,
+  }) async {
+    if (userTokens.isEmpty) return;
+
+    await _enqueueNotification(
+      tokens: userTokens,
+      title: '💰 Lembrete de Mensalidade',
+      body:
+          'Olá $userName! Consta em nosso sistema a mensalidade de $month em aberto. Poderia verificar, por favor?',
+      data: {'type': 'finance_reminder', 'category': 'fee'},
+    );
+  }
+
+  /// Notifica sobre dívida de bazar em aberto.
+  Future<void> notifyBazaarDebt({
+    required String userName,
+    required List<String> userTokens,
+    required String itemName,
+  }) async {
+    if (userTokens.isEmpty) return;
+
+    await _enqueueNotification(
+      tokens: userTokens,
+      title: '🛍️ Lembrete do Bazar',
+      body:
+          'Olá $userName! Passando para lembrar da sua compra ($itemName) no bazar. Contamos com sua colaboração!',
+      data: {'type': 'finance_reminder', 'category': 'bazaar'},
     );
   }
 }

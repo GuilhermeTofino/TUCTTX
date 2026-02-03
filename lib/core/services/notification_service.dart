@@ -23,7 +23,14 @@ class NotificationService {
       if (kDebugMode) print('Usuário permitiu notificações');
     }
 
-    // 2. Configurar Notificações Locais (para popups em foreground)
+    // 1.1 Configurar como as notificações aparecem com o app aberto (iOS)
+    await _fcm.setForegroundNotificationPresentationOptions(
+      alert: true, // Garante que o banner apareça
+      badge: true,
+      sound: true,
+    );
+
+    // 2. Configurar Notificações Locais (para popups em foreground no Android)
     const initializationSettingsAndroid = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
@@ -81,7 +88,11 @@ class NotificationService {
   void _handleForegroundMessage(RemoteMessage message) {
     RemoteNotification? notification = message.notification;
 
-    if (notification != null && !kIsWeb) {
+    // No iOS, configuramos setForegroundNotificationPresentationOptions para o sistema cuidar do banner.
+    // Para Android, usamos o flutter_local_notifications manualmente.
+    if (notification != null &&
+        !kIsWeb &&
+        defaultTargetPlatform == TargetPlatform.android) {
       _localNotifications.show(
         id: notification.hashCode,
         title: notification.title,

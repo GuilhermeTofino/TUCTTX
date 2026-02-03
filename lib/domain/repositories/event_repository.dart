@@ -34,7 +34,6 @@ class EventRepository extends BaseFirestoreDataSource {
     } catch (e) {
       throw Exception("Erro ao inserir no Firestore: $e");
     }
-
     // Se houver uma equipe de faxina, tentamos notificar cada membro
     if (eventData['cleaningCrew'] != null &&
         (eventData['cleaningCrew'] as List).isNotEmpty) {
@@ -42,6 +41,45 @@ class EventRepository extends BaseFirestoreDataSource {
         List<String>.from(eventData['cleaningCrew']),
         DateTime.parse(eventData['date']),
       );
+    }
+  }
+
+  Future<void> updateEvent(
+    String eventId,
+    Map<String, dynamic> eventData,
+  ) async {
+    try {
+      await tenantCollection('events').doc(eventId).update({
+        'title': eventData['title'],
+        'date': Timestamp.fromDate(DateTime.parse(eventData['date'])),
+        'type': eventData['type'],
+        'description': eventData['description'],
+        'cleaningCrew': eventData['cleaningCrew'],
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      // Se a equipe de faxina mudou, podemos notificar novamente
+      if (eventData['cleaningCrew'] != null &&
+          (eventData['cleaningCrew'] as List).isNotEmpty) {
+        _triggerCleaningNotifications(
+          List<String>.from(eventData['cleaningCrew']),
+          DateTime.parse(eventData['date']),
+        );
+      }
+    } catch (e) {
+      throw Exception("Erro ao atualizar evento: $e");
+    }
+  }
+
+  Future<void> deleteEvent(String eventId, String eventTitle) async {
+    try {
+      await tenantCollection('events').doc(eventId).delete();
+
+      // Notifica todos sobre o cancelamento
+      final pushService = getIt<PushTriggerService>();
+      await pushService.notifyEventCancelled(eventTitle);
+    } catch (e) {
+      throw Exception("Erro ao deletar evento: $e");
     }
   }
 
@@ -119,10 +157,34 @@ class EventRepository extends BaseFirestoreDataSource {
         .snapshots()
         .map(
           (snapshot) => snapshot.docs.map((doc) {
-            final data = doc.data() as Map<String, dynamic>;
+            final data = doc.data();
             data['id'] = doc.id;
             return data;
           }).toList(),
         );
+  }
+
+  Future<void> toggleAttendanceConfirmation(
+    String eventId,
+    String memberName,
+    bool isConfirmed,
+  ) async {
+    try {
+      final docRef = tenantCollection('events').doc(eventId);
+
+      if (isConfirmed) {
+        // Se já está confirmado (true), queremos remover (toggle off)
+        await docRef.update({
+          'confirmedAttendance': FieldValue.arrayRemove([memberName]),
+        });
+      } else {
+        // Se não está confirmado (false), queremos adicionar (toggle on)
+        await docRef.update({
+          'confirmedAttendance': FieldValue.arrayUnion([memberName]),
+        });
+      }
+    } catch (e) {
+      throw Exception("Erro ao alterar presença na faxina: $e");
+    }
   }
 }

@@ -17,11 +17,16 @@ class TenantConfig {
     required this.primaryColor,
     required this.bundleId,
     required this.responsavel,
+    this.pixKey,
+    this.paymentLink,
   });
+
+  final String? pixKey;
+  final String? paymentLink;
 
   // Getter para garantir que o texto sobre a cor primária seja sempre visível
   // Se a cor for clara, retorna preto; se for escura, retorna branco.
-  Color get onPrimaryColor => 
+  Color get onPrimaryColor =>
       primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
   // Atalho para o caminho da logo
@@ -37,7 +42,9 @@ class AppConfig {
 
   static AppConfig get instance {
     if (_instance == null) {
-      throw Exception("AppConfig deve ser instanciado antes do uso. Verifique o main.dart");
+      throw Exception(
+        "AppConfig deve ser instanciado antes do uso. Verifique o main.dart",
+      );
     }
     return _instance!;
   }

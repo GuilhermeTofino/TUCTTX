@@ -8,6 +8,7 @@ class WorkEvent {
   final String? description;
   final String tenantId;
   final List<String>? cleaningCrew; // Lista de nomes para a faxina
+  final List<String>? confirmedAttendance; // Nomes confirmados pelo admin
 
   WorkEvent({
     required this.id,
@@ -17,6 +18,7 @@ class WorkEvent {
     this.description,
     required this.tenantId,
     this.cleaningCrew,
+    this.confirmedAttendance,
   });
 
   // Converte os dados do Firebase para o nosso modelo
@@ -32,6 +34,21 @@ class WorkEvent {
       cleaningCrew: data['cleaningCrew'] != null
           ? List<String>.from(data['cleaningCrew'])
           : null,
+      confirmedAttendance: data['confirmedAttendance'] != null
+          ? List<String>.from(data['confirmedAttendance'])
+          : [],
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'date': Timestamp.fromDate(date),
+      'type': type,
+      'description': description,
+      'tenantId': tenantId,
+      'cleaningCrew': cleaningCrew,
+      'confirmedAttendance': confirmedAttendance,
+    };
   }
 }

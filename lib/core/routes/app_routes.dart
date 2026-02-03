@@ -1,10 +1,13 @@
+import 'package:app_tenda/presentation/views/admin/admin_hub_view.dart';
+import 'package:app_tenda/presentation/views/admin/member_management_view.dart';
 import 'package:app_tenda/presentation/views/admin/menu_management_view.dart';
 import 'package:app_tenda/presentation/views/calendar_view.dart';
+import 'package:app_tenda/presentation/views/finance/financial_hub_view.dart';
 import 'package:app_tenda/presentation/views/home_view.dart';
 import 'package:app_tenda/presentation/views/login_view.dart';
 import 'package:app_tenda/presentation/views/register_view.dart';
 import 'package:flutter/material.dart';
-import '../../presentation/views/welcome_view.dart';
+import 'package:app_tenda/presentation/views/welcome_view.dart';
 // Importe aqui quando criarmos os arquivos:
 // import '../../presentation/views/login_view.dart';
 // import '../../presentation/views/register_view.dart';
@@ -16,6 +19,9 @@ class AppRoutes {
   static const String home = '/home';
   static const String calendar = '/calendar';
   static const String menuManagement = '/menu-management';
+  static const String adminHub = '/admin-hub';
+  static const String adminMembers = '/admin-members';
+  static const String financialHub = '/financial-hub';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -33,10 +39,23 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const HomeView());
 
       case calendar:
-        return MaterialPageRoute(builder: (_) => const CalendarView());
+        final args = settings.arguments as Map<String, dynamic>?;
+        final isAdminMode = args?['isAdminMode'] ?? false;
+        return MaterialPageRoute(
+          builder: (_) => CalendarView(isAdminMode: isAdminMode),
+        );
 
       case menuManagement:
         return MaterialPageRoute(builder: (_) => const MenuManagementView());
+
+      case adminHub:
+        return MaterialPageRoute(builder: (_) => const AdminHubView());
+
+      case adminMembers:
+        return MaterialPageRoute(builder: (_) => const MemberManagementView());
+
+      case financialHub:
+        return MaterialPageRoute(builder: (_) => const FinancialHubView());
 
       default:
         return _errorRoute("Rota não encontrada: ${settings.name}");

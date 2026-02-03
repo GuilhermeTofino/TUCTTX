@@ -27,6 +27,32 @@ class CalendarViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> updateEvent(
+    String eventId,
+    Map<String, dynamic> eventData,
+    String tenantId,
+  ) async {
+    try {
+      await _repository.updateEvent(eventId, eventData);
+      await loadEvents(tenantId); // Recarrega para refletir mudanças
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> deleteEvent(
+    String eventId,
+    String tenantId,
+    String eventTitle,
+  ) async {
+    try {
+      await _repository.deleteEvent(eventId, eventTitle);
+      await loadEvents(tenantId); // Recarrega para refletir mudanças
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   Future<void> confirmPresence(
     String tenantId,
     String eventId,
@@ -56,5 +82,23 @@ class CalendarViewModel extends ChangeNotifier {
     String eventId,
   ) {
     return _repository.getConfirmations(tenantId, eventId);
+  }
+
+  Future<void> toggleAttendance(
+    String tenantId,
+    String eventId,
+    String memberName,
+    bool isConfirmed,
+  ) async {
+    try {
+      await _repository.toggleAttendanceConfirmation(
+        eventId,
+        memberName,
+        isConfirmed,
+      );
+      await loadEvents(tenantId); // Recarrega para refletir a mudança de cor
+    } catch (e) {
+      debugPrint("Erro ao alternar presença: $e");
+    }
   }
 }

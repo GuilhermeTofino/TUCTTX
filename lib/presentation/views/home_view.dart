@@ -65,6 +65,8 @@ class _HomeViewState extends State<HomeView> {
       Navigator.pushNamed(context, AppRoutes.calendar);
     } else if (action == 'internal:health') {
       _showHealthDetailsSheet(context, user);
+    } else if (action == 'internal:finance' || action == 'route:/finance') {
+      Navigator.pushNamed(context, AppRoutes.financialHub);
     } else if (action == 'internal:coming_soon') {
       _showComingSoonSnackBar();
     } else {
@@ -190,7 +192,7 @@ class _HomeViewState extends State<HomeView> {
                       color: Colors.white,
                     ),
                     onPressed: () =>
-                        Navigator.pushNamed(context, AppRoutes.menuManagement),
+                        Navigator.pushNamed(context, AppRoutes.adminHub),
                   ),
                 ),
               ),

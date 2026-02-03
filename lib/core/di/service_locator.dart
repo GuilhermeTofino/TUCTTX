@@ -4,6 +4,8 @@ import 'package:app_tenda/presentation/viewmodels/calendar_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/home_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/import_events_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/register_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/member_management_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/finance_viewmodel.dart';
 import 'package:get_it/get_it.dart';
 import 'package:app_tenda/domain/repositories/auth_repository.dart';
 import 'package:app_tenda/domain/repositories/user_repository.dart';
@@ -16,6 +18,7 @@ import 'package:app_tenda/domain/repositories/notification_repository.dart';
 import 'package:app_tenda/data/repositories/firebase_notification_repository.dart';
 import 'package:app_tenda/core/services/notification_service.dart';
 import 'package:app_tenda/core/services/push_trigger_service.dart';
+import 'package:app_tenda/domain/repositories/finance_repository.dart';
 
 final getIt = GetIt.instance;
 
@@ -27,6 +30,9 @@ Future<void> setupServiceLocator() async {
   getIt.registerLazySingleton<MenuRepository>(() => FirebaseMenuRepository());
   getIt.registerLazySingleton<NotificationRepository>(
     () => FirebaseNotificationRepository(),
+  );
+  getIt.registerLazySingleton<FinanceRepository>(
+    () => FirebaseFinanceRepository(),
   );
 
   // ---- Services ----
@@ -55,4 +61,9 @@ Future<void> setupServiceLocator() async {
     () =>
         ImportEventsViewModel(getIt<AIEventParser>(), getIt<EventRepository>()),
   );
+
+  getIt.registerFactory<MemberManagementViewModel>(
+    () => MemberManagementViewModel(getIt<UserRepository>()),
+  );
+  getIt.registerLazySingleton<FinanceViewModel>(() => FinanceViewModel());
 }

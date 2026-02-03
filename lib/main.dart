@@ -4,13 +4,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'dart:developer' as dev;
 
 // Configurações e Core
-import 'core/config/app_config.dart';
-import 'core/config/tenant_factory.dart';
-import 'core/services/firebase_remote_configs.dart';
-import 'core/routes/app_routes.dart';
-import 'core/di/service_locator.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/config/tenant_factory.dart';
+import 'package:app_tenda/core/services/firebase_remote_configs.dart';
+import 'package:app_tenda/core/routes/app_routes.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'core/services/notification_service.dart';
+import 'package:app_tenda/core/services/notification_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 @pragma('vm:entry-point')
