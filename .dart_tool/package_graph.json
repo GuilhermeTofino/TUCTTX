@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "app_tenda",
-      "version": "1.0.0+1",
+      "version": "1.0.0+2",
       "dependencies": [
         "cloud_firestore",
         "cupertino_icons",
@@ -15,6 +15,7 @@
         "firebase_messaging",
         "firebase_storage",
         "flutter",
+        "flutter_dotenv",
         "flutter_local_notifications",
         "flutter_localizations",
         "flutter_secure_storage",
@@ -87,6 +88,13 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "flutter_dotenv",
+      "version": "5.2.1",
+      "dependencies": [
+        "flutter"
       ]
     },
     {

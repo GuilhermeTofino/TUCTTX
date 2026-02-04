@@ -26,6 +26,7 @@ import 'package:app_tenda/domain/repositories/study_repository.dart';
 import 'package:app_tenda/data/repositories/firebase_study_repository.dart';
 import 'package:app_tenda/presentation/viewmodels/study_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/admin/cleaning_dashboard_viewmodel.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final getIt = GetIt.instance;
 
@@ -52,9 +53,11 @@ Future<void> setupServiceLocator() async {
   );
   getIt.registerLazySingleton<PushTriggerService>(() => PushTriggerService());
 
-  const geminiKey = String.fromEnvironment('GEMINI_API_KEY');
+  final geminiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
   if (geminiKey.isEmpty) {
-    print("ALERTA: GEMINI_API_KEY não configurada. A IA não funcionará.");
+    print(
+      "ALERTA: GEMINI_API_KEY não configurada no .env. A IA não funcionará.",
+    );
   }
 
   getIt.registerLazySingleton<AIEventParser>(() => AIEventParser(geminiKey));

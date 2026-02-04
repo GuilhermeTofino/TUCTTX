@@ -14,3 +14,6 @@ ios/Flutter/flutter_export_environment.sh
 
 # VS Code
 .vscode/launch.json
+
+# Environment
+.env

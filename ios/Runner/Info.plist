@@ -28,6 +28,12 @@
 		<true/>
 		<key>NSFaceIDUsageDescription</key>
 		<string>Utilizamos a biometria para facilitar seu acesso seguro ao aplicativo.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Precisamos de acesso à galeria para que você possa anexar fotos aos eventos e comprovantes.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Precisamos de acesso à câmera para que você possa tirar fotos de eventos e comprovantes.</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Precisamos de acesso ao microfone para captura de vídeo.</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UIBackgroundModes</key>

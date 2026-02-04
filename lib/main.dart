@@ -11,6 +11,7 @@ import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:app_tenda/core/services/notification_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -24,6 +25,7 @@ void main() async {
     // Garante que os bindings do Flutter estejam prontos
     WidgetsFlutterBinding.ensureInitialized();
     await initializeDateFormatting('pt_BR', null);
+    await dotenv.load(fileName: ".env");
 
     // 1. Captura variáveis de ambiente
     const slug = String.fromEnvironment('TENANT');
