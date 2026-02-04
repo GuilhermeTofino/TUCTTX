@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/domain/models/user_model.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../widgets/admin/member_options_modal.dart';
 
 import '../../widgets/premium_sliver_app_bar.dart';
@@ -104,7 +105,7 @@ class _MemberManagementViewState extends State<MemberManagementView> {
                 radius: 28,
                 backgroundColor: const Color(0xFFF1F3F5),
                 backgroundImage: member.photoUrl != null
-                    ? NetworkImage(member.photoUrl!)
+                    ? CachedNetworkImageProvider(member.photoUrl!)
                     : null,
                 child: member.photoUrl == null
                     ? const Icon(Icons.person, color: Colors.grey)

@@ -16,6 +16,52 @@ else
   echo "✅ .env file created"
 fi
 
+# Inject Tenant Config into Generated.xcconfig
+echo "📦 Injecting Tenant Config..."
+if [ -z "$TENANT" ]; then
+  echo "ERROR: TENANT environment variable is missing!"
+  exit 1
+else
+  # Encodings keys and values to Base64 logic akin to how Flutter does internaly for dart-defines
+  # However, for simplicity in shell, we will just pass them as raw defines if possible, 
+  # OR we append to DART_DEFINES if we want to mimic flutter run.
+  # But since we are likely not running "flutter build ios" directly (Xcode does the build via the script phase),
+  # we need to ensure these values are available to the App.
+  
+  # The app reads: const String.fromEnvironment('TENANT')
+  # This comes from DART_DEFINES in Generated.xcconfig.
+  
+  # Helper to encoded
+  encode_define() {
+    echo -n "$1" | base64
+  }
+  
+  TENANT_DEF="TENANT=$TENANT"
+  ENV_DEF="ENV=${ENV:-prod}" # default to prod if ENV not set
+  
+  TENANT_B64=$(encode_define "$TENANT_DEF")
+  ENV_B64=$(encode_define "$ENV_DEF")
+  
+  # Note: Generated.xcconfig might explicitly overwrite DART_DEFINES. 
+  # We should append to it.
+  
+  XCCONFIG_PATH="ios/Flutter/Generated.xcconfig"
+  
+  # Append comma + new defines to the end of the existing DART_DEFINES line
+  # This is a bit hacky but works for Xcode Cloud's post-processing of this file
+  
+  if grep -q "DART_DEFINES" "$XCCONFIG_PATH"; then
+      # Append to existing line (using sed to replace end of line)
+      # We assume the line doesn't end with a comma, so we add one.
+      sed -i '' "s/^DART_DEFINES.*/&,$TENANT_B64,$ENV_B64/" "$XCCONFIG_PATH"
+      echo "✅ Appended TENANT ($TENANT) and ENV to DART_DEFINES"
+  else
+     # Create line if not exists
+     echo "DART_DEFINES=$TENANT_B64,$ENV_B64" >> "$XCCONFIG_PATH"
+     echo "✅ Created DART_DEFINES with TENANT ($TENANT)"
+  fi
+fi
+
 echo "📦 Installed Flutter..."
 
 # Install Flutter using git
