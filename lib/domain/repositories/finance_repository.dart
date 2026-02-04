@@ -21,6 +21,8 @@ abstract class FinanceRepository {
     double? value,
   });
   Future<void> addBazaarDebt(BazaarDebtModel debt);
+  Future<void> updateBazaarDebt(BazaarDebtModel debt);
+  Future<void> deleteBazaarDebt(String userId, String debtId);
   Future<void> markBazaarDebtAsPaid(String userId, String debtId);
   Future<void> syncMonthlyFeesForYear(
     String userId,
@@ -104,6 +106,22 @@ class FirebaseFinanceRepository extends BaseFirestoreDataSource
     await tenantCollection(
       'financial',
     ).doc(debt.userId).collection('bazaar_debts').add(debt.toMap());
+  }
+
+  @override
+  Future<void> updateBazaarDebt(BazaarDebtModel debt) async {
+    await tenantCollection('financial')
+        .doc(debt.userId)
+        .collection('bazaar_debts')
+        .doc(debt.id)
+        .update(debt.toMap());
+  }
+
+  @override
+  Future<void> deleteBazaarDebt(String userId, String debtId) async {
+    await tenantCollection(
+      'financial',
+    ).doc(userId).collection('bazaar_debts').doc(debtId).delete();
   }
 
   @override

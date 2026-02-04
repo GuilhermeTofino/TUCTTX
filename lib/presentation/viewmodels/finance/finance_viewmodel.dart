@@ -92,6 +92,14 @@ class FinanceViewModel extends ChangeNotifier {
     await _repository.markBazaarDebtAsPaid(userId, debtId);
   }
 
+  Future<void> updateBazaarDebt(BazaarDebtModel debt) async {
+    await _repository.updateBazaarDebt(debt);
+  }
+
+  Future<void> deleteBazaarDebt(String userId, String debtId) async {
+    await _repository.deleteBazaarDebt(userId, debtId);
+  }
+
   // Goals Logic
   List<FinancialGoalModel> _goals = [];
   List<FinancialGoalModel> get goals => _goals;

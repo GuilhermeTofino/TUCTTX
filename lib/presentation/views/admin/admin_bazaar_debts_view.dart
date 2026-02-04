@@ -274,6 +274,45 @@ class _AdminBazaarDebtsViewState extends State<AdminBazaarDebtsView> {
                         ),
                       ),
                     ),
+                    PopupMenuButton<String>(
+                      icon: const Icon(
+                        Icons.more_vert,
+                        color: Colors.grey,
+                        size: 20,
+                      ),
+                      onSelected: (value) {
+                        if (value == 'edit') {
+                          _showEditDialog(debt);
+                        } else if (value == 'delete') {
+                          _confirmDelete(debt);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'edit',
+                          child: Row(
+                            children: [
+                              Icon(Icons.edit, size: 18),
+                              SizedBox(width: 8),
+                              Text('Editar'),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, size: 18, color: Colors.red),
+                              SizedBox(width: 8),
+                              Text(
+                                'Excluir',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
             ],
@@ -306,5 +345,85 @@ class _AdminBazaarDebtsViewState extends State<AdminBazaarDebtsView> {
         ).showSnackBar(const SnackBar(content: Text("Dívida registrada!")));
       }
     }
+  }
+
+  void _showEditDialog(BazaarDebtModel debt) {
+    final editItemController = TextEditingController(text: debt.itemName);
+    final editValueController = TextEditingController(
+      text: debt.value.toStringAsFixed(2),
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Editar Dívida"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: editItemController,
+              decoration: const InputDecoration(labelText: "Item"),
+            ),
+            TextField(
+              controller: editValueController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: "Valor (R\$)"),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () async {
+              final newItem = editItemController.text;
+              final newValueStr = editValueController.text.replaceAll(',', '.');
+              final newValue = double.tryParse(newValueStr);
+
+              if (newItem.isNotEmpty && newValue != null) {
+                final updatedDebt = BazaarDebtModel(
+                  id: debt.id,
+                  userId: debt.userId,
+                  itemName: newItem,
+                  value: newValue,
+                  date: debt.date,
+                  isPaid: debt.isPaid,
+                  paidAt: debt.paidAt,
+                );
+                await _financeVM.updateBazaarDebt(updatedDebt);
+                if (mounted) Navigator.pop(context);
+              }
+            },
+            child: const Text("Salvar"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDelete(BazaarDebtModel debt) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Excluir Dívida"),
+        content: Text("Tem certeza que deseja excluir '${debt.itemName}'?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () async {
+              await _financeVM.deleteBazaarDebt(debt.userId, debt.id);
+              if (mounted) Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text("Excluir"),
+          ),
+        ],
+      ),
+    );
   }
 }
