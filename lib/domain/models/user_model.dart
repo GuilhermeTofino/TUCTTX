@@ -8,9 +8,9 @@ class UserModel {
   final DateTime? createdAt;
   final String? photoUrl;
   final String role;
-  
+
   // NOVO CAMPO: Lista de tokens para notificações
-  final List<String>? fcmTokens; 
+  final List<String>? fcmTokens;
 
   // Campos de Fundamento
   final bool jaTirouSanto;
@@ -23,6 +23,9 @@ class UserModel {
   final String? medicamentos;
   final String? condicoesMedicas;
   final String? tipoSanguineo;
+  // Campos de Amaci
+  final DateTime? lastAmaciDate;
+  final DateTime? nextAmaciDate;
 
   UserModel({
     required this.id,
@@ -34,7 +37,7 @@ class UserModel {
     this.createdAt,
     this.photoUrl,
     this.role = 'user',
-    this.fcmTokens, // Adicionado aqui
+    this.fcmTokens,
     required this.jaTirouSanto,
     this.jogoComTata = false,
     this.orixaFrente,
@@ -43,6 +46,8 @@ class UserModel {
     this.medicamentos,
     this.condicoesMedicas,
     this.tipoSanguineo,
+    this.lastAmaciDate,
+    this.nextAmaciDate,
   });
 
   bool get isAdmin => role == 'admin';
@@ -57,7 +62,7 @@ class UserModel {
     DateTime? createdAt,
     String? photoUrl,
     String? role,
-    List<String>? fcmTokens, // Adicionado aqui
+    List<String>? fcmTokens,
     bool? jaTirouSanto,
     bool? jogoComTata,
     String? orixaFrente,
@@ -66,6 +71,8 @@ class UserModel {
     String? medicamentos,
     String? condicoesMedicas,
     String? tipoSanguineo,
+    DateTime? lastAmaciDate,
+    DateTime? nextAmaciDate,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -77,7 +84,7 @@ class UserModel {
       createdAt: createdAt ?? this.createdAt,
       photoUrl: photoUrl ?? this.photoUrl,
       role: role ?? this.role,
-      fcmTokens: fcmTokens ?? this.fcmTokens, // Adicionado aqui
+      fcmTokens: fcmTokens ?? this.fcmTokens,
       jaTirouSanto: jaTirouSanto ?? this.jaTirouSanto,
       jogoComTata: jogoComTata ?? this.jogoComTata,
       orixaFrente: orixaFrente ?? this.orixaFrente,
@@ -86,6 +93,8 @@ class UserModel {
       medicamentos: medicamentos ?? this.medicamentos,
       condicoesMedicas: condicoesMedicas ?? this.condicoesMedicas,
       tipoSanguineo: tipoSanguineo ?? this.tipoSanguineo,
+      lastAmaciDate: lastAmaciDate ?? this.lastAmaciDate,
+      nextAmaciDate: nextAmaciDate ?? this.nextAmaciDate,
     );
   }
 
@@ -100,7 +109,7 @@ class UserModel {
       'createdAt': createdAt?.toIso8601String(),
       'photoUrl': photoUrl,
       'role': role,
-      'fcmTokens': fcmTokens, // Adicionado aqui
+      'fcmTokens': fcmTokens,
       'jaTirouSanto': jaTirouSanto,
       'jogoComTata': jogoComTata,
       'orixaFrente': orixaFrente,
@@ -109,6 +118,8 @@ class UserModel {
       'medicamentos': medicamentos,
       'condicoesMedicas': condicoesMedicas,
       'tipoSanguineo': tipoSanguineo,
+      'lastAmaciDate': lastAmaciDate?.toIso8601String(),
+      'nextAmaciDate': nextAmaciDate?.toIso8601String(),
     };
   }
 
@@ -128,10 +139,20 @@ class UserModel {
       medicamentos: map['medicamentos'],
       condicoesMedicas: map['condicoesMedicas'],
       tipoSanguineo: map['tipoSanguineo'],
-      createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt']) : null,
+      createdAt: map['createdAt'] != null
+          ? DateTime.parse(map['createdAt'])
+          : null,
       photoUrl: map['photoUrl'],
       role: map['role'] ?? 'user',
-      fcmTokens: map['fcmTokens'] != null ? List<String>.from(map['fcmTokens']) : null, // Adicionado aqui
+      fcmTokens: map['fcmTokens'] != null
+          ? List<String>.from(map['fcmTokens'])
+          : null,
+      lastAmaciDate: map['lastAmaciDate'] != null
+          ? DateTime.parse(map['lastAmaciDate'])
+          : null,
+      nextAmaciDate: map['nextAmaciDate'] != null
+          ? DateTime.parse(map['nextAmaciDate'])
+          : null,
     );
   }
 }

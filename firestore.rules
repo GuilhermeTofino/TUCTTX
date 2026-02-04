@@ -35,6 +35,16 @@ service cloud.firestore {
         }
 
         // -----------------------------------------------------------------------
+        // ANNOUNCEMENTS SUBCOLLECTION
+        // Path: .../announcements/{announcementId}
+        // -----------------------------------------------------------------------
+        match /announcements/{announcementId} {
+          allow read: if request.auth != null;
+          allow write: if request.auth != null && 
+            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
+        }
+
+        // -----------------------------------------------------------------------
         // FINANCIAL SUBCOLLECTION
         // Path: .../financial/{userId}
         // -----------------------------------------------------------------------
@@ -58,6 +68,15 @@ service cloud.firestore {
         }
 
         // -----------------------------------------------------------------------
+        // FINANCIAL GOALS SUBCOLLECTION
+        // Path: .../financial_goals/{goalId}
+        // -----------------------------------------------------------------------
+        match /financial_goals/{goalId} {
+          allow read, write: if request.auth != null && 
+            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
+        }
+
+        // -----------------------------------------------------------------------
         // EVENTS SUBCOLLECTION
         // Path: .../events/{eventId}
         // -----------------------------------------------------------------------
@@ -70,6 +89,16 @@ service cloud.firestore {
             allow read: if request.auth != null;
             allow write: if request.auth != null && request.auth.uid == userId;
           }
+        }
+
+        // -----------------------------------------------------------------------
+        // STUDIES SUBCOLLECTION
+        // Path: .../studies/{docId}
+        // -----------------------------------------------------------------------
+        match /studies/{docId} {
+          allow read: if request.auth != null;
+          allow write: if request.auth != null && 
+            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
         }
       }
     }

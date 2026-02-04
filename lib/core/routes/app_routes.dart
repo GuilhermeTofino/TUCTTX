@@ -3,9 +3,13 @@ import 'package:app_tenda/presentation/views/admin/member_management_view.dart';
 import 'package:app_tenda/presentation/views/admin/menu_management_view.dart';
 import 'package:app_tenda/presentation/views/calendar_view.dart';
 import 'package:app_tenda/presentation/views/finance/financial_hub_view.dart';
+import 'package:app_tenda/presentation/views/admin/admin_announcements_view.dart';
+import 'package:app_tenda/presentation/views/admin/admin_studies_view.dart';
+import 'package:app_tenda/presentation/views/announcements_view.dart';
 import 'package:app_tenda/presentation/views/home_view.dart';
 import 'package:app_tenda/presentation/views/login_view.dart';
 import 'package:app_tenda/presentation/views/register_view.dart';
+import 'package:app_tenda/presentation/views/studies/studies_hub_view.dart';
 import 'package:flutter/material.dart';
 import 'package:app_tenda/presentation/views/welcome_view.dart';
 // Importe aqui quando criarmos os arquivos:
@@ -22,6 +26,10 @@ class AppRoutes {
   static const String adminHub = '/admin-hub';
   static const String adminMembers = '/admin-members';
   static const String financialHub = '/financial-hub';
+  static const String adminAnnouncements = '/admin-announcements';
+  static const String announcements = '/announcements';
+  static const String studiesHub = '/studies-hub';
+  static const String adminStudies = '/admin-studies';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -56,6 +64,20 @@ class AppRoutes {
 
       case financialHub:
         return MaterialPageRoute(builder: (_) => const FinancialHubView());
+
+      case adminAnnouncements:
+        return MaterialPageRoute(
+          builder: (_) => const AdminAnnouncementsView(),
+        );
+
+      case announcements:
+        return MaterialPageRoute(builder: (_) => const AnnouncementsView());
+
+      case studiesHub:
+        return MaterialPageRoute(builder: (_) => const StudiesHubView());
+
+      case adminStudies:
+        return MaterialPageRoute(builder: (_) => const AdminStudiesView());
 
       default:
         return _errorRoute("Rota não encontrada: ${settings.name}");

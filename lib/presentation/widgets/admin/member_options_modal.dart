@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:app_tenda/domain/models/user_model.dart';
 import 'package:app_tenda/presentation/views/admin/admin_monthly_fees_view.dart';
 import 'package:app_tenda/presentation/views/admin/admin_bazaar_debts_view.dart';
+import 'package:app_tenda/presentation/views/admin/admin_amaci_view.dart';
+import 'package:app_tenda/presentation/views/admin/admin_member_full_record_view.dart';
 
 class MemberOptionsModal extends StatelessWidget {
   final UserModel member;
@@ -113,8 +115,12 @@ class MemberOptionsModal extends StatelessWidget {
                 icon: Icons.water_drop_outlined,
                 color: Colors.blue,
                 onTap: () {
-                  // TODO: Implementar fluxo de amaci
-                  _showPlaceholder(context, "Amaci");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AdminAmaciView(member: member),
+                    ),
+                  );
                 },
               ),
               _buildOptionCard(
@@ -123,8 +129,12 @@ class MemberOptionsModal extends StatelessWidget {
                 icon: Icons.assignment_outlined,
                 color: Colors.purple,
                 onTap: () {
-                  // TODO: Implementar fluxo de ficha completa
-                  _showPlaceholder(context, "Ficha Completa");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AdminMemberFullRecordView(member: member),
+                    ),
+                  );
                 },
               ),
             ],
@@ -173,15 +183,6 @@ class MemberOptionsModal extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showPlaceholder(BuildContext context, String title) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("O módulo de $title será implementado em breve!"),
-        behavior: SnackBarBehavior.floating,
       ),
     );
   }

@@ -187,4 +187,38 @@ class EventRepository extends BaseFirestoreDataSource {
       throw Exception("Erro ao alterar presença na faxina: $e");
     }
   }
+
+  Future<void> addParticipantToEvent(
+    String eventId,
+    String participantName,
+  ) async {
+    try {
+      await tenantCollection('events').doc(eventId).update({
+        'participants': FieldValue.arrayUnion([participantName]),
+      });
+    } catch (e) {
+      throw Exception("Erro ao adicionar participante ao evento: $e");
+    }
+  }
+
+  Future<List<WorkEvent>> getEventsByDateAndType(
+    DateTime date,
+    String type,
+  ) async {
+    try {
+      // Ajusta para início e fim do dia para garantir que pegue o evento
+      final startOfDay = DateTime(date.year, date.month, date.day);
+      final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+      final snapshot = await tenantCollection('events')
+          .where('date', isGreaterThanOrEqualTo: startOfDay)
+          .where('date', isLessThanOrEqualTo: endOfDay)
+          .where('type', isEqualTo: type)
+          .get();
+
+      return snapshot.docs.map((doc) => WorkEvent.fromFirestore(doc)).toList();
+    } catch (e) {
+      throw Exception("Erro ao buscar eventos por data e tipo: $e");
+    }
+  }
 }

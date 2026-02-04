@@ -57,5 +57,9 @@
 		<string>http</string>
 		<string>whatsapp</string>
 	</array>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 </dict>
 </plist>

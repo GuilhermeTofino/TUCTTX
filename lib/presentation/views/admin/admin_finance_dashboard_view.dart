@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/domain/models/financial_models.dart';
+import 'package:app_tenda/domain/models/financial_goal_model.dart';
 import 'package:app_tenda/domain/models/user_model.dart';
 import 'package:app_tenda/domain/repositories/finance_repository.dart';
 import 'package:app_tenda/domain/repositories/user_repository.dart';
+import 'package:app_tenda/presentation/viewmodels/finance_viewmodel.dart';
+import 'package:app_tenda/presentation/widgets/admin/goal_progress_card.dart';
+import '../../widgets/premium_sliver_app_bar.dart';
 
 class AdminFinanceDashboardView extends StatefulWidget {
   const AdminFinanceDashboardView({super.key});
@@ -16,15 +21,29 @@ class AdminFinanceDashboardView extends StatefulWidget {
 
 class _AdminFinanceDashboardViewState extends State<AdminFinanceDashboardView> {
   final _userRepo = getIt<UserRepository>();
+  final _financeVM = getIt<FinanceViewModel>();
+
   bool _isLoading = true;
   List<UserModel> _allUsers = [];
   Map<String, List<MonthlyFeeModel>> _userFees = {};
   Map<String, List<BazaarDebtModel>> _userDebts = {};
 
+  // State UI
+  int _selectedYear = DateTime.now().year;
+  int _selectedMonth = DateTime.now().month;
+  bool _isAnnualView = false; // Toggle entre Mensal e Anual
+
   @override
   void initState() {
     super.initState();
     _loadDashboardData();
+    // Escuta metas
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _financeVM.listenToGoals(
+        AppConfig.instance.tenant.tenantSlug,
+        _selectedYear,
+      );
+    });
   }
 
   Future<void> _loadDashboardData() async {
@@ -36,7 +55,6 @@ class _AdminFinanceDashboardViewState extends State<AdminFinanceDashboardView> {
     final financeRepo = getIt<FinanceRepository>();
 
     for (final user in users) {
-      // Busca o primeiro snapshot dos streams
       final feesList = await financeRepo
           .getUserMonthlyFees(user.tenantSlug, user.id)
           .first;
@@ -58,157 +76,264 @@ class _AdminFinanceDashboardViewState extends State<AdminFinanceDashboardView> {
     }
   }
 
+  // --- Calculations ---
+
+  double _calculateTotalRecieved() {
+    double total = 0;
+
+    // Mensalidades
+    for (final list in _userFees.values) {
+      for (final fee in list) {
+        bool matchesPeriod = _isAnnualView
+            ? fee.year == _selectedYear
+            : fee.year == _selectedYear && fee.month == _selectedMonth;
+
+        if (matchesPeriod && fee.status == FinanceStatus.paid) {
+          total += fee.value;
+        }
+      }
+    }
+
+    for (final list in _userDebts.values) {
+      for (final debt in list) {
+        if (!debt.isPaid) continue;
+
+        // Usa data do pagamento se dispo, senao data da divida (fallback)
+        final effectiveDate = debt.paidAt ?? debt.date;
+
+        bool matchesPeriod = _isAnnualView
+            ? effectiveDate.year == _selectedYear
+            : effectiveDate.year == _selectedYear &&
+                  effectiveDate.month == _selectedMonth;
+
+        if (matchesPeriod) {
+          total += debt.value;
+        }
+      }
+    }
+
+    return total;
+  }
+
+  // Totais PENDENTES (Atrasado + Pendente)
+  double _calculateTotalPending() {
+    double total = 0;
+    for (final list in _userFees.values) {
+      for (final fee in list) {
+        bool matchesPeriod = _isAnnualView
+            ? fee.year == _selectedYear
+            : fee.year == _selectedYear && fee.month == _selectedMonth;
+
+        if (matchesPeriod && fee.status != FinanceStatus.paid) {
+          total += fee.value;
+        }
+      }
+    }
+    // Bazar Pendente
+    for (final list in _userDebts.values) {
+      for (final debt in list) {
+        final date = debt.date;
+        bool matchesPeriod = _isAnnualView
+            ? date.year == _selectedYear
+            : date.year == _selectedYear && date.month == _selectedMonth;
+
+        if (matchesPeriod && !debt.isPaid) {
+          total += debt.value;
+        }
+      }
+    }
+    return total;
+  }
+
   @override
   Widget build(BuildContext context) {
     final tenant = AppConfig.instance.tenant;
 
+    // Dados Calculados
+    final totalRecieved = _calculateTotalRecieved();
+    final totalPending = _calculateTotalPending();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: const Text(
-          "Dashboard Financeiro",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: tenant.primaryColor,
-        foregroundColor: Colors.white,
-      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadDashboardData,
-              child: ListView(
-                padding: const EdgeInsets.all(24),
-                children: [
-                  _buildTotalizersSection(),
-                  const SizedBox(height: 32),
-                  _buildTopDebtorsSection(),
-                ],
-              ),
+          : CustomScrollView(
+              slivers: [
+                PremiumSliverAppBar(
+                  title: "Financeiro",
+                  backgroundIcon: Icons.analytics_rounded,
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.refresh, color: Colors.white),
+                      onPressed: _loadDashboardData,
+                    ),
+                  ],
+                ),
+                ListenableBuilder(
+                  listenable: _financeVM,
+                  builder: (context, _) {
+                    double currentTarget = _isAnnualView
+                        ? _financeVM.getAnnualGoal(_selectedYear)
+                        : _financeVM.getMonthlyGoal(
+                            _selectedMonth,
+                            _selectedYear,
+                          );
+
+                    return SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildPeriodSelector(tenant),
+                            const SizedBox(height: 24),
+
+                            // Hero Progress Card
+                            GoalProgressCard(
+                              title: _isAnnualView
+                                  ? "Meta Anual ($_selectedYear)"
+                                  : "Meta de ${DateFormat('MMMM', 'pt_BR').format(DateTime(_selectedYear, _selectedMonth))}",
+                              current: totalRecieved,
+                              target: currentTarget,
+                              baseColor: tenant.primaryColor,
+                              onEditGoal: () => _showSetGoalModal(
+                                context,
+                                currentTarget,
+                                _isAnnualView,
+                                _selectedMonth,
+                                _selectedYear,
+                              ),
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            // Mini Stats Grid
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildMiniStatCard(
+                                    "Pendente",
+                                    totalPending,
+                                    Colors.orange,
+                                    Icons.pending_actions,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _buildMiniStatCard(
+                                    "Bazar (Total)",
+                                    _calculateLegacyBazaarTotal(),
+                                    Colors.teal,
+                                    Icons.shopping_bag_outlined,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 32),
+                            const Text(
+                              "Top Pendências",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            _buildTopDebtorsList(),
+                            const SizedBox(height: 40),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
     );
   }
 
-  Widget _buildTotalizersSection() {
-    // Totalizadores de Mensalidades
-    double feesPaid = 0;
-    double feesPending = 0;
-    double feesLate = 0;
-
-    for (final userId in _userFees.keys) {
-      final fees = _userFees[userId] ?? [];
-      for (final fee in fees) {
-        if (fee.status == FinanceStatus.paid) {
-          feesPaid += fee.value;
-        } else if (fee.status == FinanceStatus.pending) {
-          feesPending += fee.value;
-        } else if (fee.status == FinanceStatus.late) {
-          feesLate += fee.value;
-        }
-      }
+  double _calculateLegacyBazaarTotal() {
+    // Retorna total de divida de bazar (open) INDEPENDENTE de data, snapshot atual
+    double total = 0;
+    for (final list in _userDebts.values) {
+      total += list.where((d) => !d.isPaid).fold(0.0, (s, d) => s + d.value);
     }
+    return total;
+  }
 
-    // Totalizadores de Bazar
-    double bazaarPaid = 0;
-    double bazaarPending = 0;
-
-    for (final userId in _userDebts.keys) {
-      final debts = _userDebts[userId] ?? [];
-      for (final debt in debts) {
-        if (debt.isPaid) {
-          bazaarPaid += debt.value;
-        } else {
-          bazaarPending += debt.value;
-        }
-      }
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Seção de Mensalidades
-        const Text(
-          "💰 Mensalidades",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildTotalizerCard(
-                "Arrecadado",
-                feesPaid,
-                Colors.green,
-                Icons.check_circle_outline,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildTotalizerCard(
-                "Pendente",
-                feesPending,
-                Colors.orange,
-                Icons.schedule,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        _buildTotalizerCard(
-          "Em Atraso",
-          feesLate,
-          Colors.red,
-          Icons.warning_amber_rounded,
-        ),
-
-        const SizedBox(height: 32),
-        const Divider(),
-        const SizedBox(height: 32),
-
-        // Seção de Bazar
-        const Text(
-          "🛍️ Bazar",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildTotalizerCard(
-                "Arrecadado",
-                bazaarPaid,
-                Colors.teal,
-                Icons.shopping_bag,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildTotalizerCard(
-                "Pendente",
-                bazaarPending,
-                Colors.deepOrange,
-                Icons.pending_actions,
-              ),
-            ),
-          ],
-        ),
-      ],
+  Widget _buildPeriodSelector(tenant) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          _buildPeriodTab("MENSAL", !_isAnnualView, () {
+            setState(() => _isAnnualView = false);
+          }, tenant),
+          _buildPeriodTab("ANUAL", _isAnnualView, () {
+            setState(() => _isAnnualView = true);
+          }, tenant),
+        ],
+      ),
     );
   }
 
-  Widget _buildTotalizerCard(
+  Widget _buildPeriodTab(
+    String text,
+    bool isActive,
+    VoidCallback onTap,
+    tenant,
+  ) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isActive ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                    ),
+                  ]
+                : [],
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: isActive ? Colors.black : Colors.grey[600],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMiniStatCard(
     String label,
     double value,
     Color color,
     IconData icon,
   ) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withOpacity(0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -217,27 +342,33 @@ class _AdminFinanceDashboardViewState extends State<AdminFinanceDashboardView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 24),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(height: 12),
           Text(
-            "R\$ ${value.toStringAsFixed(2)}",
+            label,
             style: TextStyle(
-              fontSize: 24,
+              color: Colors.grey[500],
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            NumberFormat.currency(
+              symbol: "R\$",
+              locale: "pt_BR",
+            ).format(value), // Formata
+            style: TextStyle(
+              fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: color,
+              color: Colors.grey[800],
             ),
           ),
         ],
@@ -245,8 +376,8 @@ class _AdminFinanceDashboardViewState extends State<AdminFinanceDashboardView> {
     );
   }
 
-  Widget _buildTopDebtorsSection() {
-    // Calcula dívidas totais por usuário (bazar não pago)
+  Widget _buildTopDebtorsList() {
+    // Reutiliza logica de sort
     final Map<String, double> userDebtsTotal = {};
 
     for (final userId in _userDebts.keys) {
@@ -256,91 +387,162 @@ class _AdminFinanceDashboardViewState extends State<AdminFinanceDashboardView> {
         0,
         (sum, debt) => sum + debt.value,
       );
-      if (total > 0) {
-        userDebtsTotal[userId] = total;
-      }
+      if (total > 0) userDebtsTotal[userId] = total;
     }
 
-    // Ordena por maior dívida
     final sortedDebtors = userDebtsTotal.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-
     final top5 = sortedDebtors.take(5).toList();
 
-    if (top5.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(32),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: const Center(
-          child: Text(
-            "🎉 Nenhuma pendência no Bazar!",
-            style: TextStyle(color: Colors.grey, fontSize: 14),
-          ),
-        ),
-      );
-    }
+    if (top5.isEmpty) return const Text("Sem pendências!");
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Maiores Pendências (Bazar)",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Container(
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: top5.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      itemBuilder: (context, index) {
+        final entry = top5[index];
+        final user = _allUsers.firstWhere(
+          (u) => u.id == entry.key,
+          orElse: () => UserModel(
+            id: '?',
+            name: 'Desconhecido',
+            email: '',
+            role: 'user',
+            createdAt: DateTime.now(),
+
+            tenantSlug: '',
+            phone: '',
+            emergencyContact: '',
+            jaTirouSanto: false,
+          ),
+        );
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(16),
           ),
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: top5.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (context, index) {
-              final entry = top5[index];
-              final user = _allUsers.firstWhere((u) => u.id == entry.key);
-              final position = index + 1;
-
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.orange.withOpacity(0.1),
-                  child: Text(
-                    "#$position",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.orange,
-                    ),
-                  ),
+          child: Row(
+            children: [
+              Text(
+                "#${index + 1}",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
                 ),
-                title: Text(
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
                   user.name,
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
-                trailing: Text(
-                  "R\$ ${entry.value.toStringAsFixed(2)}",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                    fontSize: 16,
+              ),
+              Text(
+                NumberFormat.currency(
+                  symbol: "R\$",
+                  locale: "pt_BR",
+                ).format(entry.value),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSetGoalModal(
+    BuildContext context,
+    double currentValue,
+    bool isAnnual,
+    int month,
+    int year,
+  ) {
+    final controller = TextEditingController(
+      text: currentValue > 0 ? currentValue.toStringAsFixed(2) : '',
+    );
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 24,
+          right: 24,
+          top: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              isAnnual
+                  ? "Definir Meta Anual ($year)"
+                  : "Definir Meta de ${DateFormat('MMMM', 'pt_BR').format(DateTime(year, month))}",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: InputDecoration(
+                labelText: "Valor da Meta (R\$)",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                prefixText: "R\$ ",
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  final val =
+                      double.tryParse(controller.text.replaceAll(',', '.')) ??
+                      0.0;
+                  _financeVM.saveGoal(
+                    FinancialGoalModel(
+                      id: '', // repo generates ID logic
+                      tenantId: AppConfig.instance.tenant.tenantSlug,
+                      type: isAnnual
+                          ? FinancialGoalType.annual
+                          : FinancialGoalType.monthly,
+                      year: year,
+                      month: isAnnual ? null : month,
+                      targetValue: val,
+                      updatedAt: DateTime.now(),
+                    ),
+                  );
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppConfig.instance.tenant.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-              );
-            },
-          ),
+                child: const Text("SALVAR META"),
+              ),
+            ),
+            const SizedBox(height: 40),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/financial_models.dart';
+import '../models/financial_goal_model.dart';
 import '../../data/datasources/base_firestore_datasource.dart';
 
 abstract class FinanceRepository {
@@ -26,6 +27,10 @@ abstract class FinanceRepository {
     int year,
     double defaultValue,
   );
+
+  // Goals
+  Future<void> saveGoal(FinancialGoalModel goal);
+  Stream<List<FinancialGoalModel>> getGoals(String tenantId, int year);
 }
 
 class FirebaseFinanceRepository extends BaseFirestoreDataSource
@@ -135,5 +140,31 @@ class FirebaseFinanceRepository extends BaseFirestoreDataSource
         });
       }
     }
+  }
+
+  @override
+  Future<void> saveGoal(FinancialGoalModel goal) async {
+    // ID baseado no tipo, ano e mes para evitar duplicidade
+    final docId = goal.type == FinancialGoalType.annual
+        ? 'annual_${goal.year}'
+        : 'monthly_${goal.year}_${goal.month}';
+
+    await tenantCollection('financial_goals').doc(docId).set(goal.toMap());
+  }
+
+  @override
+  Stream<List<FinancialGoalModel>> getGoals(String tenantId, int year) {
+    return tenantCollection('financial_goals')
+        .where('year', isEqualTo: year)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => FinancialGoalModel.fromMap(
+                  doc.data() as Map<String, dynamic>,
+                ),
+              )
+              .toList(),
+        );
   }
 }

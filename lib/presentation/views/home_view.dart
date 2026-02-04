@@ -1,11 +1,16 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:app_tenda/presentation/widgets/custom_logo_loader.dart';
+import 'package:app_tenda/presentation/widgets/amaci_card.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../core/config/app_config.dart';
 import '../../core/di/service_locator.dart';
 import '../../core/routes/app_routes.dart';
 import '../viewmodels/home_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/announcement_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/finance_viewmodel.dart';
+import 'package:app_tenda/domain/models/announcement_model.dart';
 import '../../domain/models/user_model.dart';
 
 class HomeView extends StatefulWidget {
@@ -17,11 +22,27 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final HomeViewModel _viewModel = getIt<HomeViewModel>();
+  final AnnouncementViewModel _announcementVM = getIt<AnnouncementViewModel>();
+  final FinanceViewModel _financeVM = getIt<FinanceViewModel>();
 
   @override
   void initState() {
     super.initState();
     _viewModel.loadCurrentUser();
+    _viewModel.addListener(_onUserLoaded);
+    _announcementVM.loadLastSeen(AppConfig.instance.tenant.tenantSlug);
+  }
+
+  void _onUserLoaded() {
+    if (_viewModel.currentUser != null) {
+      _announcementVM.listenToAnnouncements(_viewModel.currentUser!.tenantSlug);
+    }
+  }
+
+  @override
+  void dispose() {
+    _viewModel.removeListener(_onUserLoaded);
+    super.dispose();
   }
 
   // --- HELPERS PARA MENUS DINÂMICOS ---
@@ -36,6 +57,8 @@ class _HomeViewState extends State<HomeView> {
         return Icons.health_and_safety_outlined;
       case 'documents':
         return Icons.description_outlined;
+      case 'school':
+        return Icons.school_outlined;
       default:
         return Icons.help_outline; // Ícone padrão para desconhecidos
     }
@@ -63,10 +86,13 @@ class _HomeViewState extends State<HomeView> {
   void _handleAction(String action, BuildContext context, UserModel user) {
     if (action == 'route:/calendar') {
       Navigator.pushNamed(context, AppRoutes.calendar);
-    } else if (action == 'internal:health') {
-      _showHealthDetailsSheet(context, user);
     } else if (action == 'internal:finance' || action == 'route:/finance') {
       Navigator.pushNamed(context, AppRoutes.financialHub);
+    } else if (action == 'internal:studies' ||
+        action == 'route:/studies' ||
+        action == 'studies' ||
+        action == '/studies') {
+      Navigator.pushNamed(context, AppRoutes.studiesHub);
     } else if (action == 'internal:coming_soon') {
       _showComingSoonSnackBar();
     } else {
@@ -90,62 +116,220 @@ class _HomeViewState extends State<HomeView> {
           return const Scaffold(body: Center(child: CustomLogoLoader()));
         }
 
-        return Scaffold(
-          backgroundColor: const Color(0xFFF8F9FA),
-          body: Column(
-            children: [
-              _buildFixedTopSection(user, tenant),
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  // MUDANÇA 1: Diminuímos o padding superior de 24 para 12 (ou 8)
-                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionTitle("Menu Principal"),
+        return ListenableBuilder(
+          listenable: _announcementVM,
+          builder: (context, _) {
+            return Scaffold(
+              backgroundColor: const Color(0xFFF8F9FA),
+              body: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  _buildSliverHeader(user, tenant),
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        const SizedBox(height: 16),
+                        // Banner de Aviso Importante
+                        Builder(
+                          builder: (context) {
+                            final list = _announcementVM.announcements;
+                            if (list.isEmpty) return const SizedBox.shrink();
 
-                      // MUDANÇA 2: Diminuímos o SizedBox de 16 para 8
-                      const SizedBox(height: 0),
+                            final important = list
+                                .where((a) => a.isImportant)
+                                .toList();
+                            if (important.isEmpty)
+                              return const SizedBox.shrink();
 
-                      _buildAnimatedMenuGrid(user, tenant),
-                      const SizedBox(height: 0),
-                    ],
+                            final latest = important.first;
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 24),
+                              child: InkWell(
+                                onTap: () => Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.announcements,
+                                ),
+                                child: _buildAnnouncementBanner(latest),
+                              ),
+                            );
+                          },
+                        ),
+
+                        AmaciCard(nextAmaciDate: user.nextAmaciDate),
+                        const SizedBox(height: 12),
+                        _buildSectionTitle("Menu Principal"),
+                        const SizedBox(height: 12),
+                        _buildAnimatedMenuGrid(user, tenant),
+                        const SizedBox(height: 32),
+                      ]),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
-  Widget _buildFixedTopSection(UserModel user, tenant) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: tenant.primaryColor,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
-        ),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [tenant.primaryColor, _darken(tenant.primaryColor, 0.1)],
+  Widget _buildSliverHeader(UserModel user, tenant) {
+    return SliverAppBar(
+      expandedHeight: 320,
+      pinned: true,
+      stretch: true,
+      backgroundColor: tenant.primaryColor,
+      elevation: 0,
+      automaticallyImplyLeading: false,
+      flexibleSpace: FlexibleSpaceBar(
+        stretchModes: const [
+          StretchMode.zoomBackground,
+          StretchMode.blurBackground,
+        ],
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Background Gradient & Pattern
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    tenant.primaryColor,
+                    _darken(tenant.primaryColor, 0.15),
+                  ],
+                ),
+              ),
+            ),
+            // Watermark Icon
+            Positioned(
+              right: -50,
+              top: -20,
+              child: Icon(
+                Icons.temple_hindu_rounded,
+                size: 250,
+                color: Colors.white.withOpacity(0.08),
+              ),
+            ),
+            // Header Content
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _buildTopBar(user, tenant),
+                    const Spacer(),
+                    _buildIdentityCard(user, tenant),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
-          child: Column(
-            children: [
-              _buildTopBar(user, tenant),
-              const SizedBox(height: 20),
-              _buildIdentityCard(user, tenant),
-            ],
+    );
+  }
+
+  Widget _buildAnnouncementBanner(AnnouncementModel latest) {
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: LinearGradient(
+          colors: [
+            Colors.orange[400]!.withOpacity(0.5),
+            Colors.orange[100]!.withOpacity(0.1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.9),
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[50],
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.orange.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.campaign_rounded,
+                    color: Colors.orange,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.flash_on_rounded,
+                            size: 12,
+                            color: Colors.orange[900],
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "AVISO IMPORTANTE",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.orange[900],
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        latest.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Colors.black87,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[50],
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 12,
+                    color: Colors.orange,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -161,17 +345,19 @@ class _HomeViewState extends State<HomeView> {
           children: [
             Text(
               "Olá, ${user.name.split(' ')[0]}",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
+                letterSpacing: -1,
               ),
             ),
             Text(
               "Bem-vindo(a)",
               style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withOpacity(0.8),
                 fontSize: 13,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -179,38 +365,62 @@ class _HomeViewState extends State<HomeView> {
         Row(
           children: [
             if (user.role == 'admin')
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.settings_outlined,
-                      color: Colors.white,
-                    ),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, AppRoutes.adminHub),
-                  ),
-                ),
+              _buildTopIconButton(
+                Icons.admin_panel_settings_outlined,
+                () => Navigator.pushNamed(context, AppRoutes.adminHub),
               ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.logout, color: Colors.white),
-                onPressed: () => _viewModel.signOut().then(
-                  (_) =>
-                      Navigator.pushReplacementNamed(context, AppRoutes.login),
-                ),
-              ),
+            const SizedBox(width: 8),
+            _buildTopIconButton(
+              Icons.notifications_active_outlined,
+              () => Navigator.pushNamed(context, AppRoutes.announcements),
+              showBadge: _announcementVM.hasUnread,
             ),
+            const SizedBox(width: 8),
+            _buildTopIconButton(Icons.logout_rounded, () {
+              _announcementVM.clear();
+              _financeVM.clear();
+              _viewModel.signOut().then(
+                (_) => Navigator.pushReplacementNamed(context, AppRoutes.login),
+              );
+            }),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget _buildTopIconButton(
+    IconData icon,
+    VoidCallback onTap, {
+    bool showBadge = false,
+  }) {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: IconButton(
+            icon: Icon(icon, color: Colors.white, size: 22),
+            onPressed: onTap,
+            visualDensity: VisualDensity.compact,
+          ),
+        ),
+        if (showBadge)
+          Positioned(
+            right: 4,
+            top: 4,
+            child: Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: Colors.redAccent,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -230,23 +440,21 @@ class _HomeViewState extends State<HomeView> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 1.1,
       ),
       itemCount: menus.length,
       itemBuilder: (context, index) {
         final menu = menus[index];
         return TweenAnimationBuilder<double>(
-          duration: Duration(milliseconds: 400 + (index * 150)),
+          duration: Duration(milliseconds: 500 + (index * 100)),
           tween: Tween(begin: 0.0, end: 1.0),
-          curve: Curves.easeOutQuart,
+          curve: Curves.elasticOut,
           builder: (context, value, child) {
-            return Opacity(
-              opacity: value,
-              child: Transform.translate(
-                offset: Offset(0, 30 * (1 - value)),
-                child: child,
-              ),
+            return Transform.scale(
+              scale: 0.8 + (0.2 * value),
+              child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
             );
           },
           child: _buildMenuCard(
@@ -272,9 +480,9 @@ class _HomeViewState extends State<HomeView> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: color.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -283,23 +491,31 @@ class _HomeViewState extends State<HomeView> {
         child: InkWell(
           borderRadius: BorderRadius.circular(24),
           onTap: onTap,
+          splashColor: color.withOpacity(0.1),
+          highlightColor: color.withOpacity(0.05),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  gradient: LinearGradient(
+                    colors: [color.withOpacity(0.12), color.withOpacity(0.05)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 28, color: color),
+                child: Icon(icon, size: 32, color: color),
               ),
               const SizedBox(height: 12),
               Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                title.toUpperCase(),
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 11,
+                  color: Colors.grey[800],
+                  letterSpacing: 0.8,
                 ),
               ),
             ],
@@ -309,143 +525,85 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  // --- MODAL DE SAÚDE ---
-  void _showHealthDetailsSheet(BuildContext context, UserModel user) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-      ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Dados de Saúde",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 24),
-            _buildHealthInfoRow(
-              Icons.bloodtype,
-              "Tipo Sanguíneo",
-              user.tipoSanguineo ?? "N/I",
-            ),
-            _buildHealthInfoRow(
-              Icons.warning_amber,
-              "Alergias",
-              user.alergias?.isEmpty ?? true
-                  ? "Nenhuma informada"
-                  : user.alergias!,
-            ),
-            _buildHealthInfoRow(
-              Icons.medication,
-              "Medicamentos",
-              user.medicamentos?.isEmpty ?? true
-                  ? "Nenhum informado"
-                  : user.medicamentos!,
-            ),
-            _buildHealthInfoRow(
-              Icons.favorite_border,
-              "Condições",
-              user.condicoesMedicas?.isEmpty ?? true
-                  ? "Nenhuma informada"
-                  : user.condicoesMedicas!,
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHealthInfoRow(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.redAccent, size: 24),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // --- IDENTITY CARD ---
+  // --- IDENTITY CARD (Premium Glassmorphism) ---
   Widget _buildIdentityCard(UserModel user, tenant) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(28),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.85),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.5),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
+          child: Column(
             children: [
-              _buildAvatar(user, tenant),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+              Row(
+                children: [
+                  _buildAvatar(user, tenant),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user.name,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          user.role == 'admin'
+                              ? "Administrador"
+                              : "Filho(a) de Santo",
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  _buildBloodBadge(user.tipoSanguineo ?? "N/I"),
+                ],
               ),
-              _buildBloodBadge(user.tipoSanguineo ?? "N/I"),
+              const Divider(height: 32, thickness: 1),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildOrixaItem(
+                    "Frente",
+                    user.orixaFrente ?? "A definir",
+                    _getOrixaColor(user.orixaFrente),
+                  ),
+                  _buildOrixaItem(
+                    "Juntó",
+                    user.orixaJunto ?? "A definir",
+                    _getOrixaColor(user.orixaJunto),
+                  ),
+                ],
+              ),
             ],
           ),
-          const Divider(height: 32, thickness: 1),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildOrixaItem(
-                "Frente",
-                user.orixaFrente ?? "A definir",
-                _getOrixaColor(user.orixaFrente),
-              ),
-              _buildOrixaItem(
-                "Juntó",
-                user.orixaJunto ?? "A definir",
-                _getOrixaColor(user.orixaJunto),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -577,9 +735,27 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          width: 40,
+          height: 3,
+          decoration: BoxDecoration(
+            color: AppConfig.instance.tenant.primaryColor,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+      ],
     );
   }
 

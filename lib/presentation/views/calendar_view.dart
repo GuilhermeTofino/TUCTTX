@@ -7,6 +7,7 @@ import '../viewmodels/register_viewmodel.dart';
 import '../widgets/custom_logo_loader.dart';
 import 'import_events_view.dart';
 import '../widgets/admin/event_edit_modal.dart';
+import '../widgets/premium_sliver_app_bar.dart';
 
 class CalendarView extends StatefulWidget {
   final bool isAdminMode;
@@ -46,8 +47,6 @@ class _CalendarViewState extends State<CalendarView> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      // Trava lógica: O botão só é renderizado se o usuário logado for admin
-      // Só mostra o botão de importar se estiver no modo Admin Hub E for admin
       floatingActionButton: (widget.isAdminMode && _authVM.isAdmin)
           ? FloatingActionButton(
               onPressed: () async {
@@ -63,10 +62,14 @@ class _CalendarViewState extends State<CalendarView> {
               child: const Icon(Icons.add, color: Colors.white, size: 30),
             )
           : null,
-      body: Column(
-        children: [
-          _buildHeader(tenant),
-          Expanded(
+      body: CustomScrollView(
+        slivers: [
+          PremiumSliverAppBar(
+            title: widget.isAdminMode ? "Gerenciar Escalas" : "Cronograma",
+            backgroundIcon: Icons.calendar_month_rounded,
+            bottom: _buildMonthSelector(),
+          ),
+          SliverFillRemaining(
             child: ListenableBuilder(
               listenable: _viewModel,
               builder: (context, _) {
@@ -97,94 +100,52 @@ class _CalendarViewState extends State<CalendarView> {
     );
   }
 
-  Widget _buildHeader(tenant) {
+  PreferredSizeWidget _buildMonthSelector() {
     final monthLabel = DateFormat('MMMM yyyy', 'pt_BR').format(_selectedMonth);
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(24, 60, 24, 30),
-      decoration: BoxDecoration(
-        color: tenant.primaryColor,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(60),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: () => _changeMonth(-1),
+                icon: const Icon(
+                  Icons.keyboard_arrow_left,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: Text(
+                  monthLabel[0].toUpperCase() + monthLabel.substring(1),
+                  key: ValueKey(monthLabel),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () => _changeMonth(1),
+                icon: const Icon(
+                  Icons.keyboard_arrow_right,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: 20,
-            ),
-            padding: EdgeInsets.zero,
-            alignment: Alignment.centerLeft,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            widget.isAdminMode ? "Gerenciar Escalas" : "Cronograma",
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            widget.isAdminMode
-                ? "Gestão de eventos e escalas"
-                : "Giras e trabalhos do terreiro",
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 25),
-
-          // Seletor de Mês com Animação de Texto
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  onPressed: () => _changeMonth(-1),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_left,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                ),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: Text(
-                    monthLabel[0].toUpperCase() + monthLabel.substring(1),
-                    key: ValueKey(monthLabel),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => _changeMonth(1),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_right,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -519,6 +480,60 @@ class _CalendarViewState extends State<CalendarView> {
                                       );
                                     }
                                   : null, // Apenas admin pode clicar
+                            );
+                          }).toList(),
+                        ),
+                      ],
+
+                      // Seção de Participantes (Novo)
+                      if (event.participants != null &&
+                          event.participants!.isNotEmpty) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Divider(),
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.people_outline,
+                              color: tenant.primaryColor,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              "Participantes",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: event.participants!.map<Widget>((name) {
+                            return Chip(
+                              label: Text(name),
+                              backgroundColor: Colors.blue[50],
+                              labelStyle: TextStyle(
+                                color: Colors.blue[800],
+                                fontWeight: FontWeight.bold,
+                              ),
+                              avatar: CircleAvatar(
+                                backgroundColor: Colors.blue[100],
+                                child: Text(
+                                  name.isNotEmpty ? name[0].toUpperCase() : '?',
+                                  style: TextStyle(
+                                    color: Colors.blue[800],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              side: BorderSide.none,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                             );
                           }).toList(),
                         ),

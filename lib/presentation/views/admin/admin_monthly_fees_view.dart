@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:app_tenda/core/config/app_config.dart';
+
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/domain/models/financial_models.dart';
 import 'package:app_tenda/domain/models/user_model.dart';
 import 'package:app_tenda/presentation/viewmodels/finance_viewmodel.dart';
+
+import '../../widgets/premium_sliver_app_bar.dart';
 
 class AdminMonthlyFeesView extends StatefulWidget {
   final UserModel member;
@@ -30,55 +32,57 @@ class _AdminMonthlyFeesViewState extends State<AdminMonthlyFeesView> {
 
   @override
   Widget build(BuildContext context) {
-    final tenant = AppConfig.instance.tenant;
-
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: Text(
-          "Mensalidades: ${widget.member.name.split(' ')[0]}",
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        backgroundColor: tenant.primaryColor,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.sync),
-            tooltip: "Sincronizar Ano Atual",
-            onPressed: _showSyncDialog,
-          ),
-        ],
-      ),
       body: ListenableBuilder(
         listenable: _financeVM,
         builder: (context, _) {
-          if (_financeVM.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (_financeVM.monthlyFees.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Nenhuma mensalidade encontrada."),
-                  ElevatedButton(
+          return CustomScrollView(
+            slivers: [
+              PremiumSliverAppBar(
+                title: "Mensalidades: ${widget.member.name.split(' ')[0]}",
+                backgroundIcon: Icons.calendar_month_rounded,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.sync, color: Colors.white),
+                    tooltip: "Sincronizar Ano Atual",
                     onPressed: _showSyncDialog,
-                    child: const Text("Sincronizar Ano Atual"),
                   ),
                 ],
               ),
-            );
-          }
-
-          return ListView.separated(
-            padding: const EdgeInsets.all(20),
-            itemCount: _financeVM.monthlyFees.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final fee = _financeVM.monthlyFees[index];
-              return _buildAdminFeeCard(fee);
-            },
+              if (_financeVM.isLoading)
+                const SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (_financeVM.monthlyFees.isEmpty)
+                SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Nenhuma mensalidade encontrada."),
+                        ElevatedButton(
+                          onPressed: _showSyncDialog,
+                          child: const Text("Sincronizar Ano Atual"),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.all(20),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final fee = _financeVM.monthlyFees[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildAdminFeeCard(fee),
+                      );
+                    }, childCount: _financeVM.monthlyFees.length),
+                  ),
+                ),
+            ],
           );
         },
       ),

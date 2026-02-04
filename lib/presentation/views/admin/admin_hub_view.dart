@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app_tenda/core/routes/app_routes.dart';
 import 'package:app_tenda/presentation/views/admin/admin_finance_dashboard_view.dart';
+import 'package:app_tenda/presentation/widgets/premium_sliver_app_bar.dart';
 
 class AdminHubView extends StatelessWidget {
   const AdminHubView({super.key});
@@ -9,99 +10,108 @@ class AdminHubView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: const Text(
-          "Painel Admin",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Gerenciamento",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Escolha uma área para administrar",
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-            ),
-            const SizedBox(height: 32),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              children: [
-                _buildAdminCard(
-                  context,
-                  title: "Atalhos",
-                  subtitle: "Menus da Home",
-                  icon: Icons.grid_view_rounded,
-                  color: Colors.blue,
-                  route: AppRoutes.menuManagement,
-                ),
-                _buildAdminCard(
-                  context,
-                  title: "Membros",
-                  subtitle: "Lista de Filhos",
-                  icon: Icons.people_alt_rounded,
-                  color: Colors.orange,
-                  route: AppRoutes.adminMembers,
-                ),
-                _buildAdminCard(
-                  context,
-                  title: "Financeiro",
-                  subtitle: "Dashboard",
-                  icon: Icons.analytics_rounded,
-                  color: Colors.purple,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const AdminFinanceDashboardView(),
+      body: CustomScrollView(
+        slivers: [
+          const PremiumSliverAppBar(
+            title: "Painel Administrativo",
+            backgroundIcon: Icons.admin_panel_settings_rounded,
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Gerenciamento",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
                   ),
-                ),
-                _buildAdminCard(
-                  context,
-                  title: "Escalas",
-                  subtitle: "Giras e Faxina",
-                  icon: Icons.calendar_month_rounded,
-                  color: Colors.green,
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    AppRoutes.calendar,
-                    arguments: {'isAdminMode': true},
+                  const SizedBox(height: 8),
+                  Text(
+                    "Escolha uma área para administrar",
+                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
-                ),
-                _buildAdminCard(
-                  context,
-                  title: "Avisos",
-                  subtitle: "Enviar Push",
-                  icon: Icons.notification_add_rounded,
-                  color: Colors.redAccent,
-                  onTap: () {
-                    // Futuro: Tela de envio de mensagem livre
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text("Em breve!")));
-                  },
-                ),
-              ],
+                  const SizedBox(height: 32),
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    children: [
+                      _buildAdminCard(
+                        context,
+                        title: "Atalhos",
+                        subtitle: "Menus da Home",
+                        icon: Icons.grid_view_rounded,
+                        color: Colors.blue,
+                        route: AppRoutes.menuManagement,
+                      ),
+                      _buildAdminCard(
+                        context,
+                        title: "Membros",
+                        subtitle: "Lista de Filhos",
+                        icon: Icons.people_alt_rounded,
+                        color: Colors.orange,
+                        route: AppRoutes.adminMembers,
+                      ),
+                      _buildAdminCard(
+                        context,
+                        title: "Financeiro",
+                        subtitle: "Dashboard",
+                        icon: Icons.analytics_rounded,
+                        color: Colors.purple,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AdminFinanceDashboardView(),
+                          ),
+                        ),
+                      ),
+                      _buildAdminCard(
+                        context,
+                        title: "Escalas",
+                        subtitle: "Giras e Faxina",
+                        icon: Icons.calendar_month_rounded,
+                        color: Colors.green,
+                        onTap: () => Navigator.pushNamed(
+                          context,
+                          AppRoutes.calendar,
+                          arguments: {'isAdminMode': true},
+                        ),
+                      ),
+                      _buildAdminCard(
+                        context,
+                        title: "Avisos",
+                        subtitle: "Enviar Push",
+                        icon: Icons.notification_add_rounded,
+                        color: Colors.redAccent,
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.adminAnnouncements,
+                          );
+                        },
+                      ),
+                      _buildAdminCard(
+                        context,
+                        title: "Estudos",
+                        subtitle: "Gerenciar PDFs",
+                        icon: Icons.library_books_rounded,
+                        color: Colors.indigo,
+                        route: AppRoutes.adminStudies,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -5,6 +5,8 @@ import 'package:app_tenda/domain/models/user_model.dart';
 
 import '../../widgets/admin/member_options_modal.dart';
 
+import '../../widgets/premium_sliver_app_bar.dart';
+
 class MemberManagementView extends StatefulWidget {
   const MemberManagementView({super.key});
 
@@ -26,42 +28,41 @@ class _MemberManagementViewState extends State<MemberManagementView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: const Text(
-          "Membros do Terreiro",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: Column(
-        children: [
-          _buildSearchBar(),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: _viewModel,
-              builder: (context, _) {
-                if (_viewModel.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (_viewModel.members.isEmpty) {
-                  return const Center(child: Text("Nenhum membro encontrado."));
-                }
-
-                return ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _viewModel.members.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final member = _viewModel.members[index];
-                    return _buildMemberCard(member);
-                  },
+      body: CustomScrollView(
+        slivers: [
+          const PremiumSliverAppBar(
+            title: "Membros do Terreiro",
+            backgroundIcon: Icons.people_alt_rounded,
+          ),
+          SliverToBoxAdapter(child: _buildSearchBar()),
+          ListenableBuilder(
+            listenable: _viewModel,
+            builder: (context, _) {
+              if (_viewModel.isLoading) {
+                return const SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
                 );
-              },
-            ),
+              }
+
+              if (_viewModel.members.isEmpty) {
+                return const SliverFillRemaining(
+                  child: Center(child: Text("Nenhum membro encontrado.")),
+                );
+              }
+
+              return SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final member = _viewModel.members[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _buildMemberCard(member),
+                    );
+                  }, childCount: _viewModel.members.length),
+                ),
+              );
+            },
           ),
         ],
       ),

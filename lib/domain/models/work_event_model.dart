@@ -9,6 +9,7 @@ class WorkEvent {
   final String tenantId;
   final List<String>? cleaningCrew; // Lista de nomes para a faxina
   final List<String>? confirmedAttendance; // Nomes confirmados pelo admin
+  final List<String>? participants; // Participantes gerais (ex: Amaci)
 
   WorkEvent({
     required this.id,
@@ -19,6 +20,7 @@ class WorkEvent {
     required this.tenantId,
     this.cleaningCrew,
     this.confirmedAttendance,
+    this.participants,
   });
 
   // Converte os dados do Firebase para o nosso modelo
@@ -37,6 +39,9 @@ class WorkEvent {
       confirmedAttendance: data['confirmedAttendance'] != null
           ? List<String>.from(data['confirmedAttendance'])
           : [],
+      participants: data['participants'] != null
+          ? List<String>.from(data['participants'])
+          : [],
     );
   }
 
@@ -49,6 +54,7 @@ class WorkEvent {
       'tenantId': tenantId,
       'cleaningCrew': cleaningCrew,
       'confirmedAttendance': confirmedAttendance,
+      'participants': participants,
     };
   }
 }

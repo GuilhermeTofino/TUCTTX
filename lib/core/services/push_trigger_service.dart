@@ -106,4 +106,21 @@ class PushTriggerService extends BaseFirestoreDataSource {
       data: {'type': 'finance_reminder', 'category': 'bazaar'},
     );
   }
+
+  /// Notifica sobre agendamento de Amaci.
+  Future<void> notifyAmaciSchedule({
+    required String userName,
+    required List<String> userTokens,
+    required String date,
+  }) async {
+    if (userTokens.isEmpty) return;
+
+    await _enqueueNotification(
+      tokens: userTokens,
+      title: '🌿 Próximo Amaci Agendado',
+      body:
+          'Olá $userName! Seu próximo Amaci foi agendado para o dia $date. Prepare-se! 🙏',
+      data: {'type': 'amaci_scheduled', 'date': date},
+    );
+  }
 }

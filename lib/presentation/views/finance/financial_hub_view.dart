@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:app_tenda/core/config/app_config.dart';
-import 'package:app_tenda/presentation/views/finance/monthly_fees_view.dart';
-import 'package:app_tenda/presentation/views/finance/bazaar_debts_view.dart';
+import '../../../core/config/app_config.dart';
+import '../../widgets/premium_sliver_app_bar.dart';
+import 'monthly_fees_view.dart';
+import 'bazaar_debts_view.dart';
 
 class FinancialHubView extends StatelessWidget {
   const FinancialHubView({super.key});
@@ -14,85 +14,93 @@ class FinancialHubView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: const Text(
-          "Financeiro",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: tenant.primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Selecione uma categoria",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "Acompanhe suas responsabilidades financeiras com o terreiro.",
-              style: TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-            const SizedBox(height: 32),
-            _buildFinanceCard(
-              context,
-              title: "Minhas Mensalidades",
-              subtitle: "Histórico de pagamentos mensais",
-              icon: Icons.payments_outlined,
-              color: Colors.green,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const MonthlyFeesView()),
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildFinanceCard(
-              context,
-              title: "Meu Bazar",
-              subtitle: "Itens adquiridos e pendências",
-              icon: Icons.shopping_bag_outlined,
-              color: Colors.orange,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const BazaarDebtsView()),
-              ),
-            ),
-            const SizedBox(height: 40),
-            if (tenant.pixKey != null || tenant.paymentLink != null) ...[
-              const Text(
-                "Formas de Pagamento",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              _buildPaymentInfoCard(context, tenant),
-              const SizedBox(height: 32),
-            ],
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.blue.withOpacity(0.1)),
-              ),
-              child: Row(
+      body: CustomScrollView(
+        slivers: [
+          const PremiumSliverAppBar(
+            title: "Financeiro",
+            backgroundIcon: Icons.account_balance_wallet_rounded,
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.info_outline, color: Colors.blue),
-                  const SizedBox(width: 16),
-                  const Expanded(
-                    child: Text(
-                      "Mantenha suas contas em dia para ajudar na manutenção da nossa casa.",
-                      style: TextStyle(color: Colors.blue, fontSize: 13),
+                  const Text(
+                    "Selecione uma categoria",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Acompanhe suas responsabilidades financeiras com o terreiro.",
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 32),
+                  _buildFinanceCard(
+                    context,
+                    title: "Minhas Mensalidades",
+                    subtitle: "Histórico de pagamentos mensais",
+                    icon: Icons.payments_outlined,
+                    color: Colors.green,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const MonthlyFeesView(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildFinanceCard(
+                    context,
+                    title: "Meu Bazar",
+                    subtitle: "Itens adquiridos e pendências",
+                    icon: Icons.shopping_bag_outlined,
+                    color: Colors.orange,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const BazaarDebtsView(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  if (tenant.pixKey != null || tenant.paymentLink != null) ...[
+                    const Text(
+                      "Formas de Pagamento",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildPaymentInfoCard(context, tenant),
+                    const SizedBox(height: 32),
+                  ],
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.blue.withOpacity(0.1)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.info_outline, color: Colors.blue),
+                        const SizedBox(width: 16),
+                        const Expanded(
+                          child: Text(
+                            "Mantenha suas contas em dia para ajudar na manutenção da nossa casa.",
+                            style: TextStyle(color: Colors.blue, fontSize: 13),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -237,6 +245,8 @@ class FinancialHubView extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
+                onPressed: null,
+                /* DISABLED BY USER REQUEST
                 onPressed: () async {
                   try {
                     final uri = Uri.parse(tenant.paymentLink!);
@@ -253,6 +263,7 @@ class FinancialHubView extends StatelessWidget {
                     }
                   }
                 },
+                */
                 icon: const Icon(Icons.open_in_new, size: 18),
                 label: const Text("ABRIR LINK DE PAGAMENTO"),
                 style: ElevatedButton.styleFrom(

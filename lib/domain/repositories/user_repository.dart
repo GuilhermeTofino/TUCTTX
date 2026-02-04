@@ -8,7 +8,14 @@ abstract class UserRepository {
   /// Salva ou atualiza os dados do perfil do usuário no banco de dados.
   /// Utilizado para atualizar fotos, dados de fundamento ou alteração de 'role'.
   Future<void> saveUserProfile(UserModel user);
-  
+
   /// Lista todos os usuários vinculados ao Tenant atual (útil para gestão administrativa).
   Future<List<UserModel>> getAllUsers();
+
+  /// Atualiza as datas de Amaci (último e próximo) de um usuário.
+  Future<void> updateAmaciDates(
+    String uid,
+    DateTime? lastAmaci,
+    DateTime? nextAmaci,
+  );
 }

@@ -7,6 +7,8 @@ import 'package:app_tenda/domain/models/user_model.dart';
 import 'package:app_tenda/domain/repositories/finance_repository.dart';
 import 'package:app_tenda/presentation/viewmodels/finance_viewmodel.dart';
 
+import '../../widgets/premium_sliver_app_bar.dart';
+
 class AdminBazaarDebtsView extends StatefulWidget {
   final UserModel member;
 
@@ -36,14 +38,6 @@ class _AdminBazaarDebtsViewState extends State<AdminBazaarDebtsView> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: Text(
-          "Bazar: ${widget.member.name.split(' ')[0]}",
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        backgroundColor: tenant.primaryColor,
-        foregroundColor: Colors.white,
-      ),
       body: ListenableBuilder(
         listenable: _financeVM,
         builder: (context, _) {
@@ -58,42 +52,62 @@ class _AdminBazaarDebtsViewState extends State<AdminBazaarDebtsView> {
               .where((d) => d.isPaid)
               .toList();
 
-          return ListView(
-            padding: const EdgeInsets.all(24),
-            children: [
-              _buildAddDebtCard(tenant.primaryColor),
-              const SizedBox(height: 32),
-              if (unpaidDebts.isNotEmpty) ...[
-                const Text(
-                  "Dívidas Ativas",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                ...unpaidDebts.map((d) => _buildDebtItem(d, isPaid: false)),
-                const SizedBox(height: 32),
-              ],
-              if (paidDebts.isNotEmpty) ...[
-                const Text(
-                  "Histórico de Pagamentos",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+          return CustomScrollView(
+            slivers: [
+              PremiumSliverAppBar(
+                title: "Bazar: ${widget.member.name.split(' ')[0]}",
+                backgroundIcon: Icons.shopping_bag_rounded,
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildAddDebtCard(tenant.primaryColor),
+                      const SizedBox(height: 32),
+                      if (unpaidDebts.isNotEmpty) ...[
+                        const Text(
+                          "Dívidas Ativas",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ...unpaidDebts.map(
+                          (d) => _buildDebtItem(d, isPaid: false),
+                        ),
+                        const SizedBox(height: 32),
+                      ],
+                      if (paidDebts.isNotEmpty) ...[
+                        const Text(
+                          "Histórico de Pagamentos",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ...paidDebts.map(
+                          (d) => _buildDebtItem(d, isPaid: true),
+                        ),
+                      ],
+                      if (unpaidDebts.isEmpty && paidDebts.isEmpty)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 40),
+                            child: Text(
+                              "Nenhuma movimentação no bazar.",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                ...paidDebts.map((d) => _buildDebtItem(d, isPaid: true)),
-              ],
-              if (unpaidDebts.isEmpty && paidDebts.isEmpty)
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 40),
-                    child: Text(
-                      "Nenhuma movimentação no bazar.",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                ),
+              ),
             ],
           );
         },

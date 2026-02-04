@@ -4,6 +4,7 @@ import '../../../domain/models/menu_option_model.dart';
 import '../../../domain/repositories/menu_repository.dart';
 import '../../viewmodels/home_viewmodel.dart';
 import '../../widgets/admin/menu_edit_modal.dart';
+import '../../widgets/premium_sliver_app_bar.dart';
 
 class MenuManagementView extends StatefulWidget {
   const MenuManagementView({super.key});
@@ -20,65 +21,69 @@ class _MenuManagementViewState extends State<MenuManagementView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: const Text(
-          "Gerenciar Atalhos",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (context, _) {
-          final menus = _viewModel.menus;
+      body: CustomScrollView(
+        slivers: [
+          const PremiumSliverAppBar(
+            title: "Gerenciar Atalhos",
+            backgroundIcon: Icons.grid_view_rounded,
+          ),
+          ListenableBuilder(
+            listenable: _viewModel,
+            builder: (context, _) {
+              final menus = _viewModel.menus;
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: menus.length,
-            itemBuilder: (context, index) {
-              final menu = menus[index];
-              return Card(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  title: Text(
-                    menu.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text("Ordem: ${menu.order} | ${menu.action}"),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.edit_outlined,
-                          color: Colors.blue,
+              return SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final menu = menus[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Card(
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        onPressed: () => _openEditModal(menu: menu),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.delete_outline,
-                          color: Colors.redAccent,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          title: Text(
+                            menu.title,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            "Ordem: ${menu.order} | ${menu.action}",
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit_outlined,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () => _openEditModal(menu: menu),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.redAccent,
+                                ),
+                                onPressed: () => _confirmDelete(menu.id),
+                              ),
+                            ],
+                          ),
                         ),
-                        onPressed: () => _confirmDelete(menu.id),
                       ),
-                    ],
-                  ),
+                    );
+                  }, childCount: menus.length),
                 ),
               );
             },
-          );
-        },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openEditModal(),

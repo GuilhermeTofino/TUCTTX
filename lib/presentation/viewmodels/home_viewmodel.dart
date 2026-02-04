@@ -50,7 +50,9 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> loadMenus(String tenantId) async {
     try {
-      _menus = await _menuRepository.getMenus(tenantId);
+      final rawMenus = await _menuRepository.getMenus(tenantId);
+      // Filter out 'health' menu as requested by user
+      _menus = rawMenus.where((m) => m.action != 'internal:health').toList();
     } catch (e) {
       debugPrint("Erro ao carregar menus: $e");
     } finally {

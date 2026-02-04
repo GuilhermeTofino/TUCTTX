@@ -6,6 +6,8 @@ import '../../core/di/service_locator.dart';
 import '../viewmodels/import_events_viewmodel.dart';
 import '../widgets/custom_logo_loader.dart';
 
+import '../widgets/premium_sliver_app_bar.dart';
+
 class ImportEventsView extends StatefulWidget {
   const ImportEventsView({super.key});
 
@@ -23,96 +25,102 @@ class _ImportEventsViewState extends State<ImportEventsView> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: const Text(
-          "Importar Giras (IA)",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        backgroundColor: tenant.primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInputSection(tenant),
-            const SizedBox(height: 32),
-            _buildSectionTitle("Eventos Identificados pela IA"),
-            const SizedBox(height: 12),
-            Expanded(
-              child: ListenableBuilder(
-                listenable: _viewModel,
-                builder: (context, _) {
-                  // 1. ESTADO: PROCESSANDO IA (Exibe seu CustomLogoLoader)
-                  if (_viewModel.isProcessing &&
-                      _viewModel.previewEvents.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const CustomLogoLoader(),
-                          const SizedBox(height: 24),
-                          Text(
-                            "O Gemini está lendo seu texto...",
-                            style: TextStyle(
-                              color: tenant.primaryColor.withOpacity(0.7),
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.1,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            "Isso pode levar alguns segundos",
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  // 2. ESTADO: LISTA VAZIA
-                  if (_viewModel.previewEvents.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.auto_awesome_outlined,
-                            size: 48,
-                            color: Colors.grey[300],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            "Nenhum evento processado ainda.\nCole o texto do WhatsApp acima.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  // 3. ESTADO: EXIBIÇÃO DOS CARDS GERADOS
-                  return ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: _viewModel.previewEvents.length,
-                    itemBuilder: (context, index) {
-                      final ev = _viewModel.previewEvents[index];
-                      return _buildPreviewCard(ev, index, tenant);
-                    },
-                  );
-                },
+      body: CustomScrollView(
+        slivers: [
+          const PremiumSliverAppBar(
+            title: "Importar Giras (IA)",
+            backgroundIcon: Icons.auto_awesome_rounded,
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildInputSection(tenant),
+                  const SizedBox(height: 32),
+                  _buildSectionTitle("Eventos Identificados pela IA"),
+                  const SizedBox(height: 12),
+                ],
               ),
             ),
-            _buildActionButtons(tenant),
-          ],
-        ),
+          ),
+          ListenableBuilder(
+            listenable: _viewModel,
+            builder: (context, _) {
+              if (_viewModel.isProcessing && _viewModel.previewEvents.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const CustomLogoLoader(),
+                        const SizedBox(height: 24),
+                        Text(
+                          "O Gemini está lendo seu texto...",
+                          style: TextStyle(
+                            color: tenant.primaryColor.withOpacity(0.7),
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.1,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "Isso pode levar alguns segundos",
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              if (_viewModel.previewEvents.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.auto_awesome_outlined,
+                          size: 48,
+                          color: Colors.grey[300],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Nenhum evento processado ainda.\nCole o texto do WhatsApp acima.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final ev = _viewModel.previewEvents[index];
+                    return _buildPreviewCard(ev, index, tenant);
+                  }, childCount: _viewModel.previewEvents.length),
+                ),
+              );
+            },
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: _buildActionButtons(tenant),
+            ),
+          ),
+        ],
       ),
     );
   }

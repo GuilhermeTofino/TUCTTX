@@ -19,6 +19,12 @@ import 'package:app_tenda/data/repositories/firebase_notification_repository.dar
 import 'package:app_tenda/core/services/notification_service.dart';
 import 'package:app_tenda/core/services/push_trigger_service.dart';
 import 'package:app_tenda/domain/repositories/finance_repository.dart';
+import 'package:app_tenda/domain/repositories/announcement_repository.dart';
+import 'package:app_tenda/data/repositories/firebase_announcement_repository.dart';
+import 'package:app_tenda/presentation/viewmodels/announcement_viewmodel.dart';
+import 'package:app_tenda/domain/repositories/study_repository.dart';
+import 'package:app_tenda/data/repositories/firebase_study_repository.dart';
+import 'package:app_tenda/presentation/viewmodels/study_viewmodel.dart';
 
 final getIt = GetIt.instance;
 
@@ -34,6 +40,10 @@ Future<void> setupServiceLocator() async {
   getIt.registerLazySingleton<FinanceRepository>(
     () => FirebaseFinanceRepository(),
   );
+  getIt.registerLazySingleton<AnnouncementRepository>(
+    () => FirebaseAnnouncementRepository(),
+  );
+  getIt.registerLazySingleton<StudyRepository>(() => FirebaseStudyRepository());
 
   // ---- Services ----
   getIt.registerLazySingleton<NotificationService>(
@@ -66,4 +76,8 @@ Future<void> setupServiceLocator() async {
     () => MemberManagementViewModel(getIt<UserRepository>()),
   );
   getIt.registerLazySingleton<FinanceViewModel>(() => FinanceViewModel());
+  getIt.registerLazySingleton<AnnouncementViewModel>(
+    () => AnnouncementViewModel(),
+  );
+  getIt.registerLazySingleton<StudyViewModel>(() => StudyViewModel());
 }
