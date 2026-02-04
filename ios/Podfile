@@ -48,6 +48,7 @@ target 'Runner' do
   end
 end
 
+
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
@@ -59,5 +60,24 @@ post_install do |installer|
       config.build_settings['COPY_PHASE_STRIP'] = 'NO'
     end
   end
+
+  # Inject "Strip Objective-C" build phase into Runner
+  require 'xcodeproj'
+  project_path = 'Runner.xcodeproj'
+  project = Xcodeproj::Project.open(project_path)
+  runner_target = project.targets.find { |t| t.name == 'Runner' }
+  
+  script_name = '[Fix] Strip Objective-C Framework'
+  script_path = '${SRCROOT}/scripts/strip_objective_c.sh'
+  
+  # Avoid adding duplicate phase
+  unless runner_target.shell_script_build_phases.any? { |bp| bp.name == script_name }
+    phase = runner_target.new_shell_script_build_phase(script_name)
+    phase.shell_script = "\"#{script_path}\""
+    # Ensure it runs after embedding frameworks (usually near the end)
+    runner_target.build_phases.move(phase, runner_target.build_phases.count - 1)
+    project.save()
+  end
 end
+
 
