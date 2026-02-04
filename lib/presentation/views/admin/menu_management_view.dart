@@ -1,8 +1,8 @@
+import 'package:app_tenda/presentation/viewmodels/home/home_viewmodel.dart';
 import 'package:flutter/material.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../domain/models/menu_option_model.dart';
 import '../../../domain/repositories/menu_repository.dart';
-import '../../viewmodels/home_viewmodel.dart';
 import '../../widgets/admin/menu_edit_modal.dart';
 import '../../widgets/premium_sliver_app_bar.dart';
 

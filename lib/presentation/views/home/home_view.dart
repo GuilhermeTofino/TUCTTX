@@ -4,14 +4,14 @@ import 'package:app_tenda/presentation/widgets/custom_logo_loader.dart';
 import 'package:app_tenda/presentation/widgets/amaci_card.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../core/config/app_config.dart';
-import '../../core/di/service_locator.dart';
-import '../../core/routes/app_routes.dart';
-import '../viewmodels/home_viewmodel.dart';
-import 'package:app_tenda/presentation/viewmodels/announcement_viewmodel.dart';
-import 'package:app_tenda/presentation/viewmodels/finance_viewmodel.dart';
+import '../../../core/config/app_config.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/routes/app_routes.dart';
+import '../../viewmodels/home/home_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/announcements/announcement_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/finance/finance_viewmodel.dart';
 import 'package:app_tenda/domain/models/announcement_model.dart';
-import '../../domain/models/user_model.dart';
+import '../../../domain/models/user_model.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

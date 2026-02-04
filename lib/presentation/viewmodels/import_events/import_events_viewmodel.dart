@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../core/services/ai_event_parser.dart';
-import '../../domain/repositories/event_repository.dart';
-import '../../core/di/service_locator.dart';
-import '../../core/services/push_trigger_service.dart';
+import '../../../core/services/ai_event_parser.dart';
+import '../../../domain/repositories/event_repository.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/services/push_trigger_service.dart';
 
 class ImportEventsViewModel extends ChangeNotifier {
   final AIEventParser _aiParser;

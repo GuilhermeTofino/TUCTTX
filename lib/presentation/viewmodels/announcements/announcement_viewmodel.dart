@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../domain/models/announcement_model.dart';
-import '../../domain/repositories/announcement_repository.dart';
-import '../../core/di/service_locator.dart';
+import '../../../domain/models/announcement_model.dart';
+import '../../../domain/repositories/announcement_repository.dart';
+import '../../../core/di/service_locator.dart';
 
 class AnnouncementViewModel extends ChangeNotifier {
   final AnnouncementRepository _repository = getIt<AnnouncementRepository>();

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:ui';
-import '../../core/config/app_config.dart';
-import '../../core/di/service_locator.dart';
-import '../../core/routes/app_routes.dart';
-import '../viewmodels/register_viewmodel.dart';
-import '../widgets/custom_logo_loader.dart';
-import '../../core/services/biometric_service.dart'; // Importe seu novo serviço
+import '../../../core/config/app_config.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/routes/app_routes.dart';
+import '../../viewmodels/auth/register_viewmodel.dart';
+import '../../widgets/custom_logo_loader.dart';
+import '../../../core/services/biometric_service.dart'; // Importe seu novo serviço
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -154,13 +155,14 @@ class _LoginViewState extends State<LoginView> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: IconButton(
-        icon: Icon(
-          Theme.of(context).platform == TargetPlatform.iOS
-              ? Icons.face
-              : Icons.fingerprint,
-          color: tenant.primaryColor,
-          size: 28,
-        ),
+        icon: Theme.of(context).platform == TargetPlatform.iOS
+            ? Image.asset(
+                'assets/icons/face-id.png',
+                width: 50,
+                height: 50,
+                color: tenant.primaryColor,
+              )
+            : Icon(Icons.fingerprint, color: tenant.primaryColor, size: 28),
         onPressed: _handleBiometricLogin,
       ),
     );

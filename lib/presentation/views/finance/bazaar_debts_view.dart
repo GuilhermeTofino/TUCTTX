@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/domain/models/financial_models.dart';
-import 'package:app_tenda/presentation/viewmodels/finance_viewmodel.dart';
-import 'package:app_tenda/presentation/viewmodels/home_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/finance/finance_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/home/home_viewmodel.dart';
 
 class BazaarDebtsView extends StatefulWidget {
   const BazaarDebtsView({super.key});

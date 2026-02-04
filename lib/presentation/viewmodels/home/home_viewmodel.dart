@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../core/di/service_locator.dart';
-import '../../domain/models/menu_option_model.dart';
-import '../../domain/models/user_model.dart';
-import '../../domain/repositories/auth_repository.dart';
-import '../../domain/repositories/menu_repository.dart';
-import '../../core/services/notification_service.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../domain/models/menu_option_model.dart';
+import '../../../domain/models/user_model.dart';
+import '../../../domain/repositories/auth_repository.dart';
+import '../../../domain/repositories/menu_repository.dart';
+import '../../../core/services/notification_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final AuthRepository _authRepository = getIt<AuthRepository>();

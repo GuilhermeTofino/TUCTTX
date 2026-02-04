@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:app_tenda/presentation/viewmodels/studies/study_viewmodel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/config/app_config.dart';
 import '../../../domain/models/study_document_model.dart';
-import '../../viewmodels/study_viewmodel.dart';
 import '../../widgets/premium_sliver_app_bar.dart';
 import '../../widgets/custom_logo_loader.dart';
 

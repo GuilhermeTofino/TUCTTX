@@ -5,7 +5,7 @@ import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/domain/models/financial_models.dart';
 import 'package:app_tenda/domain/models/user_model.dart';
 import 'package:app_tenda/domain/repositories/finance_repository.dart';
-import 'package:app_tenda/presentation/viewmodels/finance_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/finance/finance_viewmodel.dart';
 
 import '../../widgets/premium_sliver_app_bar.dart';
 

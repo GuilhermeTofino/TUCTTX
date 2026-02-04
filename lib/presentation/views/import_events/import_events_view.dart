@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../core/config/app_config.dart';
-import '../../core/di/service_locator.dart';
-import '../viewmodels/import_events_viewmodel.dart';
-import '../widgets/custom_logo_loader.dart';
+import '../../../core/config/app_config.dart';
+import '../../../core/di/service_locator.dart';
+import '../../viewmodels/import_events/import_events_viewmodel.dart';
+import '../../widgets/custom_logo_loader.dart';
 
-import '../widgets/premium_sliver_app_bar.dart';
+import '../../widgets/premium_sliver_app_bar.dart';
 
 class ImportEventsView extends StatefulWidget {
   const ImportEventsView({super.key});

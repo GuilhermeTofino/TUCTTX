@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:app_tenda/domain/models/user_model.dart';
 import 'package:app_tenda/domain/repositories/user_repository.dart';
 import 'package:intl/intl.dart';
-import '../../core/di/service_locator.dart';
-import '../../core/services/push_trigger_service.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/services/push_trigger_service.dart';
 
 import 'package:app_tenda/domain/repositories/event_repository.dart';
 

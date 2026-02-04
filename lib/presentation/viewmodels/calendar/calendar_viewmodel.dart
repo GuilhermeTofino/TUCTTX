@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../domain/models/work_event_model.dart';
-import '../../domain/repositories/event_repository.dart';
+import '../../../domain/models/work_event_model.dart';
+import '../../../domain/repositories/event_repository.dart';
 
 class CalendarViewModel extends ChangeNotifier {
   final EventRepository _repository;

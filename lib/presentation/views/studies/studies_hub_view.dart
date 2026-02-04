@@ -1,7 +1,7 @@
+import 'package:app_tenda/presentation/viewmodels/studies/study_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/di/service_locator.dart';
-import '../../viewmodels/study_viewmodel.dart';
 import '../../widgets/premium_sliver_app_bar.dart';
 import 'documents_list_view.dart';
 

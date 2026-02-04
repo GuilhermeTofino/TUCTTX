@@ -1,7 +1,7 @@
+import 'package:app_tenda/presentation/viewmodels/admin/member_management_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/di/service_locator.dart';
-import '../../viewmodels/member_management_viewmodel.dart';
 import '../../../domain/models/user_model.dart';
 import '../../widgets/custom_logo_loader.dart';
 

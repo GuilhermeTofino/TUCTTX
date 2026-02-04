@@ -1,6 +1,6 @@
+import 'package:app_tenda/presentation/viewmodels/admin/member_management_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
-import 'package:app_tenda/presentation/viewmodels/member_management_viewmodel.dart';
 import 'package:app_tenda/domain/models/user_model.dart';
 
 import '../../widgets/admin/member_options_modal.dart';

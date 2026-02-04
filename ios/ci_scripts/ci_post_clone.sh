@@ -7,6 +7,15 @@ set -e
 # Traverse up the directory tree to find the root of the project.
 cd "$(dirname "$0")/../../"
 
+# Create .env file from environment variable
+echo "📦 Generating .env file..."
+if [ -z "$GEMINI_API_KEY" ]; then
+  echo "WARNING: GEMINI_API_KEY is not set in the environment!"
+else
+  echo "GEMINI_API_KEY=$GEMINI_API_KEY" > .env
+  echo "✅ .env file created"
+fi
+
 echo "📦 Installed Flutter..."
 
 # Install Flutter using git

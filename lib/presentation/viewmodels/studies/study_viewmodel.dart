@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../../domain/models/study_document_model.dart';
-import '../../domain/repositories/study_repository.dart';
-import '../../core/di/service_locator.dart';
-import '../../core/config/app_config.dart';
+import '../../../domain/models/study_document_model.dart';
+import '../../../domain/repositories/study_repository.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/config/app_config.dart';
 import 'package:uuid/uuid.dart';
 
 class StudyViewModel extends ChangeNotifier {

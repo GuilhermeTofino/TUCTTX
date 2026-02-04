@@ -1,10 +1,10 @@
 import 'package:app_tenda/presentation/widgets/custom_logo_loader.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import '../../core/config/app_config.dart';
-import '../../core/di/service_locator.dart';
-import '../../core/routes/app_routes.dart';
-import '../viewmodels/register_viewmodel.dart';
+import '../../../core/config/app_config.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/routes/app_routes.dart';
+import '../../viewmodels/auth/register_viewmodel.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
