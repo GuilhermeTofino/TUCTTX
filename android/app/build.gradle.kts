@@ -63,13 +63,32 @@ android {
         }
     }
 
+    // Carregar configurações de assinatura do arquivo key.properties
+    val keyProperties = java.util.Properties()
+    val keyPropertiesFile = rootProject.file("key.properties")
+    if (keyPropertiesFile.exists()) {
+        keyProperties.load(keyPropertiesFile.inputStream())
+    }
+
+    signingConfigs {
+        create("release") {
+            if (keyPropertiesFile.exists()) {
+                keyAlias = keyProperties.getProperty("keyAlias")
+                keyPassword = keyProperties.getProperty("keyPassword")
+                storeFile = rootProject.file(keyProperties.getProperty("storeFile"))
+                storePassword = keyProperties.getProperty("storePassword")
+            }
+        }
+    }
+
     buildTypes {
         getByName("debug") {
             signingConfig = signingConfigs.getByName("debug")
         }
         
         getByName("release") {
-            signingConfig = signingConfigs.getByName("debug")
+            // Em vez de usar a config de debug, usamos a config de release definida acima
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             isShrinkResources = false
         }

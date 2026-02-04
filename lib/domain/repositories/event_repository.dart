@@ -221,4 +221,22 @@ class EventRepository extends BaseFirestoreDataSource {
       throw Exception("Erro ao buscar eventos por data e tipo: $e");
     }
   }
+
+  Future<List<WorkEvent>> getAllEventsByType(String type) async {
+    try {
+      final snapshot = await tenantCollection(
+        'events',
+      ).where('type', isEqualTo: type).orderBy('date', descending: true).get();
+
+      return snapshot.docs.map((doc) => WorkEvent.fromFirestore(doc)).toList();
+    } catch (e) {
+      throw Exception("Erro ao buscar histórico de eventos: $e");
+    }
+  }
+
+  Stream<List<WorkEvent>> streamAllEvents() {
+    return tenantCollection('events').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => WorkEvent.fromFirestore(doc)).toList();
+    });
+  }
 }

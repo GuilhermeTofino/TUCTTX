@@ -25,6 +25,7 @@ import 'package:app_tenda/presentation/viewmodels/announcement_viewmodel.dart';
 import 'package:app_tenda/domain/repositories/study_repository.dart';
 import 'package:app_tenda/data/repositories/firebase_study_repository.dart';
 import 'package:app_tenda/presentation/viewmodels/study_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/admin/cleaning_dashboard_viewmodel.dart';
 
 final getIt = GetIt.instance;
 
@@ -80,4 +81,7 @@ Future<void> setupServiceLocator() async {
     () => AnnouncementViewModel(),
   );
   getIt.registerLazySingleton<StudyViewModel>(() => StudyViewModel());
+  getIt.registerFactory<CleaningDashboardViewModel>(
+    () => CleaningDashboardViewModel(),
+  );
 }

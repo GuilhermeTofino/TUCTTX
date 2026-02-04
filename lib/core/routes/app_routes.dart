@@ -5,6 +5,7 @@ import 'package:app_tenda/presentation/views/calendar_view.dart';
 import 'package:app_tenda/presentation/views/finance/financial_hub_view.dart';
 import 'package:app_tenda/presentation/views/admin/admin_announcements_view.dart';
 import 'package:app_tenda/presentation/views/admin/admin_studies_view.dart';
+import 'package:app_tenda/presentation/views/admin/admin_cleaning_dashboard_view.dart';
 import 'package:app_tenda/presentation/views/announcements_view.dart';
 import 'package:app_tenda/presentation/views/home_view.dart';
 import 'package:app_tenda/presentation/views/login_view.dart';
@@ -30,6 +31,7 @@ class AppRoutes {
   static const String announcements = '/announcements';
   static const String studiesHub = '/studies-hub';
   static const String adminStudies = '/admin-studies';
+  static const String adminCleaningDashboard = '/admin-cleaning-dashboard';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -78,6 +80,11 @@ class AppRoutes {
 
       case adminStudies:
         return MaterialPageRoute(builder: (_) => const AdminStudiesView());
+
+      case adminCleaningDashboard:
+        return MaterialPageRoute(
+          builder: (_) => const AdminCleaningDashboardView(),
+        );
 
       default:
         return _errorRoute("Rota não encontrada: ${settings.name}");
