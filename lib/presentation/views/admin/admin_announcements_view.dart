@@ -264,8 +264,8 @@ class _AdminAnnouncementsViewState extends State<AdminAnnouncementsView> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showCreateSheet,
-        icon: const Icon(Icons.add_rounded),
-        label: const Text("Novo Aviso"),
+        icon: const Icon(Icons.add_rounded, color: Colors.white),
+        label: const Text("Novo Aviso", style: TextStyle(color: Colors.white)),
         backgroundColor: AppConfig.instance.tenant.primaryColor,
         elevation: 4,
       ),

@@ -48,16 +48,26 @@ class StudyViewModel extends ChangeNotifier {
           ? 'dev'
           : 'prod';
       final tenantId = AppConfig.instance.tenant.tenantSlug;
+      final extension = file.path.split('.').last.toLowerCase();
       final fileName =
-          "${DateTime.now().millisecondsSinceEpoch}_${const Uuid().v4()}.pdf";
+          "${DateTime.now().millisecondsSinceEpoch}_${const Uuid().v4()}.$extension";
       final storagePath =
           "environments/$env/tenants/$tenantId/studies/$topicId/$fileName";
+
+      String contentType = 'application/pdf';
+      if (['mp3', 'mpeg'].contains(extension)) {
+        contentType = 'audio/mpeg';
+      } else if (['wav', 'x-wav'].contains(extension)) {
+        contentType = 'audio/wav';
+      } else if (['m4a', 'mp4'].contains(extension)) {
+        contentType = 'audio/mp4';
+      }
 
       // 1. Upload para o Storage
       final ref = _storage.ref().child(storagePath);
       final uploadTask = await ref.putFile(
         file,
-        SettableMetadata(contentType: 'application/pdf'),
+        SettableMetadata(contentType: contentType),
       );
       final downloadUrl = await uploadTask.ref.getDownloadURL();
 
@@ -89,6 +99,8 @@ class StudyViewModel extends ChangeNotifier {
         topicName = 'FAQ';
       else if (topicId == 'ervas')
         topicName = 'Ervas';
+      else if (topicId == 'atabaque')
+        topicName = 'Atabaque';
       else if (topicId == 'biblioteca')
         topicName = 'Biblioteca';
 

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:app_tenda/presentation/widgets/custom_logo_loader.dart';
-import 'package:app_tenda/presentation/widgets/amaci_card.dart';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/config/app_config.dart';
@@ -10,8 +10,12 @@ import '../../../core/routes/app_routes.dart';
 import '../../viewmodels/home/home_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/announcements/announcement_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/finance/finance_viewmodel.dart';
-import 'package:app_tenda/domain/models/announcement_model.dart';
+
 import '../../../domain/models/user_model.dart';
+import '../../../../core/services/version_check_service.dart';
+import 'package:app_tenda/presentation/widgets/home/home_highlights_carousel.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -24,13 +28,133 @@ class _HomeViewState extends State<HomeView> {
   final HomeViewModel _viewModel = getIt<HomeViewModel>();
   final AnnouncementViewModel _announcementVM = getIt<AnnouncementViewModel>();
   final FinanceViewModel _financeVM = getIt<FinanceViewModel>();
+  final VersionCheckService _versionCheckService = getIt<VersionCheckService>();
 
   @override
   void initState() {
     super.initState();
+    _checkVersion(); // Validação de versão
     _viewModel.loadCurrentUser();
     _viewModel.addListener(_onUserLoaded);
     _announcementVM.loadLastSeen(AppConfig.instance.tenant.tenantSlug);
+  }
+
+  Future<void> _checkVersion() async {
+    await _versionCheckService.initialize();
+    final bool requiresUpdate = await _versionCheckService.isUpdateRequired();
+    if (requiresUpdate && mounted) {
+      _showUpdateDialog();
+    }
+  }
+
+  void _showUpdateDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        final primaryColor = AppConfig.instance.tenant.primaryColor;
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: primaryColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.rocket_launch_rounded,
+                      size: 48,
+                      color: primaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    "Nova Versão Disponível!",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    "Para continuar aproveitando o melhor da nossa comunidade, é necessário atualizar o aplicativo.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black54,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final url = _versionCheckService.getStoreUrl();
+                        if (url.isNotEmpty) {
+                          launchUrl(
+                            Uri.parse(url),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text(
+                        "ATUALIZAR AGORA",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Versão desatualizada",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[400],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _onUserLoaded() {
@@ -121,48 +245,34 @@ class _HomeViewState extends State<HomeView> {
           builder: (context, _) {
             return Scaffold(
               backgroundColor: const Color(0xFFF8F9FA),
-              body: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  _buildSliverHeader(user, tenant),
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
+              body: Column(
+                children: [
+                  // 1. Fixed Header
+                  _buildFixedHeader(user, tenant),
+
+                  // 2. Fixed Content (Carousel + Title)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
                         const SizedBox(height: 16),
-                        // Banner de Aviso Importante
-                        Builder(
-                          builder: (context) {
-                            final list = _announcementVM.announcements;
-                            if (list.isEmpty) return const SizedBox.shrink();
-
-                            final important = list
-                                .where((a) => a.isImportant)
-                                .toList();
-                            if (important.isEmpty)
-                              return const SizedBox.shrink();
-
-                            final latest = important.first;
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 24),
-                              child: InkWell(
-                                onTap: () => Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.announcements,
-                                ),
-                                child: _buildAnnouncementBanner(latest),
-                              ),
-                            );
-                          },
+                        HomeHighlightsCarousel(
+                          announcements: _announcementVM.announcements,
+                          nextAmaciDate: user.nextAmaciDate,
                         ),
-
-                        AmaciCard(nextAmaciDate: user.nextAmaciDate),
                         const SizedBox(height: 12),
                         _buildSectionTitle("Menu Principal"),
                         const SizedBox(height: 12),
-                        _buildAnimatedMenuGrid(user, tenant),
-                        const SizedBox(height: 32),
-                      ]),
+                      ],
+                    ),
+                  ),
+
+                  // 3. Scrollable Grid
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: _buildAnimatedMenuGrid(user, tenant),
                     ),
                   ),
                 ],
@@ -174,164 +284,43 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildSliverHeader(UserModel user, tenant) {
-    return SliverAppBar(
-      expandedHeight: 320,
-      pinned: true,
-      stretch: true,
-      backgroundColor: tenant.primaryColor,
-      elevation: 0,
-      automaticallyImplyLeading: false,
-      flexibleSpace: FlexibleSpaceBar(
-        stretchModes: const [
-          StretchMode.zoomBackground,
-          StretchMode.blurBackground,
-        ],
-        background: Stack(
-          fit: StackFit.expand,
-          children: [
-            // Background Gradient & Pattern
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    tenant.primaryColor,
-                    _darken(tenant.primaryColor, 0.15),
-                  ],
-                ),
-              ),
-            ),
-            // Watermark Icon
-            Positioned(
-              right: -50,
-              top: -20,
-              child: Icon(
-                Icons.temple_hindu_rounded,
-                size: 250,
-                color: Colors.white.withOpacity(0.08),
-              ),
-            ),
-            // Header Content
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _buildTopBar(user, tenant),
-                    const Spacer(),
-                    _buildIdentityCard(user, tenant),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAnnouncementBanner(AnnouncementModel latest) {
+  Widget _buildFixedHeader(UserModel user, tenant) {
     return Container(
-      padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
         gradient: LinearGradient(
-          colors: [
-            Colors.orange[400]!.withOpacity(0.5),
-            Colors.orange[100]!.withOpacity(0.1),
-          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+          colors: [tenant.primaryColor, _darken(tenant.primaryColor, 0.15)],
         ),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.9),
-              borderRadius: BorderRadius.circular(22),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.orange[50],
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.orange.withOpacity(0.2),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.campaign_rounded,
-                    color: Colors.orange,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.flash_on_rounded,
-                            size: 12,
-                            color: Colors.orange[900],
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            "AVISO IMPORTANTE",
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.orange[900],
-                              letterSpacing: 1.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        latest.title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          color: Colors.black87,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.orange[50],
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 12,
-                    color: Colors.orange,
-                  ),
-                ),
-              ],
+      child: Stack(
+        children: [
+          // Watermark Icon
+          Positioned(
+            right: -50,
+            top: -20,
+            child: Icon(
+              Icons.temple_hindu_rounded,
+              size: 250,
+              color: Colors.white.withOpacity(0.08),
             ),
           ),
-        ),
+          // Content
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildTopBar(user, tenant),
+                  const SizedBox(height: 24),
+                  _buildIdentityCard(user, tenant),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -340,30 +329,35 @@ class _HomeViewState extends State<HomeView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Olá, ${user.name.split(' ')[0]}",
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: -1,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Olá, ${user.name.split(' ')[0]}",
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: -1,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Text(
-              "Bem-vindo(a)",
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
+              Text(
+                "Bem-vindo(a)",
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.8),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         Row(
           children: [
+            const SizedBox(width: 8),
             if (user.role == 'admin')
               _buildTopIconButton(
                 Icons.admin_panel_settings_outlined,
@@ -375,6 +369,12 @@ class _HomeViewState extends State<HomeView> {
               () => Navigator.pushNamed(context, AppRoutes.announcements),
               showBadge: _announcementVM.hasUnread,
             ),
+            const SizedBox(width: 8),
+            _buildTopIconButton(
+              Icons.settings_outlined,
+              () => _showSettingsSheet(context),
+            ),
+
             const SizedBox(width: 8),
             _buildTopIconButton(Icons.logout_rounded, () {
               _announcementVM.clear();
@@ -436,8 +436,8 @@ class _HomeViewState extends State<HomeView> {
     }
 
     return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      physics: const BouncingScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12,
@@ -525,7 +525,6 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  // --- IDENTITY CARD (Premium Glassmorphism) ---
   Widget _buildIdentityCard(UserModel user, tenant) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
@@ -688,6 +687,162 @@ class _HomeViewState extends State<HomeView> {
         );
       }
     }
+  }
+
+  void _showSettingsSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                "Configurações",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 24),
+              ListTile(
+                leading: const Icon(Icons.description_outlined),
+                title: const Text("Termos de Uso"),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.pop(context);
+
+                  const url = 'https://www.iubenda.com/privacy-policy/11447814';
+                  launchUrl(
+                    Uri.parse(url),
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.privacy_tip_outlined),
+                title: const Text("Política de Privacidade"),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.pop(context);
+                  const url = 'https://www.iubenda.com/privacy-policy/11447814';
+                  launchUrl(
+                    Uri.parse(url),
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.delete_forever, color: Colors.red),
+                title: const Text(
+                  "Excluir Minha Conta",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showDeleteAccountDialog();
+                },
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDeleteAccountDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.red, size: 28),
+              SizedBox(width: 8),
+              Text("Excluir Conta?"),
+            ],
+          ),
+          content: const Text(
+            "Essa ação é irreversível. Todos os seus dados, histórico financeiro e perfil serão apagados permanentemente.\n\nDeseja continuar?",
+            style: TextStyle(fontSize: 15),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                "CANCELAR",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                try {
+                  // 1. Limpa os ViewModels para cancelar streams ativos
+                  // Isso evita erros de "permission-denied" quando o usuário for deletado
+                  _announcementVM.clear();
+                  _financeVM.clear();
+
+                  // 2. Deleta a conta
+                  await _viewModel.deleteAccount();
+
+                  if (mounted) {
+                    // 3. Exibe mensagem ANTES de navegar (enquanto o contexto é válido)
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Conta excluída com sucesso."),
+                      ),
+                    );
+
+                    // 4. Navega para Login
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.login,
+                      (route) => false,
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          e.toString().replaceAll("Exception: ", ""),
+                        ),
+                        backgroundColor: Colors.red,
+                        duration: const Duration(seconds: 5),
+                      ),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text("SIM, EXCLUIR"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Seus métodos _buildOrixaItem, _buildBloodBadge, _buildSectionTitle, _darken e _getOrixaColor permanecem os mesmos...

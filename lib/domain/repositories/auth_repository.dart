@@ -18,12 +18,13 @@ abstract class AuthRepository {
     String? medicamentos,
     String? condicoesMedicas,
     String? tipoSanguineo,
-    String role = 'user', 
+    String role = 'user',
   });
 
   Future<void> sendPasswordResetEmail(String email);
   Future<String> uploadProfileImage(File image, String userId);
   Future<void> signOut();
+  Future<void> deleteAccount();
   Stream<UserModel?> get onAuthStateChanged;
 
   // Método utilitário para buscar o perfil atualizado do usuário logado

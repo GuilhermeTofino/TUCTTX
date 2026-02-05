@@ -7,6 +7,7 @@ import '../../core/config/app_config.dart';
 import '../../domain/models/user_model.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/base_firestore_datasource.dart';
+import '../../core/utils/auth_exception_handler.dart';
 
 class FirebaseAuthRepository extends BaseFirestoreDataSource
     implements AuthRepository {
@@ -37,7 +38,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
       }
     } catch (e) {
       dev.log("Erro no SignIn: $e");
-      rethrow;
+      throw Exception(AuthExceptionHandler.handleException(e));
     }
   }
 
@@ -164,17 +165,43 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
       return newUser;
     } catch (e) {
       dev.log("ERRO NO SIGNUP: $e");
-      rethrow;
+      throw Exception(AuthExceptionHandler.handleException(e));
     }
   }
 
   @override
   Future<void> sendPasswordResetEmail(String email) async {
-    await _auth.sendPasswordResetEmail(email: email);
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      dev.log("Erro ao enviar reset de senha: $e");
+      throw Exception(AuthExceptionHandler.handleException(e));
+    }
   }
 
   @override
   Future<void> signOut() => _auth.signOut();
+
+  @override
+  Future<void> deleteAccount() async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception("Usuário não autenticado.");
+
+    try {
+      dev.log("Iniciando exclusão da conta do usuário: ${user.uid}");
+
+      // 1. Deleta o documento do usuário no Firestore (Tenant)
+      await tenantDocument('users', user.uid).delete();
+
+      // 2. Deleta o usuário do Firebase Auth
+      await user.delete();
+
+      dev.log("Conta excluída com sucesso.");
+    } catch (e) {
+      dev.log("Erro ao excluir conta: $e");
+      throw Exception(AuthExceptionHandler.handleException(e));
+    }
+  }
 
   @override
   Stream<UserModel?> get onAuthStateChanged {

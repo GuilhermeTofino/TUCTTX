@@ -89,4 +89,21 @@ class HomeViewModel extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<void> deleteAccount() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _authRepository.deleteAccount();
+      _currentUser = null;
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
 }

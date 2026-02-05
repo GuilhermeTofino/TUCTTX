@@ -12,6 +12,10 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:app_tenda/core/services/notification_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:app_tenda/core/services/layout_service.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/foundation.dart'; // Para kDebugMode e PlatformDispatcher
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -43,7 +47,9 @@ void main() async {
     AppConfig.instantiate(environment: env, tenant: tenant);
 
     // 3. Inicializa Service Locator (Injeção de Dependências)
+    // 3. Inicializa Service Locator (Injeção de Dependências)
     await setupServiceLocator();
+    await getIt<LayoutService>().init();
 
     // 4. Inicializa o Firebase
     dev.log("--- INICIALIZANDO FIREBASE ---");
@@ -58,6 +64,19 @@ void main() async {
     } catch (e) {
       print("Erro na inicialização do Firebase: $e");
     }
+
+    // 5. Configurações de Crashlytics e Analytics
+    // Captura erros fatais do Flutter
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+    // Captura erros assíncronos não tratados (PlatformDispatcher)
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
+    // Inicializa Analytics
+    FirebaseAnalytics.instance.logAppOpen();
 
     // 5. Inicializa Notificações
     await getIt<NotificationService>().initialize();

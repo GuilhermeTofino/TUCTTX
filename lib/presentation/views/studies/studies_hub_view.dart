@@ -4,6 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/di/service_locator.dart';
 import '../../widgets/premium_sliver_app_bar.dart';
 import 'documents_list_view.dart';
+import 'audio_list_view.dart';
+import '../../../core/services/layout_service.dart';
 
 class StudiesHubView extends StatefulWidget {
   const StudiesHubView({super.key});
@@ -41,6 +43,14 @@ class _StudiesHubViewState extends State<StudiesHubView> {
       'isSingle': true,
     },
     {
+      'id': 'atabaque',
+      'title': 'Atabaque',
+      'subtitle': 'Pontos em Áudio',
+      'icon': Icons.queue_music_rounded,
+      'color': Colors.deepOrange,
+      'isSingle': false, // Opens list
+    },
+    {
       'id': 'pontos_riscados',
       'title': 'Pontos Riscados',
       'subtitle': 'Símbolos sagrados',
@@ -76,32 +86,103 @@ class _StudiesHubViewState extends State<StudiesHubView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: CustomScrollView(
-        slivers: [
-          const PremiumSliverAppBar(
-            title: 'Estudos',
-            backgroundIcon: Icons.school_rounded,
-            expandedHeight: 180,
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.all(20),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 0.85,
+    return ListenableBuilder(
+      listenable: getIt<LayoutService>(),
+      builder: (context, _) {
+        final isGrid = getIt<LayoutService>().isGridView;
+
+        return Scaffold(
+          backgroundColor: const Color(0xFFF8F9FA),
+          body: CustomScrollView(
+            slivers: [
+              PremiumSliverAppBar(
+                title: 'Estudos',
+                backgroundIcon: Icons.school_rounded,
+                expandedHeight: 180,
+                actions: [
+                  IconButton(
+                    icon: Icon(
+                      isGrid ? Icons.list_rounded : Icons.grid_view_rounded,
+                      color: Colors.white,
+                    ),
+                    onPressed: getIt<LayoutService>().toggleView,
+                  ),
+                ],
               ),
-              delegate: SliverChildBuilderDelegate((context, index) {
-                final option = studyOptions[index];
-                return _buildStudyCard(context, option);
-              }, childCount: studyOptions.length),
-            ),
+              if (isGrid)
+                SliverPadding(
+                  padding: const EdgeInsets.all(20),
+                  sliver: SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.85,
+                        ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final option = studyOptions[index];
+                      return _buildStudyCard(context, option);
+                    }, childCount: studyOptions.length),
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.all(20),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final option = studyOptions[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildStudyListCard(context, option),
+                      );
+                    }, childCount: studyOptions.length),
+                  ),
+                ),
+              const SliverToBoxAdapter(child: SizedBox(height: 40)),
+            ],
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        );
+      },
+    );
+  }
+
+  Widget _buildStudyListCard(
+    BuildContext context,
+    Map<String, dynamic> option,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: option['color'].withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(option['icon'], color: option['color']),
+        ),
+        title: Text(
+          option['title'],
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          option['subtitle'],
+          style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+        onTap: () => _handleTopicTap(option),
       ),
     );
   }
@@ -202,8 +283,16 @@ class _StudiesHubViewState extends State<StudiesHubView> {
               context,
             ).showSnackBar(SnackBar(content: Text('Erro ao carregar: $e')));
           });
+    } else if (option['id'] == 'atabaque') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              AudioListView(topicId: option['id'], topicTitle: option['title']),
+        ),
+      );
     } else {
-      // Para hubs, navegamos para a lista de documentos
+      // Para hubs (biblioteca, ervas, etc), navegamos para a lista de documentos PDF/Pastas
       Navigator.push(
         context,
         MaterialPageRoute(

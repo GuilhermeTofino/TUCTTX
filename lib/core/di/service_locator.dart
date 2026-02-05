@@ -27,6 +27,8 @@ import 'package:app_tenda/domain/repositories/study_repository.dart';
 import 'package:app_tenda/data/repositories/firebase_study_repository.dart';
 import 'package:app_tenda/presentation/viewmodels/studies/study_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/admin/cleaning_dashboard_viewmodel.dart';
+import 'package:app_tenda/core/services/version_check_service.dart';
+import 'package:app_tenda/core/services/layout_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final getIt = GetIt.instance;
@@ -63,6 +65,10 @@ Future<void> setupServiceLocator() async {
   }
 
   getIt.registerLazySingleton<AIEventParser>(() => AIEventParser(geminiKey));
+
+  // ---- Version Check Service ----
+  getIt.registerLazySingleton<VersionCheckService>(() => VersionCheckService());
+  getIt.registerLazySingleton<LayoutService>(() => LayoutService());
 
   // ---- ViewModels ----
   getIt.registerFactory(() => WelcomeViewModel(getIt<AuthRepository>()));

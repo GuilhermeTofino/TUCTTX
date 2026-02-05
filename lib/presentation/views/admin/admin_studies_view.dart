@@ -41,6 +41,7 @@ class _AdminStudiesViewState extends State<AdminStudiesView> {
       'title': 'Biblioteca',
       'icon': Icons.library_books_rounded,
     },
+    {'id': 'atabaque', 'title': 'Atabaque', 'icon': Icons.queue_music_rounded},
   ];
 
   @override
@@ -242,9 +243,13 @@ class _AdminStudiesViewState extends State<AdminStudiesView> {
                     color: Colors.red[50],
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
-                    Icons.picture_as_pdf_rounded,
-                    color: Colors.red,
+                  child: Icon(
+                    _selectedTopicId == 'atabaque'
+                        ? Icons.audiotrack_rounded
+                        : Icons.picture_as_pdf_rounded,
+                    color: _selectedTopicId == 'atabaque'
+                        ? Colors.orange
+                        : Colors.red,
                   ),
                 ),
                 title: Text(
@@ -364,9 +369,13 @@ class _AdminStudiesViewState extends State<AdminStudiesView> {
                 const SizedBox(height: 20),
                 InkWell(
                   onTap: () async {
+                    final allowedExtensions = _selectedTopicId == 'atabaque'
+                        ? ['mp3', 'm4a', 'wav']
+                        : ['pdf'];
+
                     final result = await FilePicker.platform.pickFiles(
                       type: FileType.custom,
-                      allowedExtensions: ['pdf'],
+                      allowedExtensions: allowedExtensions,
                     );
                     if (result != null) {
                       setModalState(

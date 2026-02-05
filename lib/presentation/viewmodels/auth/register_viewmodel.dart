@@ -62,7 +62,7 @@ class RegisterViewModel extends ChangeNotifier {
       return user != null;
     } catch (e) {
       _isLoading = false;
-      _errorMessage = e.toString();
+      _errorMessage = e.toString().replaceAll("Exception: ", "");
       notifyListeners();
       return false;
     }
@@ -87,7 +87,7 @@ class RegisterViewModel extends ChangeNotifier {
       return user != null;
     } catch (e) {
       _isLoading = false;
-      _errorMessage = e.toString();
+      _errorMessage = e.toString().replaceAll("Exception: ", "");
       notifyListeners();
       return false;
     }
@@ -109,7 +109,7 @@ class RegisterViewModel extends ChangeNotifier {
       return true;
     } catch (e) {
       _isLoading = false;
-      _errorMessage = e.toString();
+      _errorMessage = e.toString().replaceAll("Exception: ", "");
       notifyListeners();
       return false;
     }
