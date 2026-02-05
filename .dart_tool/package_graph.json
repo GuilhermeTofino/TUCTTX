@@ -7,9 +7,11 @@
       "name": "app_tenda",
       "version": "2.0.0+3",
       "dependencies": [
+        "add_2_calendar",
         "cached_network_image",
         "cloud_firestore",
         "cupertino_icons",
+        "device_calendar",
         "file_picker",
         "firebase_auth",
         "firebase_core",
@@ -26,6 +28,7 @@
         "local_auth",
         "overlay_support",
         "provider",
+        "timezone",
         "url_launcher",
         "uuid"
       ],
@@ -92,6 +95,30 @@
       ]
     },
     {
+      "name": "timezone",
+      "version": "0.9.4",
+      "dependencies": [
+        "path"
+      ]
+    },
+    {
+      "name": "device_calendar",
+      "version": "4.3.3",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "sprintf",
+        "timezone"
+      ]
+    },
+    {
+      "name": "add_2_calendar",
+      "version": "2.2.5",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
       "name": "cached_network_image",
       "version": "3.4.1",
       "dependencies": [
@@ -149,13 +176,12 @@
     },
     {
       "name": "flutter_local_notifications",
-      "version": "20.0.0",
+      "version": "18.0.1",
       "dependencies": [
         "clock",
         "flutter",
         "flutter_local_notifications_linux",
         "flutter_local_notifications_platform_interface",
-        "flutter_local_notifications_windows",
         "timezone"
       ]
     },
@@ -490,6 +516,11 @@
       ]
     },
     {
+      "name": "sprintf",
+      "version": "7.0.0",
+      "dependencies": []
+    },
+    {
       "name": "octo_image",
       "version": "2.1.0",
       "dependencies": [
@@ -646,35 +677,16 @@
       ]
     },
     {
-      "name": "timezone",
-      "version": "0.10.1",
-      "dependencies": [
-        "http",
-        "path"
-      ]
-    },
-    {
       "name": "flutter_local_notifications_platform_interface",
-      "version": "10.0.0",
+      "version": "8.0.0",
       "dependencies": [
+        "flutter",
         "plugin_platform_interface"
       ]
     },
     {
-      "name": "flutter_local_notifications_windows",
-      "version": "2.0.0",
-      "dependencies": [
-        "ffi",
-        "flutter",
-        "flutter_local_notifications_platform_interface",
-        "meta",
-        "timezone",
-        "xml"
-      ]
-    },
-    {
       "name": "flutter_local_notifications_linux",
-      "version": "7.0.0",
+      "version": "5.0.0",
       "dependencies": [
         "dbus",
         "ffi",

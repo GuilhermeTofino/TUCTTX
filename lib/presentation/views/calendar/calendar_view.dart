@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/di/service_locator.dart';
 import '../../viewmodels/calendar/calendar_viewmodel.dart';
+import '../../../core/services/calendar_service.dart';
 import '../../viewmodels/auth/register_viewmodel.dart';
 import '../../widgets/custom_logo_loader.dart';
 
@@ -20,6 +21,7 @@ class CalendarView extends StatefulWidget {
 
 class _CalendarViewState extends State<CalendarView> {
   final _viewModel = getIt<CalendarViewModel>();
+  final _calendarService = getIt<CalendarService>();
   final _authVM = getIt<RegisterViewModel>();
   DateTime _selectedMonth = DateTime.now();
 
@@ -68,6 +70,13 @@ class _CalendarViewState extends State<CalendarView> {
           PremiumSliverAppBar(
             title: widget.isAdminMode ? "Gerenciar Escalas" : "Cronograma",
             backgroundIcon: Icons.calendar_month_rounded,
+            actions: [
+              IconButton(
+                onPressed: () => _exportMonthEvents(tenant.primaryColor),
+                icon: const Icon(Icons.ios_share_rounded, color: Colors.white),
+                tooltip: "Exportar para Calendário",
+              ),
+            ],
             bottom: _buildMonthSelector(),
           ),
           SliverFillRemaining(
@@ -405,6 +414,38 @@ class _CalendarViewState extends State<CalendarView> {
                         DateFormat('HH:mm').format(event.date),
                       ),
                       _buildDetailRow(Icons.label_outline, "Tipo", event.type),
+
+                      // Botão Adicionar ao Calendário
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              _calendarService.addToCalendar(event);
+                            },
+                            icon: Icon(
+                              Icons.calendar_month_outlined,
+                              color: tenant.primaryColor,
+                            ),
+                            label: Text(
+                              "Adicionar ao Calendário",
+                              style: TextStyle(
+                                color: tenant.primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: tenant.primaryColor),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
                       // Seção de Faxina (Nova)
                       if (event.cleaningCrew != null &&
                           event.cleaningCrew!.isNotEmpty) ...[
@@ -771,6 +812,80 @@ class _CalendarViewState extends State<CalendarView> {
           Navigator.pop(context);
           await _viewModel.deleteEvent(event.id, tenantId, event.title);
         },
+      ),
+    );
+  }
+
+  Future<void> _exportMonthEvents(Color primaryColor) async {
+    // Filtrar eventos do mês atual
+    final filteredEvents = _viewModel.events
+        .where(
+          (e) =>
+              e.date.month == _selectedMonth.month &&
+              e.date.year == _selectedMonth.year,
+        )
+        .toList();
+
+    if (filteredEvents.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Não há eventos para exportar neste mês."),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    // Confirmar exportação
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Exportar Eventos"),
+        content: Text(
+          "Deseja adicionar ${filteredEvents.length} eventos ao seu calendário do celular?",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Exportar"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    // Loading indicator
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(
+        child: Card(
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      ),
+    );
+
+    // Call Service
+    final result = await _calendarService.addAllToCalendar(filteredEvents);
+
+    // Dismiss Loading
+    if (mounted) Navigator.pop(context);
+
+    // Show Result
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(result['message']),
+        backgroundColor: result['success'] ? Colors.green : Colors.red,
       ),
     );
   }

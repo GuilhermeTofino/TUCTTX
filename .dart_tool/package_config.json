@@ -8,6 +8,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "add_2_calendar",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/add_2_calendar-2.2.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "ansicolor",
       "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/ansicolor-2.0.3",
       "packageUri": "lib/",
@@ -132,6 +138,12 @@
       "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/dbus-0.7.11",
       "packageUri": "lib/",
       "languageVersion": "2.17"
+    },
+    {
+      "name": "device_calendar",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/device_calendar-4.3.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "fake_async",
@@ -291,27 +303,21 @@
     },
     {
       "name": "flutter_local_notifications",
-      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/flutter_local_notifications-20.0.0",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/flutter_local_notifications-18.0.1",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.1"
     },
     {
       "name": "flutter_local_notifications_linux",
-      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/flutter_local_notifications_linux-7.0.0",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/flutter_local_notifications_linux-5.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.1"
     },
     {
       "name": "flutter_local_notifications_platform_interface",
-      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/flutter_local_notifications_platform_interface-10.0.0",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/flutter_local_notifications_platform_interface-8.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
-    },
-    {
-      "name": "flutter_local_notifications_windows",
-      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/flutter_local_notifications_windows-2.0.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.1"
     },
     {
       "name": "flutter_localizations",
@@ -668,6 +674,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "sprintf",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/sprintf-7.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "sqflite",
       "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/sqflite-2.4.2",
       "packageUri": "lib/",
@@ -735,7 +747,7 @@
     },
     {
       "name": "timezone",
-      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/timezone-0.10.1",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/timezone-0.9.4",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },

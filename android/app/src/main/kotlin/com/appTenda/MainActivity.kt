@@ -1,4 +1,4 @@
-package com.appTenda.app_tenda
+package com.appTenda
 
 import io.flutter.embedding.android.FlutterActivity
 

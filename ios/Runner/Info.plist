@@ -71,5 +71,9 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<key>NSCalendarsUsageDescription</key>
+		<string>Precisamos de acesso ao calendário para adicionar os eventos da gira.</string>
+		<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+		<string>Precisamos de acesso ao calendário para adicionar os eventos da gira.</string>
 	</dict>
 </plist>

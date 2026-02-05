@@ -41,8 +41,8 @@ class NotificationService {
       iOS: initializationSettingsIOS,
     );
 
-    // Na versão 20.0.0, os parâmetros são nomeados
-    await _localNotifications.initialize(settings: initializationSettings);
+    // Na versão < 20.0.0, o parâmetro é posicional
+    await _localNotifications.initialize(initializationSettings);
 
     // 3. Listeners
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
@@ -94,10 +94,10 @@ class NotificationService {
         !kIsWeb &&
         defaultTargetPlatform == TargetPlatform.android) {
       _localNotifications.show(
-        id: notification.hashCode,
-        title: notification.title,
-        body: notification.body,
-        notificationDetails: const NotificationDetails(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        const NotificationDetails(
           android: AndroidNotificationDetails(
             'high_importance_channel',
             'High Importance Notifications',

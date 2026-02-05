@@ -1,7 +1,9 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
-    id("com.google.gms.google-services")
+    // id("com.google.gms.google-services")
     // END: FlutterFire Configuration
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
@@ -15,6 +17,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -64,7 +67,7 @@ android {
     }
 
     // Carregar configurações de assinatura do arquivo key.properties
-    val keyProperties = java.util.Properties()
+    val keyProperties = Properties()
     val keyPropertiesFile = rootProject.file("key.properties")
     if (keyPropertiesFile.exists()) {
         keyProperties.load(keyPropertiesFile.inputStream())
@@ -103,8 +106,25 @@ android {
         val displayName = if (isDev) "[DEV] $baseName" else baseName
         resValue("string", "app_name", displayName)
     }
+
+    sourceSets {
+        getByName("tucttxDev") { res.srcDirs("src/tucttx/res") }
+        getByName("tucttxProd") { res.srcDirs("src/tucttx/res") }
+        
+        getByName("tu7eDev") { res.srcDirs("src/tu7e/res") }
+        getByName("tu7eProd") { res.srcDirs("src/tu7e/res") }
+        
+        getByName("tusvaDev") { res.srcDirs("src/tusva/res") }
+        getByName("tusvaProd") { res.srcDirs("src/tusva/res") }
+    }
 }
+
+
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
