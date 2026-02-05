@@ -173,7 +173,10 @@ class _MemberManagementViewState extends State<MemberManagementView> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => MemberOptionsModal(member: member),
+      builder: (context) => MemberOptionsModal(
+        member: member,
+        onPromoteToAdmin: _viewModel.toggleAdminRole,
+      ),
     );
   }
 }

@@ -7,6 +7,7 @@ class StudyDocumentModel {
   final String fileUrl;
   final DateTime createdAt;
   final String authorId;
+  final String? folder; // Optional folder/subcategory name
 
   StudyDocumentModel({
     required this.id,
@@ -15,6 +16,7 @@ class StudyDocumentModel {
     required this.fileUrl,
     required this.createdAt,
     required this.authorId,
+    this.folder,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +27,7 @@ class StudyDocumentModel {
       'fileUrl': fileUrl,
       'createdAt': Timestamp.fromDate(createdAt),
       'authorId': authorId,
+      'folder': folder,
     };
   }
 
@@ -36,6 +39,7 @@ class StudyDocumentModel {
       fileUrl: map['fileUrl'] ?? '',
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       authorId: map['authorId'] ?? '',
+      folder: map['folder'],
     );
   }
 }

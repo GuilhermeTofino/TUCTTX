@@ -8,7 +8,13 @@ import 'package:app_tenda/presentation/views/admin/admin_member_full_record_view
 class MemberOptionsModal extends StatelessWidget {
   final UserModel member;
 
-  const MemberOptionsModal({super.key, required this.member});
+  final Future<void> Function(UserModel)? onPromoteToAdmin;
+
+  const MemberOptionsModal({
+    super.key,
+    required this.member,
+    this.onPromoteToAdmin,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -137,9 +143,53 @@ class MemberOptionsModal extends StatelessWidget {
                   );
                 },
               ),
+              if (onPromoteToAdmin != null)
+                _buildOptionCard(
+                  context,
+                  title: member.isAdmin ? "Remover Admin" : "Tornar Admin",
+                  icon: member.isAdmin
+                      ? Icons.remove_moderator_outlined
+                      : Icons.admin_panel_settings_outlined,
+                  color: member.isAdmin ? Colors.red : Colors.indigo,
+                  onTap: () => _showConfirmationDialog(context),
+                ),
             ],
           ),
           const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(member.isAdmin ? "Remover Admin" : "Tornar Admin"),
+        content: Text(
+          member.isAdmin
+              ? "Tem certeza que deseja remover as permissões de administrador de ${member.name}?"
+              : "Tem certeza que deseja conceder permissões de administrador para ${member.name}?",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx); // Fecha o dialog
+              Navigator.pop(context); // Fecha o modal
+              onPromoteToAdmin?.call(member);
+            },
+            child: Text(
+              "Confirmar",
+              style: TextStyle(
+                color: member.isAdmin ? Colors.red : Colors.indigo,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ],
       ),
     );

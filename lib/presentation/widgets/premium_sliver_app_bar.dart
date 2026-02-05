@@ -7,6 +7,7 @@ class PremiumSliverAppBar extends StatelessWidget {
   final List<Widget>? actions;
   final double expandedHeight;
   final bool showBackButton;
+  final Widget? leading;
   final PreferredSizeWidget? bottom;
 
   const PremiumSliverAppBar({
@@ -16,6 +17,7 @@ class PremiumSliverAppBar extends StatelessWidget {
     this.actions,
     this.expandedHeight = 120.0,
     this.showBackButton = true,
+    this.leading,
     this.bottom,
   });
 
@@ -30,16 +32,18 @@ class PremiumSliverAppBar extends StatelessWidget {
       backgroundColor: tenant.primaryColor,
       elevation: 0,
       actions: actions,
-      leading: showBackButton
-          ? IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.white,
-                size: 20,
-              ),
-              onPressed: () => Navigator.pop(context),
-            )
-          : null,
+      leading:
+          leading ??
+          (showBackButton
+              ? IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                )
+              : null),
       bottom: bottom,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: false,

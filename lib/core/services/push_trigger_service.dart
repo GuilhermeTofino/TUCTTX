@@ -123,4 +123,39 @@ class PushTriggerService extends BaseFirestoreDataSource {
       data: {'type': 'amaci_scheduled', 'date': date},
     );
   }
+
+  /// Notifica todos os usuários sobre um aviso urgente no mural.
+  Future<void> notifyUrgentAnnouncement({
+    required String title,
+    required String content,
+  }) async {
+    final tenantId = AppConfig.instance.tenant.tenantSlug;
+    final env = AppConfig.instance.environment.name;
+
+    await _enqueueNotification(
+      topic: '${tenantId}_${env}_all',
+      title: '🚨 Aviso Urgente: $title',
+      body: content.length > 100 ? '${content.substring(0, 97)}...' : content,
+      data: {'type': 'announcement_urgent'},
+    );
+  }
+
+  /// Notifica sobre novo material de estudo.
+  Future<void> notifyNewStudyMaterial({
+    required String topicName,
+    required String title,
+    required String folder,
+  }) async {
+    final tenantId = AppConfig.instance.tenant.tenantSlug;
+    final env = AppConfig.instance.environment.name;
+
+    await _enqueueNotification(
+      topic: '${tenantId}_${env}_all',
+      title: '📚 Novo Estudo: $topicName',
+      body: folder.isNotEmpty
+          ? 'Novo arquivo em "$folder": $title'
+          : 'Novo arquivo adicionado: $title',
+      data: {'type': 'study_material'},
+    );
+  }
 }

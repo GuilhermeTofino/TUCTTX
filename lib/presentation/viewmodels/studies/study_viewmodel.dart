@@ -5,10 +5,12 @@ import '../../../domain/models/study_document_model.dart';
 import '../../../domain/repositories/study_repository.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/config/app_config.dart';
+import '../../../core/services/push_trigger_service.dart';
 import 'package:uuid/uuid.dart';
 
 class StudyViewModel extends ChangeNotifier {
   final StudyRepository _repository = getIt<StudyRepository>();
+  final PushTriggerService _pushService = getIt<PushTriggerService>();
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   bool _isLoading = false;
@@ -35,6 +37,7 @@ class StudyViewModel extends ChangeNotifier {
     required String title,
     required File file,
     required String authorId,
+    String? folder,
   }) async {
     _isLoading = true;
     _errorMessage = null;
@@ -66,11 +69,39 @@ class StudyViewModel extends ChangeNotifier {
         fileUrl: downloadUrl,
         createdAt: DateTime.now(),
         authorId: authorId,
+        folder: folder,
       );
 
       await _repository.uploadDocument(document);
+
+      // 3. Enviar notificação push
+      // Tenta obter o nome amigável do tópico (isso poderia ser otimizado)
+      String topicName = topicId;
+      if (topicId == 'apostila')
+        topicName = 'Apostila';
+      else if (topicId == 'rumbe')
+        topicName = 'Rumbê';
+      else if (topicId == 'pontos_cantados')
+        topicName = 'Pontos Cantados';
+      else if (topicId == 'pontos_riscados')
+        topicName = 'Pontos Riscados';
+      else if (topicId == 'faq')
+        topicName = 'FAQ';
+      else if (topicId == 'ervas')
+        topicName = 'Ervas';
+      else if (topicId == 'biblioteca')
+        topicName = 'Biblioteca';
+
+      await _pushService.notifyNewStudyMaterial(
+        topicName: topicName,
+        title: title,
+        folder: folder ?? '',
+      );
+
+      print('Upload realizado com sucesso: ${document.toMap()}');
     } catch (e) {
       _errorMessage = "Erro ao fazer upload: $e";
+      print(_errorMessage);
       rethrow;
     } finally {
       _isLoading = false;

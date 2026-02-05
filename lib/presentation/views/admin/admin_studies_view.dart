@@ -285,6 +285,7 @@ class _AdminStudiesViewState extends State<AdminStudiesView> {
 
   void _showUploadSheet() {
     final titleController = TextEditingController();
+    final folderController = TextEditingController();
     File? selectedFile;
 
     showModalBottomSheet(
@@ -335,6 +336,22 @@ class _AdminStudiesViewState extends State<AdminStudiesView> {
                     labelText: "Título do Documento",
                     hintText: "Ex: Apostila de Ervas",
                     prefixIcon: const Icon(Icons.title_rounded),
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: folderController,
+                  decoration: InputDecoration(
+                    labelText: "Pasta / Categoria (Opcional)",
+                    hintText: "Ex: Banho de Ervas, Livros Sagrados...",
+                    prefixIcon: const Icon(Icons.folder_open_rounded),
                     filled: true,
                     fillColor: Colors.grey[100],
                     border: OutlineInputBorder(
@@ -409,7 +426,11 @@ class _AdminStudiesViewState extends State<AdminStudiesView> {
                       if (titleController.text.isEmpty || selectedFile == null)
                         return;
                       Navigator.pop(context);
-                      _upload(titleController.text, selectedFile!);
+                      _upload(
+                        titleController.text,
+                        selectedFile!,
+                        folderController.text,
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppConfig.instance.tenant.primaryColor,
@@ -436,13 +457,14 @@ class _AdminStudiesViewState extends State<AdminStudiesView> {
     );
   }
 
-  Future<void> _upload(String title, File file) async {
+  Future<void> _upload(String title, File file, String folder) async {
     try {
       await _viewModel.uploadPdf(
         topicId: _selectedTopicId,
         title: title,
         file: file,
         authorId: FirebaseAuth.instance.currentUser?.uid ?? 'admin',
+        folder: folder.trim().isEmpty ? null : folder.trim(),
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

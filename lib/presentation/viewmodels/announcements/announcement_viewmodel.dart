@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../domain/models/announcement_model.dart';
 import '../../../domain/repositories/announcement_repository.dart';
+import '../../../core/services/push_trigger_service.dart';
 import '../../../core/di/service_locator.dart';
 
 class AnnouncementViewModel extends ChangeNotifier {
   final AnnouncementRepository _repository = getIt<AnnouncementRepository>();
+  final PushTriggerService _pushService = getIt<PushTriggerService>();
 
   StreamSubscription<List<AnnouncementModel>>? _subscription;
   List<AnnouncementModel> _announcements = [];
@@ -89,6 +91,13 @@ class AnnouncementViewModel extends ChangeNotifier {
 
     try {
       await _repository.createAnnouncement(announcement);
+
+      if (announcement.isImportant) {
+        await _pushService.notifyUrgentAnnouncement(
+          title: announcement.title,
+          content: announcement.content,
+        );
+      }
     } catch (e) {
       _errorMessage = "Erro ao criar aviso: $e";
       rethrow;

@@ -132,4 +132,24 @@ class MemberManagementViewModel extends ChangeNotifier {
       // Não damos rethrow aqui para não travar o fluxo principal se o calendário falhar
     }
   }
+
+  Future<void> toggleAdminRole(UserModel user) async {
+    final newRole = user.isAdmin ? 'user' : 'admin';
+    final updatedUser = user.copyWith(role: newRole);
+
+    try {
+      await _userRepository.saveUserProfile(updatedUser);
+
+      // Atualiza a lista localmente para refletir a mudança imediatamente
+      final index = _allMembers.indexWhere((u) => u.id == user.id);
+      if (index != -1) {
+        _allMembers[index] = updatedUser;
+        _applyFilter(); // Re-aplica filtros se houver
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Erro ao alterar permissão de admin: $e");
+      rethrow;
+    }
+  }
 }

@@ -1,4 +1,4 @@
 #include? "../Pods/Target Support Files/Pods-Runner/Pods-Runner.release-tucttxprod.xcconfig"
 #include "Release.xcconfig"
 
-DART_DEFINES=$(inherited),VEVOQU5UPXR1Y3R0eA==,RU5WPXByb2Q=
+DART_DEFINES=VEVOQU5UPXR1Y3R0eA==,RU5WPXByb2Q=
