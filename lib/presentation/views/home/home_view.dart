@@ -14,7 +14,6 @@ import 'package:app_tenda/presentation/viewmodels/finance/finance_viewmodel.dart
 import '../../../domain/models/user_model.dart';
 import '../../../../core/services/version_check_service.dart';
 import 'package:app_tenda/presentation/widgets/home/home_highlights_carousel.dart';
-import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends StatefulWidget {

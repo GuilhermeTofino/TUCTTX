@@ -24,6 +24,14 @@ workflows:
           # Decodifica o keystore da variável de ambiente CM_KEYSTORE (base64)
           echo "$CM_KEYSTORE" | base64 --decode > "$CM_BUILD_DIR/android/keystore.jks"
 
+      - name: Create .env file
+        script: | 
+          echo "GEMINI_API_KEY=$GEMINI_API_KEY" > "$CM_BUILD_DIR/.env"
+
+      - name: Create .env file
+        script: | 
+          echo "GEMINI_API_KEY=$GEMINI_API_KEY" > "$CM_BUILD_DIR/.env"
+
       - name: Get Flutter packages
         script: |
           flutter packages pub get
@@ -31,7 +39,7 @@ workflows:
       - name: Build Android App Bundle (Prod)
         script: |
           # Builda o AAB para o flavor tucttxProd
-          flutter build appbundle --release --flavor tucttxProd
+          flutter build appbundle --release --flavor tucttxProd --dart-define=TENANT=tucttx --dart-define=ENV=prod
 
     artifacts:
       - build/**/outputs/**/*.aab
@@ -63,6 +71,10 @@ workflows:
           app-store-connect fetch-signing-files "$(xcode-project bundle-identifier)" --type IOS_APP_STORE --create
           keychain add-certificates
       
+      - name: Create .env file
+        script: | 
+          echo "GEMINI_API_KEY=$GEMINI_API_KEY" > "$CM_BUILD_DIR/.env"
+
       - name: Get Flutter packages
         script: |
           flutter packages pub get
@@ -78,7 +90,7 @@ workflows:
           # export-options.plist é gerado automaticamente pelo Codemagic se não especificado, 
           # mas para flavors específicos pode ser necessário ajuste. 
           # Por enquanto, vamos confiar na detecção automática do Codemagic.
-          flutter build ipa --release --flavor tucttxProd --export-options-plist=$HOME/export_options.plist
+          flutter build ipa --release --flavor tucttxProd --export-options-plist=$HOME/export_options.plist --dart-define=TENANT=tucttx --dart-define=ENV=prod
 
     artifacts:
       - build/ios/ipa/*.ipa
