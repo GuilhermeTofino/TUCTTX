@@ -93,9 +93,9 @@ workflows:
           flutter build ipa --release --flavor tucttxProd --export-options-plist=$HOME/export_options.plist --dart-define=TENANT=tucttx --dart-define=ENV=prod
 
     artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
-      - *.dSYM.zip
+      - "build/ios/ipa/*.ipa"
+      - "/tmp/xcodebuild_logs/*.log"
+      - "*.dSYM.zip"
 
     publishing:
       app_store_connect:
