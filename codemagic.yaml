@@ -1,0 +1,93 @@
+workflows:
+  android-workflow:
+    name: Android Dev & Prod
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - android_credentials
+      flutter: stable
+      xcode: latest
+      java: 17
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+      
+      - name: Set up key.properties
+        script: |
+          echo "storePassword=$CM_STORE_PASSWORD" > "$CM_BUILD_DIR/android/key.properties"
+          echo "keyPassword=$CM_KEY_PASSWORD" >> "$CM_BUILD_DIR/android/key.properties"
+          echo "keyAlias=$CM_KEY_ALIAS" >> "$CM_BUILD_DIR/android/key.properties"
+          echo "storeFile=../keystore.jks" >> "$CM_BUILD_DIR/android/key.properties"
+          
+          # Decodifica o keystore da variável de ambiente CM_KEYSTORE (base64)
+          echo "$CM_KEYSTORE" | base64 --decode > "$CM_BUILD_DIR/android/keystore.jks"
+
+      - name: Get Flutter packages
+        script: |
+          flutter packages pub get
+
+      - name: Build Android App Bundle (Prod)
+        script: |
+          # Builda o AAB para o flavor tucttxProd
+          flutter build appbundle --release --flavor tucttxProd
+
+    artifacts:
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+
+    publishing:
+      google_play:
+        # Usa as credenciais JSON da variável de ambiente
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
+
+  ios-workflow:
+    name: iOS Dev & Prod
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - ios_credentials
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: iOS Code Signing
+        script: | 
+          # Inicializa keychain e busca perfis de provisionamento
+          keychain initialize
+          app-store-connect fetch-signing-files "$(xcode-project bundle-identifier)" --type IOS_APP_STORE --create
+          keychain add-certificates
+      
+      - name: Get Flutter packages
+        script: |
+          flutter packages pub get
+
+      - name: Install Pods
+        script: |
+          find . -name "Podfile" -exec dirNAME={} \;
+          cd ios && pod install
+
+      - name: Build iOS IPA
+        script: |
+          # Builda o IPA para o flavor tucttxProd
+          # export-options.plist é gerado automaticamente pelo Codemagic se não especificado, 
+          # mas para flavors específicos pode ser necessário ajuste. 
+          # Por enquanto, vamos confiar na detecção automática do Codemagic.
+          flutter build ipa --release --flavor tucttxProd --export-options-plist=$HOME/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - *.dSYM.zip
+
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
