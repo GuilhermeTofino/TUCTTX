@@ -29,7 +29,7 @@ workflows:
           echo "storePassword=$CM_STORE_PASSWORD" > "$CM_BUILD_DIR/android/key.properties"
           echo "keyPassword=$CM_KEY_PASSWORD" >> "$CM_BUILD_DIR/android/key.properties"
           echo "keyAlias=$CM_KEY_ALIAS" >> "$CM_BUILD_DIR/android/key.properties"
-          echo "storeFile=../keystore.jks" >> "$CM_BUILD_DIR/android/key.properties"
+          echo "storeFile=keystore.jks" >> "$CM_BUILD_DIR/android/key.properties"
           
           # Decodifica o keystore da variável de ambiente CM_KEYSTORE (base64)
           echo "$CM_KEYSTORE" | base64 --decode > "$CM_BUILD_DIR/android/keystore.jks"
@@ -88,7 +88,7 @@ workflows:
         script: | 
           # Inicializa keychain e busca perfis de provisionamento
           keychain initialize
-          app-store-connect fetch-signing-files "$(xcode-project bundle-identifier)" --type IOS_APP_STORE --create
+          app-store-connect fetch-signing-files "com.appTenda" --type IOS_APP_STORE --create
           keychain add-certificates
       
       - name: Create .env file
