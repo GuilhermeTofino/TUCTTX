@@ -3,6 +3,16 @@ workflows:
     name: Android Dev & Prod
     max_build_duration: 60
     instance_type: mac_mini_m2
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: develop
+          include: true
+          source: true
+        - pattern: main
+          include: true
+          source: true
     environment:
       groups:
         - android_credentials
@@ -57,6 +67,16 @@ workflows:
     name: iOS Dev & Prod
     max_build_duration: 60
     instance_type: mac_mini_m2
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: develop
+          include: true
+          source: true
+        - pattern: main
+          include: true
+          source: true
     environment:
       groups:
         - ios_credentials
