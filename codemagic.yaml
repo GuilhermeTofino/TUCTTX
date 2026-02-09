@@ -93,7 +93,7 @@ workflows:
           keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password "$CM_CERTIFICATE_PASSWORD"
           
           # Busca apenas os profiles (usando o certificado que acabamos de adicionar)
-          app-store-connect fetch-signing-files "com.appTenda" --type IOS_APP_STORE --create
+          app-store-connect fetch-signing-files "com.appTenda.tucttx" --type IOS_APP_STORE --create
       
       - name: Create .env file
         script: | 
