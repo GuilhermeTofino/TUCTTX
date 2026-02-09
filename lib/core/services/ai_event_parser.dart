@@ -5,8 +5,10 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 class AIEventParser {
   final String apiKey;
   late GenerativeModel _model;
+  late GenerativeModel _camboneModel; // Modelo específico para cambones
 
   AIEventParser(this.apiKey) {
+    // Modelo padrão para Eventos
     _model = GenerativeModel(
       model: 'gemini-3-flash-preview',
       apiKey: apiKey,
@@ -19,7 +21,6 @@ class AIEventParser {
               'date': Schema.string(
                 description: 'Data e hora no formato ISO8601',
               ),
-              // Removemos o enumValues/enumShapes para evitar erro de compilação
               'type': Schema.string(
                 description: 'Tipo: Pública, Fechada, Festa ou Desenvolvimento',
               ),
@@ -33,6 +34,27 @@ class AIEventParser {
               ),
             },
             requiredProperties: ['title', 'date', 'type', 'description'],
+          ),
+        ),
+      ),
+    );
+
+    // Modelo específico para Escalas de Cambones
+    _camboneModel = GenerativeModel(
+      model: 'gemini-3-flash-preview',
+      apiKey: apiKey,
+      generationConfig: GenerationConfig(
+        responseMimeType: 'application/json',
+        responseSchema: Schema.array(
+          items: Schema.object(
+            properties: {
+              'camboneName': Schema.string(description: 'Nome do Cambone'),
+              'mediums': Schema.array(
+                items: Schema.string(),
+                description: 'Lista de nomes dos médiuns associados',
+              ),
+            },
+            requiredProperties: ['camboneName', 'mediums'],
           ),
         ),
       ),
@@ -105,6 +127,131 @@ class AIEventParser {
       return parsedData.map((item) => Map<String, dynamic>.from(item)).toList();
     } catch (e) {
       print("Erro no Parsing de Imagem: $e");
+      return [];
+    }
+  }
+
+  // Novo método para parsear texto de escala de cambones
+  Future<List<Map<String, dynamic>>> parseCamboneScheduleText(
+    String text,
+  ) async {
+    if (text.trim().isEmpty) return [];
+
+    final prompt =
+        '''
+    Você é um assistente de terreiro.
+    Analise o texto abaixo que contém uma escala de cambones e seus médiuns.
+    Retorne um JSON com a lista de atribuições.
+
+    REGRAS CRITICAS DE INTERPRETAÇÃO:
+    1. O formato geralmente é: "Nomes dos Médiuns - Nome do Cambone". 
+       Exemplo: "PAI RICARDO - TAMARA" significa que TAMARA é o Cambone e PAI RICARDO é o Médium.
+    2. Pode haver vários médiuns separados por barra (/) ou vírgula.
+       Exemplo: "BRANCA/MA - NATALIA" -> Cambone: NATALIA, Médiuns: ["BRANCA", "MA"].
+
+    ESTRUTURA DO JSON (Lista de Objetos):
+    [
+      {
+        "camboneName": "Nome do Cambone (sempre quem cuida)",
+        "mediums": ["Médium 1", "Médium 2"]
+      }
+    ]
+
+    OUTRAS REGRAS:
+    - Se houver uma data no texto, ignore por enquanto, foque na associação Cambone-Médiuns.
+    - Retorne APENAS o JSON válido, sem markdown.
+
+    Texto para Análise: "$text"
+    ''';
+
+    try {
+      final content = [Content.text(prompt)];
+      final response = await _camboneModel.generateContent(content);
+
+      if (response.text == null) throw Exception("Resposta vazia");
+
+      print(
+        "AI RAW RESPONSE: ${response.text}",
+      ); // Debug solicitado pelo usuário
+
+      var jsonText = response.text!.trim();
+
+      // Remove blocos de código se houver
+      if (jsonText.startsWith('```')) {
+        jsonText = jsonText
+            .replaceAll(RegExp(r'^```[a-z]*\n'), '')
+            .replaceAll(RegExp(r'\n```$'), '');
+      }
+
+      // Tenta encontrar o início e fim do JSON array
+      final startIndex = jsonText.indexOf('[');
+      final endIndex = jsonText.lastIndexOf(']');
+
+      if (startIndex != -1 && endIndex != -1) {
+        jsonText = jsonText.substring(startIndex, endIndex + 1);
+      }
+
+      final List<dynamic> parsedData = jsonDecode(jsonText);
+      return parsedData.map((item) => Map<String, dynamic>.from(item)).toList();
+    } catch (e) {
+      print("Erro no Parsing de Escala de Cambones (Texto): $e");
+      return [];
+    }
+  }
+
+  // Novo método para parsear imagem de escala de cambones
+  Future<List<Map<String, dynamic>>> parseCamboneScheduleImage(
+    File imageFile,
+  ) async {
+    final imageBytes = await imageFile.readAsBytes();
+
+    final prompt = '''
+    Analise esta imagem de escala de cambones.
+    Identifique os pares de Cambone e seus respectivos Médiuns.
+
+    REGRAS:
+    1. O JSON deve ser uma lista de objetos:
+       [
+         {
+           "camboneName": "Nome do Cambone",
+           "mediums": ["Nome Médium 1", "Nome Médium 2"]
+         }
+       ]
+    2. Geralmente a imagem tem uma coluna para Cambones e outra para Médiuns, ou agrupa os médiuns sob o nome do cambone.
+    3. Retorne APENAS o JSON válido, sem markdown.
+    ''';
+
+    try {
+      final content = [
+        Content.multi([TextPart(prompt), DataPart('image/jpeg', imageBytes)]),
+      ];
+
+      // USANDO O MODELO ESPECÍFICO PARA CAMBONES
+      final response = await _camboneModel.generateContent(content);
+
+      if (response.text == null) throw Exception("Resposta vazia da IA");
+
+      var jsonText = response.text!.trim();
+
+      // Remove blocos de código se houver
+      if (jsonText.startsWith('```')) {
+        jsonText = jsonText
+            .replaceAll(RegExp(r'^```[a-z]*\n'), '')
+            .replaceAll(RegExp(r'\n```$'), '');
+      }
+
+      // Tenta encontrar o início e fim do JSON array
+      final startIndex = jsonText.indexOf('[');
+      final endIndex = jsonText.lastIndexOf(']');
+
+      if (startIndex != -1 && endIndex != -1) {
+        jsonText = jsonText.substring(startIndex, endIndex + 1);
+      }
+
+      final List<dynamic> parsedData = jsonDecode(jsonText);
+      return parsedData.map((item) => Map<String, dynamic>.from(item)).toList();
+    } catch (e) {
+      print("Erro no Parsing de Escala de Cambones (Imagem): $e");
       return [];
     }
   }

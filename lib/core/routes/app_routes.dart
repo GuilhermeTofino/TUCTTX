@@ -13,6 +13,10 @@ import 'package:app_tenda/presentation/views/auth/register_view.dart';
 import 'package:app_tenda/presentation/views/studies/studies_hub_view.dart';
 import 'package:flutter/material.dart';
 import 'package:app_tenda/presentation/views/auth/welcome_view.dart';
+import 'package:app_tenda/presentation/views/cambone/admin_cambone_view.dart';
+import 'package:app_tenda/presentation/views/cambone/cambone_list_view.dart';
+import 'package:app_tenda/presentation/views/profile/my_entities_view.dart';
+import 'package:app_tenda/presentation/views/admin/house_entities_view.dart';
 // Importe aqui quando criarmos os arquivos:
 // import '../../presentation/views/auth/login_view.dart';
 // import '../../presentation/views/auth/register_view.dart';
@@ -32,6 +36,10 @@ class AppRoutes {
   static const String studiesHub = '/studies-hub';
   static const String adminStudies = '/admin-studies';
   static const String adminCleaningDashboard = '/admin-cleaning-dashboard';
+  static const String camboneList = '/cambone-list';
+  static const String adminCambone = '/admin-cambone';
+  static const String myEntities = '/my-entities';
+  static const String houseEntities = '/admin-house-entities';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -85,6 +93,22 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => const AdminCleaningDashboardView(),
         );
+
+      case camboneList:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final isAdminMode = args?['isAdminMode'] ?? false;
+        return MaterialPageRoute(
+          builder: (_) => CamboneListView(isAdminMode: isAdminMode),
+        );
+
+      case adminCambone:
+        return MaterialPageRoute(builder: (_) => const AdminCamboneView());
+
+      case myEntities:
+        return MaterialPageRoute(builder: (_) => const MyEntitiesView());
+
+      case houseEntities:
+        return MaterialPageRoute(builder: (_) => const HouseEntitiesView());
 
       default:
         return _errorRoute("Rota não encontrada: ${settings.name}");

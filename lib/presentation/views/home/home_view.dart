@@ -182,6 +182,11 @@ class _HomeViewState extends State<HomeView> {
         return Icons.description_outlined;
       case 'school':
         return Icons.school_outlined;
+      case 'cambone':
+      case 'people':
+        return Icons.people_alt_rounded;
+      case 'scales':
+        return Icons.view_agenda_rounded;
       default:
         return Icons.help_outline; // Ícone padrão para desconhecidos
     }
@@ -216,6 +221,10 @@ class _HomeViewState extends State<HomeView> {
         action == 'studies' ||
         action == '/studies') {
       Navigator.pushNamed(context, AppRoutes.studiesHub);
+    } else if (action == 'route:/cambone-list') {
+      Navigator.pushNamed(context, AppRoutes.camboneList);
+    } else if (action == 'route:/admin-house-entities') {
+      Navigator.pushNamed(context, AppRoutes.houseEntities);
     } else if (action == 'internal:coming_soon') {
       _showComingSoonSnackBar();
     } else {
@@ -267,13 +276,12 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
 
-                  // 3. Scrollable Grid
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: _buildAnimatedMenuGrid(user, tenant),
-                    ),
+                  // 3. Horizontal Grid
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: _buildAnimatedMenuGrid(user, tenant),
                   ),
+                  const SizedBox(height: 24), // Bottom padding
                 ],
               ),
             );
@@ -434,36 +442,51 @@ class _HomeViewState extends State<HomeView> {
       );
     }
 
-    return GridView.builder(
-      padding: EdgeInsets.zero,
-      physics: const BouncingScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1.1,
-      ),
-      itemCount: menus.length,
-      itemBuilder: (context, index) {
-        final menu = menus[index];
-        return TweenAnimationBuilder<double>(
-          duration: Duration(milliseconds: 500 + (index * 100)),
-          tween: Tween(begin: 0.0, end: 1.0),
-          curve: Curves.elasticOut,
-          builder: (context, value, child) {
-            return Transform.scale(
-              scale: 0.8 + (0.2 * value),
-              child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
-            );
-          },
-          child: _buildMenuCard(
+    // Cálculos para exibir "de 4 em 4" (2x2 na tela)
+    final double screenWidth = MediaQuery.of(context).size.width;
+    const double horizontalPadding = 48.0; // 24 esquerda + 24 direita
+    const double mainAxisSpacing = 12.0;
+    const double crossAxisSpacing = 12.0;
+
+    // Altura total do grid permanece fixa
+    const double gridHeight = 378.0;
+
+    // Altura de um item = (AlturaGrid - EspaçoVertical) / 2 linhas
+    const double itemHeight = (gridHeight - crossAxisSpacing) / 2;
+
+    // Largura ideal de um item para caber 2 na tela = (LarguraTela - Padding - EspaçoHorizontal) / 2
+    final double itemWidth =
+        (screenWidth - horizontalPadding - mainAxisSpacing) / 2;
+
+    // Razão de aspecto = Altura / Largura (No scroll horizontal o crossAxis é a altura)
+    final double aspectRatio = itemHeight / itemWidth;
+
+    return SizedBox(
+      height: gridHeight,
+      child: GridView.builder(
+        padding: const EdgeInsets.only(
+          bottom: 24,
+        ), // Espaço para não cortar a sombra
+        scrollDirection: Axis.horizontal,
+        physics:
+            const PageScrollPhysics(), // Scroll paginado para dar a sensação de "4 em 4"
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // 2 Linhas
+          crossAxisSpacing: crossAxisSpacing,
+          mainAxisSpacing: mainAxisSpacing,
+          childAspectRatio: aspectRatio,
+        ),
+        itemCount: menus.length,
+        itemBuilder: (context, index) {
+          final menu = menus[index];
+          return _buildMenuCard(
             menu.title,
             _mapIcon(menu.icon),
             _mapColor(menu.color, tenant),
             () => _handleAction(menu.action, context, user),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -714,6 +737,16 @@ class _HomeViewState extends State<HomeView> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 24),
+              ListTile(
+                leading: const Icon(Icons.groups_3_outlined),
+                title: const Text("Minhas Entidades"),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, AppRoutes.myEntities);
+                },
+              ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.description_outlined),
                 title: const Text("Termos de Uso"),

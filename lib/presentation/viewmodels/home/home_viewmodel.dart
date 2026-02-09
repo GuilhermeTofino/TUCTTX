@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../core/di/service_locator.dart';
+import '../../../domain/models/entity_model.dart';
 import '../../../domain/models/menu_option_model.dart';
 import '../../../domain/models/user_model.dart';
 import '../../../domain/repositories/auth_repository.dart';
@@ -53,6 +54,19 @@ class HomeViewModel extends ChangeNotifier {
       final rawMenus = await _menuRepository.getMenus(tenantId);
       // Filter out 'health' menu as requested by user
       _menus = rawMenus.where((m) => m.action != 'internal:health').toList();
+
+      // INJECTION: Add House Entities Menu manually for ALL users
+      _menus.add(
+        MenuOptionModel(
+          id: 'house_entities',
+          title: 'Entidades da Casa',
+          icon:
+              'people', // Reusing 'people' icon which maps to Icons.people_alt_rounded
+          color: '#673AB7', // Deep Purple
+          action: 'route:/admin-house-entities',
+          order: 999,
+        ),
+      );
     } catch (e) {
       debugPrint("Erro ao carregar menus: $e");
     } finally {
@@ -104,6 +118,14 @@ class HomeViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       rethrow;
+    }
+  }
+
+  // Método adicionado para atualizar as entidades localmente e refletir na UI
+  void updateCurrentUserEntities(List<EntityModel> newEntities) {
+    if (_currentUser != null) {
+      _currentUser = _currentUser!.copyWith(entities: newEntities);
+      notifyListeners();
     }
   }
 }

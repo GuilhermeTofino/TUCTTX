@@ -29,6 +29,10 @@ import 'package:app_tenda/presentation/viewmodels/studies/study_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/admin/cleaning_dashboard_viewmodel.dart';
 import 'package:app_tenda/core/services/version_check_service.dart';
 import 'package:app_tenda/core/services/layout_service.dart';
+import 'package:app_tenda/domain/repositories/cambone_repository.dart';
+import 'package:app_tenda/presentation/viewmodels/cambone/cambone_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/profile/my_entities_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/admin/house_entities_viewmodel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final getIt = GetIt.instance;
@@ -95,4 +99,16 @@ Future<void> setupServiceLocator() async {
   getIt.registerFactory<CleaningDashboardViewModel>(
     () => CleaningDashboardViewModel(),
   );
+
+  getIt.registerLazySingleton<CamboneRepository>(() => CamboneRepository());
+  getIt.registerFactory<CamboneViewModel>(
+    () => CamboneViewModel(
+      getIt<AIEventParser>(),
+      getIt<CamboneRepository>(),
+      getIt<PushTriggerService>(), // Added
+    ),
+  );
+
+  getIt.registerFactory<MyEntitiesViewModel>(() => MyEntitiesViewModel());
+  getIt.registerFactory(() => HouseEntitiesViewModel());
 }

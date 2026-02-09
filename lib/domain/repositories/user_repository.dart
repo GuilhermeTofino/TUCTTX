@@ -1,3 +1,4 @@
+import '../models/entity_model.dart';
 import '../models/user_model.dart';
 
 abstract class UserRepository {
@@ -18,4 +19,7 @@ abstract class UserRepository {
     DateTime? lastAmaci,
     DateTime? nextAmaci,
   );
+
+  /// Atualiza a lista de entidades ("Minhas Entidades") do usuário.
+  Future<void> updateEntities(String uid, List<EntityModel> entities);
 }

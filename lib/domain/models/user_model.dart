@@ -1,3 +1,5 @@
+import 'entity_model.dart';
+
 class UserModel {
   final String id;
   final String name;
@@ -27,6 +29,9 @@ class UserModel {
   final DateTime? lastAmaciDate;
   final DateTime? nextAmaciDate;
 
+  // NOVO CAMPO: Lista de entidades (Minhas Entidades)
+  final List<EntityModel>? entities;
+
   UserModel({
     required this.id,
     required this.name,
@@ -48,6 +53,7 @@ class UserModel {
     this.tipoSanguineo,
     this.lastAmaciDate,
     this.nextAmaciDate,
+    this.entities,
   });
 
   bool get isAdmin => role == 'admin';
@@ -73,6 +79,7 @@ class UserModel {
     String? tipoSanguineo,
     DateTime? lastAmaciDate,
     DateTime? nextAmaciDate,
+    List<EntityModel>? entities,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -95,6 +102,7 @@ class UserModel {
       tipoSanguineo: tipoSanguineo ?? this.tipoSanguineo,
       lastAmaciDate: lastAmaciDate ?? this.lastAmaciDate,
       nextAmaciDate: nextAmaciDate ?? this.nextAmaciDate,
+      entities: entities ?? this.entities,
     );
   }
 
@@ -120,6 +128,7 @@ class UserModel {
       'tipoSanguineo': tipoSanguineo,
       'lastAmaciDate': lastAmaciDate?.toIso8601String(),
       'nextAmaciDate': nextAmaciDate?.toIso8601String(),
+      'entities': entities?.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -152,6 +161,13 @@ class UserModel {
           : null,
       nextAmaciDate: map['nextAmaciDate'] != null
           ? DateTime.parse(map['nextAmaciDate'])
+          : null,
+      entities: map['entities'] != null
+          ? List<EntityModel>.from(
+              (map['entities'] as List).map(
+                (x) => EntityModel.fromMap(x as Map<String, dynamic>),
+              ),
+            )
           : null,
     );
   }

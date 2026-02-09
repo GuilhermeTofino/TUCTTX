@@ -42,15 +42,36 @@ class _MenuEditModalState extends State<MenuEditModal> {
       'key': 'documents',
       'icon': Icons.description_outlined,
     },
+    {
+      'name': 'Pessoas / Cambones',
+      'key': 'people',
+      'icon': Icons.people_alt_rounded,
+    },
     {'name': 'Ajuda', 'key': 'help_outline', 'icon': Icons.help_outline},
   ];
 
   final List<Map<String, dynamic>> _availableActions = [
     {'name': 'Abrir Calendário', 'key': 'route:/calendar'},
+    {'name': 'Escala de Cambones', 'key': 'route:/cambone-list'},
     {'name': 'Central Financeira', 'key': 'internal:finance'},
     {'name': 'Dados de Saúde', 'key': 'internal:health'},
     {'name': 'Em Breve (Aviso)', 'key': 'internal:coming_soon'},
     {'name': 'Customizada (Rota)', 'key': 'custom'},
+  ];
+
+  final List<Map<String, dynamic>> _availableColors = [
+    {
+      'name': 'Primária',
+      'value': 'primary',
+      'color': Colors.grey,
+    }, // Placeholder for dynamic primary
+    {'name': 'Azul', 'value': 'blue', 'color': Colors.blue},
+    {'name': 'Verde', 'value': 'green', 'color': Colors.green},
+    {'name': 'Vermelho', 'value': 'red', 'color': Colors.redAccent},
+    {'name': 'Laranja', 'value': '#FF9800', 'color': Colors.orange},
+    {'name': 'Roxo', 'value': '#9C27B0', 'color': Colors.purple},
+    {'name': 'Rosa', 'value': '#E91E63', 'color': Colors.pink},
+    {'name': 'Preto', 'value': '#000000', 'color': Colors.black},
   ];
 
   final _customRouteController = TextEditingController();
@@ -144,6 +165,53 @@ class _MenuEditModalState extends State<MenuEditModal> {
                     )
                     .toList(),
                 onChanged: (v) => setState(() => _selectedIcon = v!),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Cor do Ícone",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: _availableColors.map((colorOption) {
+                  final isSelected = _selectedColor == colorOption['value'];
+                  final Color displayColor = colorOption['value'] == 'primary'
+                      ? Theme.of(context).primaryColor
+                      : colorOption['color'];
+
+                  return GestureDetector(
+                    onTap: () => setState(() {
+                      _selectedColor = colorOption['value'];
+                    }),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: displayColor,
+                        shape: BoxShape.circle,
+                        border: isSelected
+                            ? Border.all(color: Colors.black, width: 3)
+                            : Border.all(color: Colors.grey.shade300),
+                        boxShadow: [
+                          BoxShadow(
+                            color: displayColor.withOpacity(0.4),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: isSelected
+                          ? const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 20,
+                            )
+                          : null,
+                    ),
+                  );
+                }).toList(),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(

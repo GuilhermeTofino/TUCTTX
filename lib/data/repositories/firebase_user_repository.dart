@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../domain/models/entity_model.dart';
 import '../../domain/models/user_model.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../datasources/base_firestore_datasource.dart';
@@ -44,6 +45,13 @@ class FirebaseUserRepository extends BaseFirestoreDataSource
     await tenantDocument('users', uid).set({
       'lastAmaciDate': lastAmaci?.toIso8601String(),
       'nextAmaciDate': nextAmaci?.toIso8601String(),
+    }, SetOptions(merge: true));
+  }
+
+  @override
+  Future<void> updateEntities(String uid, List<EntityModel> entities) async {
+    await tenantDocument('users', uid).set({
+      'entities': entities.map((e) => e.toMap()).toList(),
     }, SetOptions(merge: true));
   }
 }

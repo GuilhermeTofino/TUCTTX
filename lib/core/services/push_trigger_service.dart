@@ -158,4 +158,45 @@ class PushTriggerService extends BaseFirestoreDataSource {
       data: {'type': 'study_material'},
     );
   }
+
+  /// Notifica sobre nova escala de cambones.
+  Future<void> notifyNewCamboneSchedule(String eventTitle) async {
+    final tenantId = AppConfig.instance.tenant.tenantSlug;
+    final env = AppConfig.instance.environment.name;
+
+    await _enqueueNotification(
+      topic: '${tenantId}_${env}_all',
+      title: '📋 Nova Escala de Cambones',
+      body: 'A escala para "$eventTitle" já está disponível. Confira!',
+      data: {'type': 'cambone_schedule_new', 'route': '/cambone-list'},
+    );
+  }
+
+  /// Notifica sobre atualização em escala de cambones.
+  Future<void> notifyUpdatedCamboneSchedule(String eventTitle) async {
+    final tenantId = AppConfig.instance.tenant.tenantSlug;
+    final env = AppConfig.instance.environment.name;
+
+    await _enqueueNotification(
+      topic: '${tenantId}_${env}_all',
+      title: '🔄 Escala Atualizada',
+      body:
+          'A escala para "$eventTitle" sofreu alterações. Verifique se seu nome mudou!',
+      data: {'type': 'cambone_schedule_update', 'route': '/cambone-list'},
+    );
+  }
+
+  /// Notifica sobre exclusão de escala de cambones.
+  Future<void> notifyDeletedCamboneSchedule(String eventTitle) async {
+    final tenantId = AppConfig.instance.tenant.tenantSlug;
+    final env = AppConfig.instance.environment.name;
+
+    await _enqueueNotification(
+      topic: '${tenantId}_${env}_all',
+      title: '❌ Escala Cancelada',
+      body:
+          'Atenção: A escala de cambones para "$eventTitle" foi cancelada/removida.',
+      data: {'type': 'cambone_schedule_delete'},
+    );
+  }
 }

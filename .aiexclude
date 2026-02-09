@@ -1,0 +1,16 @@
+# Ignorar pastas de build e ferramentas do Flutter
+.dart_tool/
+build/
+ios/Pods/
+ios/.symlinks/
+android/.gradle/
+
+# Ignorar binários e caches
+*.exe
+*.dll
+*.so
+*.pyc
+
+# Ignorar código gerado (opcional, mas recomendado se o projeto for imenso)
+*.g.dart
+*.freezed.dart

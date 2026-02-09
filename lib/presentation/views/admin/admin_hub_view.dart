@@ -86,6 +86,18 @@ class AdminHubView extends StatelessWidget {
                       ),
                       _buildAdminCard(
                         context,
+                        title: "Cambones",
+                        subtitle: "Gerenciar Escalas",
+                        icon: Icons.people_alt_rounded,
+                        color: Colors.blueGrey,
+                        onTap: () => Navigator.pushNamed(
+                          context,
+                          AppRoutes.camboneList,
+                          arguments: {'isAdminMode': true},
+                        ),
+                      ),
+                      _buildAdminCard(
+                        context,
                         title: "Avisos",
                         subtitle: "Enviar Push",
                         icon: Icons.notification_add_rounded,
