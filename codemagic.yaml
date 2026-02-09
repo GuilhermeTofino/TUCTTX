@@ -86,10 +86,14 @@ workflows:
     scripts:
       - name: iOS Code Signing
         script: | 
-          # Inicializa keychain e busca perfis de provisionamento
           keychain initialize
+          
+          # Decodifica e adiciona o certificado manual
+          echo "$CM_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
+          keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password "$CM_CERTIFICATE_PASSWORD"
+          
+          # Busca apenas os profiles (usando o certificado que acabamos de adicionar)
           app-store-connect fetch-signing-files "com.appTenda" --type IOS_APP_STORE --create
-          keychain add-certificates
       
       - name: Create .env file
         script: | 
