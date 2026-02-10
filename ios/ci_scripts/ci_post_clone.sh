@@ -7,10 +7,16 @@ set -e
 # Traverse up the directory tree to find the root of the project.
 cd "$(dirname "$0")/../../"
 
+echo "🔍 Debug: Environment Variables"
+echo "TENANT: ${TENANT:-<not set>}"
+echo "ENV: ${ENV:-<not set>}"
+echo "GEMINI_API_KEY: ${GEMINI_API_KEY:+<set>}${GEMINI_API_KEY:-<not set>}"
+echo ""
+
 # Create .env file from environment variable
 echo "📦 Generating .env file..."
 if [ -z "$GEMINI_API_KEY" ]; then
-  echo "WARNING: GEMINI_API_KEY is not set in the environment!"
+  echo "⚠️  WARNING: GEMINI_API_KEY is not set in the environment!"
 else
   echo "GEMINI_API_KEY=$GEMINI_API_KEY" > .env
   echo "✅ .env file created"
@@ -19,7 +25,8 @@ fi
 # Inject Tenant Config into Generated.xcconfig
 echo "📦 Injecting Tenant Config..."
 if [ -z "$TENANT" ]; then
-  echo "ERROR: TENANT environment variable is missing!"
+  echo "❌ ERROR: TENANT environment variable is missing!"
+  echo "Please configure TENANT in Xcode Cloud environment variables."
   exit 1
 else
   # Encodings keys and values to Base64 logic akin to how Flutter does internaly for dart-defines
@@ -53,35 +60,48 @@ else
   if grep -q "DART_DEFINES" "$XCCONFIG_PATH"; then
       # Append to existing line (using sed to replace end of line)
       # We assume the line doesn't end with a comma, so we add one.
-      sed -i '' "s/^DART_DEFINES.*/&,$TENANT_B64,$ENV_B64/" "$XCCONFIG_PATH"
-      echo "✅ Appended TENANT ($TENANT) and ENV to DART_DEFINES"
+      sed -i '' "s/^DART_DEFINES.*/\&,$TENANT_B64,$ENV_B64/" "$XCCONFIG_PATH"
+      echo "✅ Appended TENANT ($TENANT) and ENV ($ENV_DEF) to DART_DEFINES"
   else
      # Create line if not exists
      echo "DART_DEFINES=$TENANT_B64,$ENV_B64" >> "$XCCONFIG_PATH"
-     echo "✅ Created DART_DEFINES with TENANT ($TENANT)"
+     echo "✅ Created DART_DEFINES with TENANT ($TENANT) and ENV ($ENV_DEF)"
   fi
 fi
 
-echo "📦 Installed Flutter..."
-
 # Install Flutter using git
-git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
-export PATH="$PATH:$HOME/flutter/bin"
+echo "📦 Installing Flutter..."
+if [ -d "$HOME/flutter" ]; then
+  echo "ℹ️  Flutter directory already exists, skipping clone..."
+  export PATH="$PATH:$HOME/flutter/bin"
+else
+  git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
+  export PATH="$PATH:$HOME/flutter/bin"
+  echo "✅ Flutter cloned successfully"
+fi
 
-echo "✅ Flutter installed"
+# Verify Flutter installation
+flutter --version
+echo "✅ Flutter is ready"
 
 # Install artifacts
 echo "📦 Precaching iOS artifacts..."
 flutter precache --ios
 
 # Install dependencies
-echo "📦 Installing depedencies..."
+echo "📦 Installing dependencies..."
 flutter pub get
 
 # Install CocoaPods
 echo "📦 Installing CocoaPods..."
-HOMEBREW_NO_AUTO_UPDATE=1 # disable homebrew update to save time
-brew install cocoapods
+export HOMEBREW_NO_AUTO_UPDATE=1 # disable homebrew update to save time
+
+if command -v pod >/dev/null 2>&1; then
+  echo "ℹ️  CocoaPods already installed: $(pod --version)"
+else
+  brew install cocoapods
+  echo "✅ CocoaPods installed"
+fi
 
 # Install Pods
 echo "📦 Running pod install..."
