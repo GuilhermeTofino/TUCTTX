@@ -50,7 +50,7 @@ end
 
 target 'DynamicIslandWidgetExtension' do
   use_frameworks!
-  pod 'live_activities_extension', :path => '.symlinks/plugins/live_activities/ios/live_activities_extension.podspec'
+  # pod 'live_activities_extension', :path => '.symlinks/plugins/live_activities/ios/live_activities_extension.podspec'
 end
 
 
