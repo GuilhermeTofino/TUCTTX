@@ -92,6 +92,33 @@ flutter precache --ios
 echo "📦 Installing dependencies..."
 flutter pub get
 
+# Create symlink for CocoaPods
+# Flutter creates .symlinks in ios/.symlinks, but Podfile references .symlinks
+# When using --project-directory, we need .symlinks at project root
+echo "🔗 Creating .symlinks symlink..."
+if [ ! -L ".symlinks" ] && [ ! -d ".symlinks" ]; then
+  ln -s ios/.symlinks .symlinks
+  echo "✅ Created symlink: .symlinks -> ios/.symlinks"
+elif [ -L ".symlinks" ]; then
+  echo "ℹ️  Symlink .symlinks already exists"
+else
+  echo "ℹ️  Directory .symlinks already exists (not a symlink)"
+fi
+
+# Verify symlinks were created
+echo "🔍 Verifying .symlinks directory..."
+if [ -d ".symlinks/plugins/live_activities/ios" ]; then
+  echo "✅ .symlinks/plugins/live_activities/ios exists"
+else
+  echo "⚠️  .symlinks/plugins/live_activities/ios not found"
+  echo "Checking ios/.symlinks instead..."
+  if [ -d "ios/.symlinks/plugins/live_activities/ios" ]; then
+    echo "✅ Found in ios/.symlinks/plugins/live_activities/ios"
+  else
+    echo "❌ live_activities symlinks not found in either location"
+  fi
+fi
+
 # Install CocoaPods
 echo "📦 Installing CocoaPods..."
 export HOMEBREW_NO_AUTO_UPDATE=1 # disable homebrew update to save time
