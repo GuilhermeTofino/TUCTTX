@@ -105,7 +105,6 @@ fi
 
 # Install Pods
 echo "📦 Running pod install..."
-cd ios
-pod install
+pod install --project-directory=ios
 
 echo "🎉 Setup complete!"
