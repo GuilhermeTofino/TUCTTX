@@ -22,7 +22,33 @@ else
   echo "✅ .env file created"
 fi
 
+
+
+# Install Flutter using git
+echo "📦 Installing Flutter..."
+if [ -d "$HOME/flutter" ]; then
+  echo "ℹ️  Flutter directory already exists, skipping clone..."
+  export PATH="$PATH:$HOME/flutter/bin"
+else
+  git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
+  export PATH="$PATH:$HOME/flutter/bin"
+  echo "✅ Flutter cloned successfully"
+fi
+
+# Verify Flutter installation
+flutter --version
+echo "✅ Flutter is ready"
+
+# Install artifacts
+echo "📦 Precaching iOS artifacts..."
+flutter precache --ios
+
+# Install dependencies
+echo "📦 Installing dependencies..."
+flutter pub get
+
 # Inject Tenant Config into Generated.xcconfig
+# NOTE: This must happen AFTER flutter pub get, otherwise flutter pub get will overwrite Generated.xcconfig
 echo "📦 Injecting Tenant Config..."
 if [ -z "$TENANT" ]; then
   echo "❌ ERROR: TENANT environment variable is missing!"
@@ -69,29 +95,6 @@ else
   fi
 fi
 
-# Install Flutter using git
-echo "📦 Installing Flutter..."
-if [ -d "$HOME/flutter" ]; then
-  echo "ℹ️  Flutter directory already exists, skipping clone..."
-  export PATH="$PATH:$HOME/flutter/bin"
-else
-  git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
-  export PATH="$PATH:$HOME/flutter/bin"
-  echo "✅ Flutter cloned successfully"
-fi
-
-# Verify Flutter installation
-flutter --version
-echo "✅ Flutter is ready"
-
-# Install artifacts
-echo "📦 Precaching iOS artifacts..."
-flutter precache --ios
-
-# Install dependencies
-echo "📦 Installing dependencies..."
-flutter pub get
-
 # Verify Flutter created the necessary files
 echo "🔍 Verifying Flutter setup..."
 if [ -d "ios/.symlinks/plugins" ]; then
@@ -115,6 +118,8 @@ fi
 
 # Install Pods
 echo "📦 Running pod install..."
+echo "🔍 Debug: Listing ios/ directory structure..."
+ls -R ios/ | head -50 || true
 cd ios
 pod install
 
