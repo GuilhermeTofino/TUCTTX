@@ -4,17 +4,20 @@ import 'package:app_tenda/presentation/widgets/custom_logo_loader.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../core/config/app_config.dart';
-import '../../../core/di/service_locator.dart';
-import '../../../core/routes/app_routes.dart';
-import '../../viewmodels/home/home_viewmodel.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/routes/app_routes.dart';
+import 'package:app_tenda/presentation/viewmodels/home/home_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/announcements/announcement_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/finance/finance_viewmodel.dart';
+import 'package:app_tenda/presentation/viewmodels/calendar/calendar_viewmodel.dart';
 
-import '../../../domain/models/user_model.dart';
-import '../../../../core/services/version_check_service.dart';
+import 'package:app_tenda/domain/models/user_model.dart';
+import 'package:app_tenda/domain/models/announcement_model.dart';
+import 'package:app_tenda/core/services/version_check_service.dart';
 import 'package:app_tenda/presentation/widgets/home/home_highlights_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:app_tenda/core/services/dynamic_island/dynamic_island_service.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -28,6 +31,8 @@ class _HomeViewState extends State<HomeView> {
   final AnnouncementViewModel _announcementVM = getIt<AnnouncementViewModel>();
   final FinanceViewModel _financeVM = getIt<FinanceViewModel>();
   final VersionCheckService _versionCheckService = getIt<VersionCheckService>();
+  final CalendarViewModel _calendarVM = getIt<CalendarViewModel>();
+  String? _lastAnnouncementId;
 
   @override
   void initState() {
@@ -35,6 +40,7 @@ class _HomeViewState extends State<HomeView> {
     _checkVersion(); // Validação de versão
     _viewModel.loadCurrentUser();
     _viewModel.addListener(_onUserLoaded);
+    _announcementVM.addListener(_checkForNewAnnouncements);
     _announcementVM.loadLastSeen(AppConfig.instance.tenant.tenantSlug);
   }
 
@@ -156,15 +162,135 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  void _checkForNewAnnouncements() {
+    if (_announcementVM.announcements.isEmpty) return;
+
+    final latest = _announcementVM.announcements.first;
+    print(
+      '🔔 Checking announcement: ${latest.title} (ID: ${latest.id}, Important: ${latest.isImportant})',
+    );
+
+    // Se é a primeira carga
+    if (_lastAnnouncementId == null) {
+      print('📌 First load - storing ID: ${latest.id}');
+      _lastAnnouncementId = latest.id;
+
+      // SEMPRE dispara avisos importantes na primeira carga (mesmo que já lidos)
+      // Isso garante que o usuário veja o aviso mais recente ao abrir o app
+      if (latest.isImportant) {
+        print('⚠️ Triggering important announcement on first load');
+        _triggerAnnouncementDI(latest);
+      }
+      return;
+    }
+
+    // Se mudou o ID, é um novo aviso recebido em tempo real
+    if (_lastAnnouncementId != latest.id) {
+      print(
+        '🆕 New announcement detected! Old ID: $_lastAnnouncementId, New ID: ${latest.id}',
+      );
+      _lastAnnouncementId = latest.id;
+      _triggerAnnouncementDI(latest);
+    } else {
+      print('✓ Same announcement, no action needed');
+    }
+  }
+
+  void _triggerAnnouncementDI(AnnouncementModel announcement) {
+    print('🚀 Triggering DI for announcement: ${announcement.title}');
+
+    final diService = getIt<DynamicIslandService>();
+    final primaryColor = AppConfig.instance.tenant.primaryColor;
+    final hexColor = '#${primaryColor.value.toRadixString(16).substring(2)}';
+
+    print('📱 Calling startAnnouncement with:');
+    print('   Title: ${announcement.title}');
+    print('   Content: ${announcement.content}');
+    print('   Important: ${announcement.isImportant}');
+    print('   Color: $hexColor');
+
+    diService.startAnnouncement(
+      title: announcement.title,
+      content: announcement.content,
+      isImportant: announcement.isImportant,
+      primaryColor: hexColor,
+    );
+
+    if (announcement.isImportant) {
+      print('⚠️ Showing important announcement snackbar');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("⚠️ Aviso Importante: ${announcement.title}"),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
+  }
+
   void _onUserLoaded() {
     if (_viewModel.currentUser != null) {
-      _announcementVM.listenToAnnouncements(_viewModel.currentUser!.tenantSlug);
+      final tenantSlug = _viewModel.currentUser!.tenantSlug;
+      _announcementVM.listenToAnnouncements(tenantSlug);
+
+      // Carregar eventos e atualizar Dynamic Island
+      _calendarVM.loadEvents(tenantSlug).then((_) {
+        _updateDynamicIsland();
+      });
+    }
+  }
+
+  void _updateDynamicIsland() {
+    // Lógica para encontrar o próximo evento
+    final now = DateTime.now();
+    final events = _calendarVM.events;
+
+    // Filtra eventos futuros ou de hoje que ainda não acabaram (assumindo duração de 4h por padrão se não tiver fim)
+    // Para simplificar, pegamos o primeiro evento cujo início é após agora - 4 horas
+    final upcomingEvents = events.where((e) {
+      final eventEnd = e.date.add(const Duration(hours: 4));
+      return eventEnd.isAfter(now);
+    }).toList();
+
+    // Ordena por data
+    upcomingEvents.sort((a, b) => a.date.compareTo(b.date));
+
+    if (upcomingEvents.isNotEmpty) {
+      final nextEvent = upcomingEvents.first;
+      final diService = getIt<DynamicIslandService>();
+
+      // Formata a hora HH:mm
+      final hour = nextEvent.date.hour.toString().padLeft(2, '0');
+      final minute = nextEvent.date.minute.toString().padLeft(2, '0');
+      final timeString = "$hour:$minute";
+
+      // Status baseado no horário
+      String status = "Em breve";
+      if (now.isAfter(nextEvent.date) &&
+          now.isBefore(nextEvent.date.add(const Duration(hours: 4)))) {
+        status = "Em andamento";
+      }
+
+      // Converte cor primária para Hex String se possível
+      final primaryColor = AppConfig.instance.tenant.primaryColor;
+      final hexColor = '#${primaryColor.value.toRadixString(16).substring(2)}';
+
+      diService.startActivity(
+        eventName: nextEvent.title,
+        eventType: nextEvent.type,
+        eventDate: timeString,
+        status: status,
+        eventDescription: nextEvent.description,
+        primaryColor: hexColor,
+      );
     }
   }
 
   @override
   void dispose() {
     _viewModel.removeListener(_onUserLoaded);
+    _announcementVM.removeListener(_checkForNewAnnouncements);
     super.dispose();
   }
 
@@ -277,9 +403,11 @@ class _HomeViewState extends State<HomeView> {
                   ),
 
                   // 3. Horizontal Grid
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: _buildAnimatedMenuGrid(user, tenant),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: _buildAnimatedMenuGrid(user, tenant),
+                    ),
                   ),
                   const SizedBox(height: 24), // Bottom padding
                 ],
@@ -364,7 +492,6 @@ class _HomeViewState extends State<HomeView> {
         ),
         Row(
           children: [
-            const SizedBox(width: 8),
             if (user.role == 'admin')
               _buildTopIconButton(
                 Icons.admin_panel_settings_outlined,

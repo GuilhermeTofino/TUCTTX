@@ -64,6 +64,7 @@ dependencies:
   just_audio: ^0.10.5
   audio_video_progress_bar: ^2.0.3
   shared_preferences: ^2.5.4
+  live_activities: ^2.0.2
   # onesignal_flutter: ^5.4.0
   # firebase_messaging: ^16.1.1
   # flutter_local_notifications: ^17.2.2

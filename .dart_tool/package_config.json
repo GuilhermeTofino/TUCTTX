@@ -338,6 +338,12 @@
       "languageVersion": "3.8"
     },
     {
+      "name": "flutter_app_group_directory",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/flutter_app_group_directory-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
       "name": "flutter_cache_manager",
       "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/flutter_cache_manager-3.4.1",
       "packageUri": "lib/",
@@ -590,6 +596,12 @@
       "languageVersion": "3.8"
     },
     {
+      "name": "live_activities",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/live_activities-2.4.6",
+      "packageUri": "lib/",
+      "languageVersion": "3.10"
+    },
+    {
       "name": "local_auth",
       "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/local_auth-2.3.0",
       "packageUri": "lib/",
@@ -714,6 +726,42 @@
       "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/path_provider_windows-2.3.0",
       "packageUri": "lib/",
       "languageVersion": "3.2"
+    },
+    {
+      "name": "permission_handler",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/permission_handler-12.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
+      "name": "permission_handler_android",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/permission_handler_android-13.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
+      "name": "permission_handler_apple",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/permission_handler_apple-9.4.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "permission_handler_html",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/permission_handler_html-0.1.3+5",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "permission_handler_platform_interface",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/permission_handler_platform_interface-4.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
+      "name": "permission_handler_windows",
+      "rootUri": "file:///Users/guilhermetofino/.pub-cache/hosted/pub.dev/permission_handler_windows-0.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "petitparser",

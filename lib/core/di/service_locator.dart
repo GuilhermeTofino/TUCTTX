@@ -33,6 +33,7 @@ import 'package:app_tenda/domain/repositories/cambone_repository.dart';
 import 'package:app_tenda/presentation/viewmodels/cambone/cambone_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/profile/my_entities_viewmodel.dart';
 import 'package:app_tenda/presentation/viewmodels/admin/house_entities_viewmodel.dart';
+import 'package:app_tenda/core/services/dynamic_island/dynamic_island_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final getIt = GetIt.instance;
@@ -73,6 +74,9 @@ Future<void> setupServiceLocator() async {
   // ---- Version Check Service ----
   getIt.registerLazySingleton<VersionCheckService>(() => VersionCheckService());
   getIt.registerLazySingleton<LayoutService>(() => LayoutService());
+  getIt.registerLazySingleton<DynamicIslandService>(
+    () => DynamicIslandService(),
+  );
 
   // ---- ViewModels ----
   getIt.registerFactory(() => WelcomeViewModel(getIt<AuthRepository>()));

@@ -75,5 +75,7 @@
 		<string>Precisamos de acesso ao calendário para adicionar os eventos da gira.</string>
 		<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 		<string>Precisamos de acesso ao calendário para adicionar os eventos da gira.</string>
+		<key>NSSupportsLiveActivities</key>
+		<true/>
 	</dict>
 </plist>

@@ -8,13 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		16535C86F08115C02082A3F6 /* Pods_DynamicIslandWidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC8625EE8968E5B3EDAC393C /* Pods_DynamicIslandWidgetExtension.framework */; };
+		1F2088C0C08B6D7EF4FA48CE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F63899980BFF4EEE88AED66 /* Assets.xcassets */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		373229FB5666FB629C3F8A63 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38F4B3545CCFBCBF061BA16F /* Pods_RunnerTests.framework */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		3DF6F80D44D808B4D8968FB8 /* DynamicIslandWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5892C569896901D28E427C27 /* DynamicIslandWidget.swift */; };
+		64D3439E053254EC6FBF3018 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56BE0FA1772275B8DC2606FA /* Foundation.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		86F80FCBC17951EE967FF223 /* DynamicIslandWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D9139278390E4892A4E5E29F /* DynamicIslandWidgetExtension.appex */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		EE3512AA60EFA4D3638AAE56 /* DynamicIslandWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214677FBECC436CBEA33E06F /* DynamicIslandWidgetBundle.swift */; };
 		F3E2942516DBCAFEB60D73F4 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE7514004010A023757CC670 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -26,9 +32,27 @@
 			remoteGlobalIDString = 97C146ED1CF9000F007C117D;
 			remoteInfo = Runner;
 		};
+		4814FAC806662569A0DCC5DF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 22FDD4CE88CC37ED2C7A46A7;
+			remoteInfo = DynamicIslandWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		88EB6E10524E728A82B63A84 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				86F80FCBC17951EE967FF223 /* DynamicIslandWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -44,14 +68,19 @@
 /* Begin PBXFileReference section */
 		03D067632ECF73CEF7C617D6 /* Pods-RunnerTests.release-tu7e.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tu7e.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tu7e.xcconfig"; sourceTree = "<group>"; };
 		0D2857AAEE8F926A4A6C3400 /* Pods-Runner.release-tucttxdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tucttxdev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tucttxdev.xcconfig"; sourceTree = "<group>"; };
+		0D9192448817ABE78CF425F5 /* Pods-DynamicIslandWidgetExtension.debug-tu7eprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.debug-tu7eprod.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.debug-tu7eprod.xcconfig"; sourceTree = "<group>"; };
 		0E8D81554B86EFD928228622 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1140A85A4FD66BB74A28B1EC /* Pods-Runner.release-tusvadev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tusvadev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tusvadev.xcconfig"; sourceTree = "<group>"; };
+		11CBF73FEB79737668339FB1 /* Pods-DynamicIslandWidgetExtension.release-tucttxdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.release-tucttxdev.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.release-tucttxdev.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		1A521285F593B705FEDED539 /* Pods-RunnerTests.debug-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tusvaprod.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tusvaprod.xcconfig"; sourceTree = "<group>"; };
 		1AD718932419A694EE13D2E8 /* Pods-RunnerTests.release-tusvadev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tusvadev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tusvadev.xcconfig"; sourceTree = "<group>"; };
 		1CF7C15AE9B10748E3F39E14 /* Pods-Runner.debug-tu7e.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tu7e.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tu7e.xcconfig"; sourceTree = "<group>"; };
+		1E0EC7B2F4DD2AE57CCADC84 /* DynamicIslandWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = DynamicIslandWidget.entitlements; sourceTree = "<group>"; };
+		214677FBECC436CBEA33E06F /* DynamicIslandWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DynamicIslandWidgetBundle.swift; sourceTree = "<group>"; };
 		275865A4E9D473D1C0BCF6ED /* Pods-RunnerTests.release-tucttxprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tucttxprod.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tucttxprod.xcconfig"; sourceTree = "<group>"; };
+		2865FAF0626987108D3EB98C /* Pods-DynamicIslandWidgetExtension.debug-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.debug-tusvaprod.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.debug-tusvaprod.xcconfig"; sourceTree = "<group>"; };
 		2D391A390FFD12CEC9EBD726 /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		3079473CEE8DAC8C85930768 /* Pods-Runner.release-tu7edev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tu7edev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tu7edev.xcconfig"; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
@@ -61,6 +90,13 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		4A14DF73561550E500A4C135 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		4B87054E934156D48D8D3068 /* Pods-RunnerTests.debug-tusva.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tusva.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tusva.xcconfig"; sourceTree = "<group>"; };
+		4E6F50C726AF56E123AD6877 /* Pods-DynamicIslandWidgetExtension.debug-tucttxdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.debug-tucttxdev.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.debug-tucttxdev.xcconfig"; sourceTree = "<group>"; };
+		4E8EC5D1094972830FCE9550 /* Pods-DynamicIslandWidgetExtension.debug-tu7edev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.debug-tu7edev.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.debug-tu7edev.xcconfig"; sourceTree = "<group>"; };
+		56BE0FA1772275B8DC2606FA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		5892C569896901D28E427C27 /* DynamicIslandWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DynamicIslandWidget.swift; sourceTree = "<group>"; };
+		5B913592EDC7A8181CE32691 /* Pods-DynamicIslandWidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.release.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
+		6F63899980BFF4EEE88AED66 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		746F632950614F90FBAB132C /* Pods-DynamicIslandWidgetExtension.release-tu7eprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.release-tu7eprod.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.release-tu7eprod.xcconfig"; sourceTree = "<group>"; };
 		7474E6A84FF458B96385FAF5 /* Pods-RunnerTests.release-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tusvaprod.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tusvaprod.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -68,8 +104,14 @@
 		796217D90DEDBC9166EF9430 /* Pods-RunnerTests.release-tucttx.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tucttx.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tucttx.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7B50EAF0489BFA6AB327E000 /* Pods-Runner.debug-tucttxdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tucttxdev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tucttxdev.xcconfig"; sourceTree = "<group>"; };
+		7C1D0C3488C4C83DBDC87424 /* Pods-DynamicIslandWidgetExtension.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.profile.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.profile.xcconfig"; sourceTree = "<group>"; };
 		7F18EABE7FB3F0625DB7D0A9 /* Pods-RunnerTests.debug-tucttx.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tucttx.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tucttx.xcconfig"; sourceTree = "<group>"; };
+		83F2C0AEAE9929F4C8FFEA7F /* Pods-DynamicIslandWidgetExtension.debug-tucttxprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.debug-tucttxprod.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.debug-tucttxprod.xcconfig"; sourceTree = "<group>"; };
+		8D0A4B582435D9810FD2E0D1 /* Pods-DynamicIslandWidgetExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.debug.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		8E0AEAF9C6DD301D39B377A0 /* Pods-DynamicIslandWidgetExtension.release-tu7edev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.release-tu7edev.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.release-tu7edev.xcconfig"; sourceTree = "<group>"; };
+		8E29BA3984398133C098ACC0 /* Pods-DynamicIslandWidgetExtension.debug-tusvadev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.debug-tusvadev.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.debug-tusvadev.xcconfig"; sourceTree = "<group>"; };
 		948B12C3949CDBA587881CFE /* Pods-Runner.release-tu7eprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tu7eprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tu7eprod.xcconfig"; sourceTree = "<group>"; };
+		94EBC1632BA4CD977572C0E3 /* Pods-DynamicIslandWidgetExtension.release-tusvadev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.release-tusvadev.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.release-tusvadev.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* .app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = .app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,6 +120,7 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9B38272EA2E7B95F14DA2D95 /* Pods-RunnerTests.release-tucttxdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tucttxdev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tucttxdev.xcconfig"; sourceTree = "<group>"; };
+		9BD9630D6C5377BED599ED4F /* Pods-DynamicIslandWidgetExtension.release-tucttxprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.release-tucttxprod.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.release-tucttxprod.xcconfig"; sourceTree = "<group>"; };
 		9E1C0806FF3B790F7ABDB544 /* Pods-Runner.debug-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tusvaprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tusvaprod.xcconfig"; sourceTree = "<group>"; };
 		9EA0B2A316E2DDB832AA6395 /* Pods-RunnerTests.debug-tucttxdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tucttxdev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tucttxdev.xcconfig"; sourceTree = "<group>"; };
 		A382CEFF8AA085122E2B7485 /* Pods-Runner.release-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tusvaprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tusvaprod.xcconfig"; sourceTree = "<group>"; };
@@ -108,10 +151,13 @@
 		C9ED1AAFCB0EA989FEA28D67 /* Pods-Runner.release-tucttx.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tucttx.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tucttx.xcconfig"; sourceTree = "<group>"; };
 		CC3D1C79DDF783A7792B6B6B /* Pods-Runner.release-tucttxprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tucttxprod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tucttxprod.xcconfig"; sourceTree = "<group>"; };
 		D0A1D6FEA1DF21A09AC6B7D8 /* Pods-RunnerTests.debug-tucttxprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tucttxprod.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tucttxprod.xcconfig"; sourceTree = "<group>"; };
+		D528FA85B3492E0961746BAF /* Pods-DynamicIslandWidgetExtension.release-tusvaprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicIslandWidgetExtension.release-tusvaprod.xcconfig"; path = "Target Support Files/Pods-DynamicIslandWidgetExtension/Pods-DynamicIslandWidgetExtension.release-tusvaprod.xcconfig"; sourceTree = "<group>"; };
+		D9139278390E4892A4E5E29F /* DynamicIslandWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DynamicIslandWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB4D6B31786522123484830A /* Pods-RunnerTests.debug-tu7edev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tu7edev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tu7edev.xcconfig"; sourceTree = "<group>"; };
 		EB7944490294086F88AD5618 /* Pods-Runner.release-tusva.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-tusva.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-tusva.xcconfig"; sourceTree = "<group>"; };
 		EB7E5B82382857D3DE4CF357 /* Pods-RunnerTests.debug-tusvadev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-tusvadev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-tusvadev.xcconfig"; sourceTree = "<group>"; };
 		EB8873080A8530FD711E6C79 /* Pods-Runner.debug-tu7edev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-tu7edev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-tu7edev.xcconfig"; sourceTree = "<group>"; };
+		EC8625EE8968E5B3EDAC393C /* Pods_DynamicIslandWidgetExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DynamicIslandWidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFF85CA72037B89F783380AA /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		FE7514004010A023757CC670 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF1F6889E3798DD2AB60EC6F /* Pods-RunnerTests.release-tu7edev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-tu7edev.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-tu7edev.xcconfig"; sourceTree = "<group>"; };
@@ -131,6 +177,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3E2942516DBCAFEB60D73F4 /* Pods_Runner.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A529327D9FC0CA002A2A6925 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64D3439E053254EC6FBF3018 /* Foundation.framework in Frameworks */,
+				16535C86F08115C02082A3F6 /* Pods_DynamicIslandWidgetExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,6 +236,21 @@
 				275865A4E9D473D1C0BCF6ED /* Pods-RunnerTests.release-tucttxprod.xcconfig */,
 				9B38272EA2E7B95F14DA2D95 /* Pods-RunnerTests.release-tucttxdev.xcconfig */,
 				B0B3560D8F53193B9330C000 /* Pods-Runner.debug.xcconfig */,
+				5B913592EDC7A8181CE32691 /* Pods-DynamicIslandWidgetExtension.release.xcconfig */,
+				8D0A4B582435D9810FD2E0D1 /* Pods-DynamicIslandWidgetExtension.debug.xcconfig */,
+				8E29BA3984398133C098ACC0 /* Pods-DynamicIslandWidgetExtension.debug-tusvadev.xcconfig */,
+				2865FAF0626987108D3EB98C /* Pods-DynamicIslandWidgetExtension.debug-tusvaprod.xcconfig */,
+				4E8EC5D1094972830FCE9550 /* Pods-DynamicIslandWidgetExtension.debug-tu7edev.xcconfig */,
+				0D9192448817ABE78CF425F5 /* Pods-DynamicIslandWidgetExtension.debug-tu7eprod.xcconfig */,
+				4E6F50C726AF56E123AD6877 /* Pods-DynamicIslandWidgetExtension.debug-tucttxdev.xcconfig */,
+				83F2C0AEAE9929F4C8FFEA7F /* Pods-DynamicIslandWidgetExtension.debug-tucttxprod.xcconfig */,
+				D528FA85B3492E0961746BAF /* Pods-DynamicIslandWidgetExtension.release-tusvaprod.xcconfig */,
+				94EBC1632BA4CD977572C0E3 /* Pods-DynamicIslandWidgetExtension.release-tusvadev.xcconfig */,
+				746F632950614F90FBAB132C /* Pods-DynamicIslandWidgetExtension.release-tu7eprod.xcconfig */,
+				8E0AEAF9C6DD301D39B377A0 /* Pods-DynamicIslandWidgetExtension.release-tu7edev.xcconfig */,
+				9BD9630D6C5377BED599ED4F /* Pods-DynamicIslandWidgetExtension.release-tucttxprod.xcconfig */,
+				11CBF73FEB79737668339FB1 /* Pods-DynamicIslandWidgetExtension.release-tucttxdev.xcconfig */,
+				7C1D0C3488C4C83DBDC87424 /* Pods-DynamicIslandWidgetExtension.profile.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -198,6 +268,8 @@
 			children = (
 				FE7514004010A023757CC670 /* Pods_Runner.framework */,
 				38F4B3545CCFBCBF061BA16F /* Pods_RunnerTests.framework */,
+				D5A1931E822FFB3F2DBD133E /* iOS */,
+				EC8625EE8968E5B3EDAC393C /* Pods_DynamicIslandWidgetExtension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -234,6 +306,7 @@
 				331C8082294A63A400263BE5 /* RunnerTests */,
 				02F467AACEC306246168B036 /* Pods */,
 				74AED0DE279A781014A4F4AA /* Frameworks */,
+				A851CEA27AE6992827891454 /* DynamicIslandWidget */,
 			);
 			sourceTree = "<group>";
 		};
@@ -242,6 +315,7 @@
 			children = (
 				97C146EE1CF9000F007C117D /* .app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
+				D9139278390E4892A4E5E29F /* DynamicIslandWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -262,9 +336,47 @@
 			path = Runner;
 			sourceTree = "<group>";
 		};
+		A851CEA27AE6992827891454 /* DynamicIslandWidget */ = {
+			isa = PBXGroup;
+			children = (
+				5892C569896901D28E427C27 /* DynamicIslandWidget.swift */,
+				214677FBECC436CBEA33E06F /* DynamicIslandWidgetBundle.swift */,
+				6F63899980BFF4EEE88AED66 /* Assets.xcassets */,
+				1E0EC7B2F4DD2AE57CCADC84 /* DynamicIslandWidget.entitlements */,
+			);
+			name = DynamicIslandWidget;
+			path = DynamicIslandWidget;
+			sourceTree = "<group>";
+		};
+		D5A1931E822FFB3F2DBD133E /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				56BE0FA1772275B8DC2606FA /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		22FDD4CE88CC37ED2C7A46A7 /* DynamicIslandWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DCB816931F6D7096EBA195E1 /* Build configuration list for PBXNativeTarget "DynamicIslandWidgetExtension" */;
+			buildPhases = (
+				21FBC3B4A3B33987A6874E9D /* [CP] Check Pods Manifest.lock */,
+				FFFC77FB436E752E4BBBE9B1 /* Sources */,
+				A529327D9FC0CA002A2A6925 /* Frameworks */,
+				5E8A4F7EA9B6D1B2F0B0B2CE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DynamicIslandWidgetExtension;
+			productName = DynamicIslandWidgetExtension;
+			productReference = D9139278390E4892A4E5E29F /* DynamicIslandWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		331C8080294A63A400263BE5 /* RunnerTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 331C8087294A63A400263BE5 /* Build configuration list for PBXNativeTarget "RunnerTests" */;
@@ -293,15 +405,16 @@
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
+				88EB6E10524E728A82B63A84 /* Embed Foundation Extensions */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				7934C0B85BB4F485358DB0CF /* [CP] Embed Pods Frameworks */,
 				33829FDDF4C8B93BA30A83BB /* [CP] Copy Pods Resources */,
-				57ECF886E1B7630D3A680392 /* [Fix] Strip Objective-C Framework */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2EE0280E8D45AD3107C040B1 /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
@@ -343,6 +456,7 @@
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
+				22FDD4CE88CC37ED2C7A46A7 /* DynamicIslandWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -352,6 +466,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E8A4F7EA9B6D1B2F0B0B2CE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1F2088C0C08B6D7EF4FA48CE /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,6 +491,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		21FBC3B4A3B33987A6874E9D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DynamicIslandWidgetExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		33829FDDF4C8B93BA30A83BB /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -401,24 +545,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
-		};
-		57ECF886E1B7630D3A680392 /* [Fix] Strip Objective-C Framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Fix] Strip Objective-C Framework";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/scripts/strip_objective_c.sh\"";
 		};
 		752EFCD5304896A9453F2AB3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -516,9 +642,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FFFC77FB436E752E4BBBE9B1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3DF6F80D44D808B4D8968FB8 /* DynamicIslandWidget.swift in Sources */,
+				EE3512AA60EFA4D3638AAE56 /* DynamicIslandWidgetBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2EE0280E8D45AD3107C040B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DynamicIslandWidgetExtension;
+			target = 22FDD4CE88CC37ED2C7A46A7 /* DynamicIslandWidgetExtension */;
+			targetProxy = 4814FAC806662569A0DCC5DF /* PBXContainerItemProxy */;
+		};
 		331C8086294A63A400263BE5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 97C146ED1CF9000F007C117D /* Runner */;
@@ -548,6 +689,91 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		1615715FD989866627035AAE /* Release-tucttxDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 11CBF73FEB79737668339FB1 /* Pods-DynamicIslandWidgetExtension.release-tucttxdev.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tucttx.dev;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.dev.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release-tucttxDev";
+		};
+		16CA9F4DFD27F31A6E0E2B5D /* Debug-tusvaProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2865FAF0626987108D3EB98C /* Pods-DynamicIslandWidgetExtension.debug-tusvaprod.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tusva;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug-tusvaProd";
+		};
+		18E056419D5B58FB1843EEF3 /* Debug-tusvaDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8E29BA3984398133C098ACC0 /* Pods-DynamicIslandWidgetExtension.debug-tusvadev.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tusva.dev;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.dev.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug-tusvaDev";
+		};
+		2302CA0123E07420C47A53DF /* Debug-tucttxDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4E6F50C726AF56E123AD6877 /* Pods-DynamicIslandWidgetExtension.debug-tucttxdev.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tucttx.dev;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.dev.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug-tucttxDev";
+		};
 		249021D3217E4FDB00AE95B9 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -605,6 +831,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tucttx;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -675,6 +902,28 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
 			name = Profile;
+		};
+		64BC10B645E04E994564F443 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5B913592EDC7A8181CE32691 /* Pods-DynamicIslandWidgetExtension.release.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tucttx;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
 		};
 		97C147031CF9000F007C117D /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -793,6 +1042,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tucttx;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -819,6 +1069,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tucttx;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -839,6 +1090,92 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
+		};
+		A636A59FBD2CF8CD159F574F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8D0A4B582435D9810FD2E0D1 /* Pods-DynamicIslandWidgetExtension.debug.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tucttx;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AE459A2F83AAD6380D612CDE /* Debug-tu7eProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0D9192448817ABE78CF425F5 /* Pods-DynamicIslandWidgetExtension.debug-tu7eprod.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tu7e;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug-tu7eProd";
+		};
+		AEFD0C8A428A1833BD456959 /* Release-tusvaDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 94EBC1632BA4CD977572C0E3 /* Pods-DynamicIslandWidgetExtension.release-tusvadev.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tusva.dev;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.dev.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release-tusvaDev";
+		};
+		AF0C5301592B732CDD01C8A1 /* Release-tucttxProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9BD9630D6C5377BED599ED4F /* Pods-DynamicIslandWidgetExtension.release-tucttxprod.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tucttx;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release-tucttxProd";
 		};
 		B87FC4782F202E7100C93C20 /* Debug-tucttxDev */ = {
 			isa = XCBuildConfiguration;
@@ -908,6 +1245,7 @@
 			baseConfigurationReference = AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				APP_GROUP_ID = group.com.appTenda.tucttx.dev;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -1020,6 +1358,7 @@
 			baseConfigurationReference = AFB162AC7DFD311251D6434F /* tu7eDevDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TU7E";
+				APP_GROUP_ID = group.com.appTenda.tu7e.dev;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -1132,6 +1471,7 @@
 			baseConfigurationReference = AF2F614712F5BE70781ED75D /* tusvaDevDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUSVA";
+				APP_GROUP_ID = group.com.appTenda.tusva.dev;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -1241,6 +1581,7 @@
 			baseConfigurationReference = AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUCTTX;
+				APP_GROUP_ID = group.com.appTenda.tucttx;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -1347,6 +1688,7 @@
 			baseConfigurationReference = AF622B35D9367CA89DFAA458 /* tu7eProdRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TU7E;
+				APP_GROUP_ID = group.com.appTenda.tu7e;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -1453,6 +1795,7 @@
 			baseConfigurationReference = AF5993D612E5A2AB843D4E23 /* tusvaProdRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUSVA;
+				APP_GROUP_ID = group.com.appTenda.tusva;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -1491,6 +1834,93 @@
 				PRODUCT_NAME = "$(APP_DISPLAY_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = "Release-tusvaProd";
+		};
+		B9838F2ACCCA9675976C4008 /* Debug-tu7eDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4E8EC5D1094972830FCE9550 /* Pods-DynamicIslandWidgetExtension.debug-tu7edev.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tu7e.dev;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e.dev.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug-tu7eDev";
+		};
+		D5844CF0977056BF877DDB00 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C1D0C3488C4C83DBDC87424 /* Pods-DynamicIslandWidgetExtension.profile.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tucttx;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Profile;
+		};
+		DA17016ED20BDCD8433A6B0C /* Release-tu7eProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 746F632950614F90FBAB132C /* Pods-DynamicIslandWidgetExtension.release-tu7eprod.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tu7e;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release-tu7eProd";
+		};
+		E8194E5153247C96690ADC84 /* Release-tusvaProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D528FA85B3492E0961746BAF /* Pods-DynamicIslandWidgetExtension.release-tusvaprod.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tusva;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = "Release-tusvaProd";
 		};
@@ -1559,6 +1989,7 @@
 			baseConfigurationReference = AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				APP_GROUP_ID = group.com.appTenda.tucttx.dev;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -1665,6 +2096,7 @@
 			baseConfigurationReference = AFF2D34A4216505EF4AC35A0 /* tu7eDevRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TU7E";
+				APP_GROUP_ID = group.com.appTenda.tu7e.dev;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -1771,6 +2203,7 @@
 			baseConfigurationReference = AFFC70FC69EC583981AE0FFA /* tusvaDevRelease.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "[DEV] TUSVA";
+				APP_GROUP_ID = group.com.appTenda.tusva.dev;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -1811,6 +2244,49 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
 			name = "Release-tusvaDev";
+		};
+		F35958AECFE4B7A388FB90A7 /* Release-tu7eDev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8E0AEAF9C6DD301D39B377A0 /* Pods-DynamicIslandWidgetExtension.release-tu7edev.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tu7e.dev;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e.dev.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release-tu7eDev";
+		};
+		F473B7754B0BBA6F25DFAFA4 /* Debug-tucttxProd */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83F2C0AEAE9929F4C8FFEA7F /* Pods-DynamicIslandWidgetExtension.debug-tucttxprod.xcconfig */;
+			buildSettings = {
+				APP_GROUP_ID = group.com.appTenda.tucttx;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = DynamicIslandWidget/DynamicIslandWidget.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DynamicIslandWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleShortVersionString = "$(FLUTTER_BUILD_NAME)";
+				INFOPLIST_KEY_CFBundleVersion = "$(FLUTTER_BUILD_NUMBER)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tucttx.DynamicIslandWidget;
+				PRODUCT_NAME = DynamicIslandWidgetExtension;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug-tucttxProd";
 		};
 		F87FC4782F202E7100C93C20 /* Debug-tucttxProd */ = {
 			isa = XCBuildConfiguration;
@@ -1880,6 +2356,7 @@
 			baseConfigurationReference = AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUCTTX;
+				APP_GROUP_ID = group.com.appTenda.tucttx;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -1992,6 +2469,7 @@
 			baseConfigurationReference = AFB28180C4523581EF33B8C4 /* tu7eProdDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TU7E;
+				APP_GROUP_ID = group.com.appTenda.tu7e;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tu7e";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -2104,6 +2582,7 @@
 			baseConfigurationReference = AF90857BDFFA0AA0204BECA8 /* tusvaProdDebug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = TUSVA;
+				APP_GROUP_ID = group.com.appTenda.tusva;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tusva";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -2213,6 +2692,28 @@
 				B87FC4822F202E9300C93C20 /* Release-tucttxProd */,
 				E87FC4822F202E9300C93C20 /* Release-tucttxDev */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DCB816931F6D7096EBA195E1 /* Build configuration list for PBXNativeTarget "DynamicIslandWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64BC10B645E04E994564F443 /* Release */,
+				A636A59FBD2CF8CD159F574F /* Debug */,
+				18E056419D5B58FB1843EEF3 /* Debug-tusvaDev */,
+				16CA9F4DFD27F31A6E0E2B5D /* Debug-tusvaProd */,
+				B9838F2ACCCA9675976C4008 /* Debug-tu7eDev */,
+				AE459A2F83AAD6380D612CDE /* Debug-tu7eProd */,
+				2302CA0123E07420C47A53DF /* Debug-tucttxDev */,
+				F473B7754B0BBA6F25DFAFA4 /* Debug-tucttxProd */,
+				E8194E5153247C96690ADC84 /* Release-tusvaProd */,
+				AEFD0C8A428A1833BD456959 /* Release-tusvaDev */,
+				DA17016ED20BDCD8433A6B0C /* Release-tu7eProd */,
+				F35958AECFE4B7A388FB90A7 /* Release-tu7eDev */,
+				AF0C5301592B732CDD01C8A1 /* Release-tucttxProd */,
+				1615715FD989866627035AAE /* Release-tucttxDev */,
+				D5844CF0977056BF877DDB00 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
