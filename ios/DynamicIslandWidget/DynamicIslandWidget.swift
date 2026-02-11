@@ -1,11 +1,28 @@
 import ActivityKit
 import WidgetKit
 import SwiftUI
-import live_activities_extension
+// import live_activities_extension
+
+struct LiveActivitiesAppAttributes: ActivityAttributes, Identifiable {
+    public typealias LiveDeliveryData = ContentState
+    public struct ContentState: Codable, Hashable {
+        public var appGroupId: String
+        
+        public init(appGroupId: String) {
+            self.appGroupId = appGroupId
+        }
+    }
+    
+    var id = UUID()
+    
+    public init(id: UUID = UUID()) {
+        self.id = id
+    }
+}
 
 struct AppLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: LiveActivitiesPlugin.LiveActivitiesAppAttributes.self) { (context) in
+        ActivityConfiguration(for: LiveActivitiesAppAttributes.self) { (context) in
             LockScreenView(context: context)
         } dynamicIsland: { (context) in
             DynamicIsland {
