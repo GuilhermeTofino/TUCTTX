@@ -116,7 +116,7 @@ if [ -n "$LIVE_ACTIVITIES_PATH" ] && [ -d "$LIVE_ACTIVITIES_PATH" ]; then
   echo "✅ Created symlink: ios/.symlinks/plugins/live_activities -> $LIVE_ACTIVITIES_PATH"
   
   # Verify the podspec exists
-  if [ -f "ios/.symlinks/plugins/live_activities/ios/live_activities_extension.podspec" ]; then
+  if [ -f "ios/.symlinks/plugins/live_activities/ios/live_activities.podspec" ]; then
     echo "✅ Verified podspec exists at target location"
   else
     echo "❌ WARNING: Podspec not found at expected location after symlink creation!"
