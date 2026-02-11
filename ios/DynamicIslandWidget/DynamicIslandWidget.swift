@@ -159,7 +159,7 @@ struct AppLiveActivityWidget: Widget {
         }
     }
     
-    func getData(_ context: ActivityViewContext<LiveActivitiesPlugin.LiveActivitiesAppAttributes>, _ key: String) -> String? {
+    func getData(_ context: ActivityViewContext<LiveActivitiesAppAttributes>, _ key: String) -> String? {
         let appGroupId = context.state.appGroupId
         if let defaults = UserDefaults(suiteName: appGroupId) {
             let prefix = context.attributes.id.description
@@ -168,7 +168,7 @@ struct AppLiveActivityWidget: Widget {
         return nil
     }
 
-    func getPrimaryColor(_ context: ActivityViewContext<LiveActivitiesPlugin.LiveActivitiesAppAttributes>) -> Color {
+    func getPrimaryColor(_ context: ActivityViewContext<LiveActivitiesAppAttributes>) -> Color {
         let type = getData(context, "eventType") ?? ""
         
         // Premium colors for different types
@@ -186,7 +186,7 @@ struct AppLiveActivityWidget: Widget {
         return Color(red: 0.4, green: 0.2, blue: 0.6) // Deep purple fallback
     }
 
-    func getIcon(_ context: ActivityViewContext<LiveActivitiesPlugin.LiveActivitiesAppAttributes>) -> String {
+    func getIcon(_ context: ActivityViewContext<LiveActivitiesAppAttributes>) -> String {
         let type = getData(context, "eventType") ?? ""
         if type == "IMPORTANTE" { return "exclamationmark.triangle.fill" }
         if type == "AVISO" { return "megaphone.fill" }
@@ -196,7 +196,7 @@ struct AppLiveActivityWidget: Widget {
 
 // MARK: - Lock Screen View (Premium Design)
 struct LockScreenView: View {
-    let context: ActivityViewContext<LiveActivitiesPlugin.LiveActivitiesAppAttributes>
+    let context: ActivityViewContext<LiveActivitiesAppAttributes>
     
     var body: some View {
         ZStack {
@@ -275,7 +275,7 @@ struct LockScreenView: View {
         .activitySystemActionForegroundColor(getPrimaryColor(context))
     }
     
-    func getData(_ context: ActivityViewContext<LiveActivitiesPlugin.LiveActivitiesAppAttributes>, _ key: String) -> String? {
+    func getData(_ context: ActivityViewContext<LiveActivitiesAppAttributes>, _ key: String) -> String? {
         let appGroupId = context.state.appGroupId
         if let defaults = UserDefaults(suiteName: appGroupId) {
             let prefix = context.attributes.id.description
@@ -284,7 +284,7 @@ struct LockScreenView: View {
         return nil
     }
 
-    func getPrimaryColor(_ context: ActivityViewContext<LiveActivitiesPlugin.LiveActivitiesAppAttributes>) -> Color {
+    func getPrimaryColor(_ context: ActivityViewContext<LiveActivitiesAppAttributes>) -> Color {
         let type = getData(context, "eventType") ?? ""
         
         if type == "IMPORTANTE" {
@@ -301,7 +301,7 @@ struct LockScreenView: View {
         return Color(red: 0.4, green: 0.2, blue: 0.6)
     }
 
-    func getIcon(_ context: ActivityViewContext<LiveActivitiesPlugin.LiveActivitiesAppAttributes>) -> String {
+    func getIcon(_ context: ActivityViewContext<LiveActivitiesAppAttributes>) -> String {
         let type = getData(context, "eventType") ?? ""
         if type == "IMPORTANTE" { return "exclamationmark.triangle.fill" }
         if type == "AVISO" { return "megaphone.fill" }
