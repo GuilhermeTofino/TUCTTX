@@ -215,18 +215,6 @@ class _HomeViewState extends State<HomeView> {
       isImportant: announcement.isImportant,
       primaryColor: hexColor,
     );
-
-    if (announcement.isImportant) {
-      print('⚠️ Showing important announcement snackbar');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("⚠️ Aviso Importante: ${announcement.title}"),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-    }
   }
 
   void _onUserLoaded() {
