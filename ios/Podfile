@@ -75,4 +75,15 @@ post_install do |installer|
       config.build_settings['COPY_PHASE_STRIP'] = 'NO'
     end
   end
+
+  installer.aggregate_targets.each do |target|
+    if target.name == 'Pods-DynamicIslandWidgetExtension'
+      target.xcconfigs.each do |config_name, config_file|
+        xcconfig_path = target.xcconfig_path(config_name)
+        File.open(xcconfig_path, 'a') do |file|
+          file.puts "\n#include \"../../../Flutter/Generated.xcconfig\"\n"
+        end
+      end
+    end
+  end
 end
