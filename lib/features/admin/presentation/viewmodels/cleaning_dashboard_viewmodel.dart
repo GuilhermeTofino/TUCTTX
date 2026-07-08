@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../../domain/repositories/event_repository.dart';
-import '../../../core/di/service_locator.dart';
+import 'package:app_tenda/features/calendar/domain/repositories/event_repository.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
 
 class CleaningMemberStats {
   final String name;

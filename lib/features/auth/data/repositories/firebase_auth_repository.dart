@@ -3,11 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:developer' as dev;
-import '../../core/config/app_config.dart';
-import '../../domain/models/user_model.dart';
-import '../../domain/repositories/auth_repository.dart';
-import '../datasources/base_firestore_datasource.dart';
-import '../../core/utils/auth_exception_handler.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/auth/domain/repositories/auth_repository.dart';
+import 'package:app_tenda/core/services/base_firestore_datasource.dart';
+import 'package:app_tenda/core/utils/auth_exception_handler.dart';
 
 class FirebaseAuthRepository extends BaseFirestoreDataSource
     implements AuthRepository {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../domain/models/user_model.dart';
-import '../../../domain/repositories/auth_repository.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/auth/domain/repositories/auth_repository.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   final AuthRepository _authRepository;

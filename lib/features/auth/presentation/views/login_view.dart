@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import '../../../core/config/app_config.dart';
-import '../../../core/di/service_locator.dart';
-import '../../../core/routes/app_routes.dart';
-import '../../viewmodels/auth/register_viewmodel.dart';
-import '../../widgets/custom_logo_loader.dart';
-import '../../../core/services/biometric_service.dart'; // Importe seu novo serviço
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/routes/app_routes.dart';
+import 'package:app_tenda/features/auth/presentation/viewmodels/register_viewmodel.dart';
+import 'package:app_tenda/core/widgets/custom_logo_loader.dart';
+import 'package:app_tenda/core/services/biometric_service.dart'; // Importe seu novo serviço
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

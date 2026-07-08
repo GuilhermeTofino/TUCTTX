@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import '../../../core/config/app_config.dart';
-import '../../../core/di/service_locator.dart';
-import '../../viewmodels/cambone/cambone_viewmodel.dart';
-import '../../widgets/custom_logo_loader.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/features/cambone/presentation/viewmodels/cambone_viewmodel.dart';
+import 'package:app_tenda/core/widgets/custom_logo_loader.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
-import '../../../domain/models/cambone_model.dart';
-import '../../../domain/models/work_event_model.dart'; // Added // Added import
+import 'package:app_tenda/features/cambone/domain/models/cambone_model.dart';
+import 'package:app_tenda/features/calendar/domain/models/work_event_model.dart'; // Added // Added import
 
 class AdminCamboneView extends StatefulWidget {
   final CamboneSchedule? scheduleToEdit; // Added argument

@@ -1,7 +1,7 @@
 import 'package:firebase_storage/firebase_storage.dart';
-import '../../domain/models/study_document_model.dart';
-import '../../domain/repositories/study_repository.dart';
-import '../datasources/base_firestore_datasource.dart';
+import 'package:app_tenda/features/studies/domain/models/study_document_model.dart';
+import 'package:app_tenda/features/studies/domain/repositories/study_repository.dart';
+import 'package:app_tenda/core/services/base_firestore_datasource.dart';
 
 class FirebaseStudyRepository extends BaseFirestoreDataSource
     implements StudyRepository {

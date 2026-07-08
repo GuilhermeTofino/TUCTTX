@@ -2,7 +2,7 @@ import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:device_calendar/device_calendar.dart' as dev_cal;
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
-import '../../domain/models/work_event_model.dart';
+import 'package:app_tenda/features/calendar/domain/models/work_event_model.dart';
 
 class CalendarService {
   final dev_cal.DeviceCalendarPlugin _deviceCalendarPlugin =

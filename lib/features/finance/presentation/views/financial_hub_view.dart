@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/config/app_config.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
-import 'monthly_fees_view.dart';
-import 'bazaar_debts_view.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/features/finance/presentation/views/monthly_fees_view.dart';
+import 'package:app_tenda/features/finance/presentation/views/bazaar_debts_view.dart';
 
 class FinancialHubView extends StatelessWidget {
   const FinancialHubView({super.key});

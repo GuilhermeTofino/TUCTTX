@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:app_tenda/domain/models/user_model.dart';
-import 'package:app_tenda/presentation/views/admin/admin_monthly_fees_view.dart';
-import 'package:app_tenda/presentation/views/admin/admin_bazaar_debts_view.dart';
-import 'package:app_tenda/presentation/views/admin/admin_amaci_view.dart';
-import 'package:app_tenda/presentation/views/admin/admin_member_full_record_view.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_monthly_fees_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_bazaar_debts_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_amaci_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_member_full_record_view.dart';
 
 class MemberOptionsModal extends StatelessWidget {
   final UserModel member;

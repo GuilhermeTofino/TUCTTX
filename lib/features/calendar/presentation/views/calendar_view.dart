@@ -1,15 +1,15 @@
-import 'package:app_tenda/presentation/views/import_events/import_events_view.dart';
+import 'package:app_tenda/features/calendar/presentation/views/import_events_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../core/config/app_config.dart';
-import '../../../core/di/service_locator.dart';
-import '../../viewmodels/calendar/calendar_viewmodel.dart';
-import '../../../core/services/calendar_service.dart';
-import '../../viewmodels/auth/register_viewmodel.dart';
-import '../../widgets/custom_logo_loader.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/features/calendar/presentation/viewmodels/calendar_viewmodel.dart';
+import 'package:app_tenda/core/services/calendar_service.dart';
+import 'package:app_tenda/features/auth/presentation/viewmodels/register_viewmodel.dart';
+import 'package:app_tenda/core/widgets/custom_logo_loader.dart';
 
-import '../../widgets/admin/event_edit_modal.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/features/admin/presentation/widgets/event_edit_modal.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class CalendarView extends StatefulWidget {
   final bool isAdminMode;

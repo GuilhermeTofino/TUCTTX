@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/di/service_locator.dart';
-import '../../viewmodels/admin/cleaning_dashboard_viewmodel.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/features/admin/presentation/viewmodels/cleaning_dashboard_viewmodel.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class AdminCleaningDashboardView extends StatefulWidget {
   const AdminCleaningDashboardView({super.key});

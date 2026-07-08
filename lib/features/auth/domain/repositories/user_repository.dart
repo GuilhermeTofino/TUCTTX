@@ -1,5 +1,5 @@
-import '../models/entity_model.dart';
-import '../models/user_model.dart';
+import 'package:app_tenda/features/profile/domain/models/entity_model.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 
 abstract class UserRepository {
   /// Busca o perfil completo de um usuário pelo seu ID único (UID).

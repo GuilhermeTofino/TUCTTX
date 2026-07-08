@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/config/app_config.dart';
-import '../../../../core/di/service_locator.dart';
-import '../../viewmodels/profile/my_entities_viewmodel.dart';
-import '../../../../domain/models/entity_model.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/features/profile/presentation/viewmodels/my_entities_viewmodel.dart';
+import 'package:app_tenda/features/profile/domain/models/entity_model.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class MyEntitiesView extends StatelessWidget {
   const MyEntitiesView({super.key});

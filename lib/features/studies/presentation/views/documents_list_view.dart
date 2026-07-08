@@ -1,11 +1,11 @@
-import 'package:app_tenda/presentation/viewmodels/studies/study_viewmodel.dart'
+import 'package:app_tenda/features/studies/presentation/viewmodels/study_viewmodel.dart'
     show StudyViewModel;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../core/di/service_locator.dart';
-import '../../../domain/models/study_document_model.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/features/studies/domain/models/study_document_model.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class DocumentsListView extends StatefulWidget {
   final String topicId;

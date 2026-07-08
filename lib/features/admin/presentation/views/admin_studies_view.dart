@@ -1,14 +1,14 @@
 import 'dart:io';
-import 'package:app_tenda/presentation/viewmodels/studies/study_viewmodel.dart';
+import 'package:app_tenda/features/studies/presentation/viewmodels/study_viewmodel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../../core/di/service_locator.dart';
-import '../../../core/config/app_config.dart';
-import '../../../domain/models/study_document_model.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
-import '../../widgets/custom_logo_loader.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/features/studies/domain/models/study_document_model.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/widgets/custom_logo_loader.dart';
 
 class AdminStudiesView extends StatefulWidget {
   const AdminStudiesView({super.key});

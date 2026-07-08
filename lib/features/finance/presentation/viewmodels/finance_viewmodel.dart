@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:app_tenda/domain/models/financial_goal_model.dart';
-import 'package:app_tenda/domain/models/financial_models.dart';
-import 'package:app_tenda/domain/repositories/finance_repository.dart';
+import 'package:app_tenda/features/finance/domain/models/financial_goal_model.dart';
+import 'package:app_tenda/features/finance/domain/models/financial_models.dart';
+import 'package:app_tenda/features/finance/domain/repositories/finance_repository.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/core/services/push_trigger_service.dart';
-import 'package:app_tenda/domain/models/user_model.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 
 class FinanceViewModel extends ChangeNotifier {
   final FinanceRepository _repository = getIt<FinanceRepository>();

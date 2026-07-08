@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
-import 'package:app_tenda/domain/models/financial_models.dart';
-import 'package:app_tenda/domain/models/user_model.dart';
-import 'package:app_tenda/domain/repositories/finance_repository.dart';
-import 'package:app_tenda/presentation/viewmodels/finance/finance_viewmodel.dart';
+import 'package:app_tenda/features/finance/domain/models/financial_models.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/finance/domain/repositories/finance_repository.dart';
+import 'package:app_tenda/features/finance/presentation/viewmodels/finance_viewmodel.dart';
 
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class AdminBazaarDebtsView extends StatefulWidget {
   final UserModel member;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../../../domain/models/study_document_model.dart';
-import '../../../domain/repositories/study_repository.dart';
-import '../../../core/di/service_locator.dart';
-import '../../../core/config/app_config.dart';
-import '../../../core/services/push_trigger_service.dart';
+import 'package:app_tenda/features/studies/domain/models/study_document_model.dart';
+import 'package:app_tenda/features/studies/domain/repositories/study_repository.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/services/push_trigger_service.dart';
 import 'package:uuid/uuid.dart';
 
 class StudyViewModel extends ChangeNotifier {

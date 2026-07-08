@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../domain/repositories/cambone_repository.dart';
-import '../../../../core/services/ai_event_parser.dart';
-import '../../../domain/models/cambone_model.dart';
-import '../../../domain/models/user_model.dart';
-import '../../../domain/models/work_event_model.dart'; // Added
-import '../../../domain/repositories/user_repository.dart';
-import '../../../domain/repositories/event_repository.dart'; // Added
-import '../../../core/di/service_locator.dart';
+import 'package:app_tenda/features/cambone/domain/repositories/cambone_repository.dart';
+import 'package:app_tenda/core/services/ai_event_parser.dart';
+import 'package:app_tenda/features/cambone/domain/models/cambone_model.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/calendar/domain/models/work_event_model.dart'; // Added
+import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
+import 'package:app_tenda/features/calendar/domain/repositories/event_repository.dart'; // Added
+import 'package:app_tenda/core/di/service_locator.dart';
 
 import 'package:intl/intl.dart';
-import '../../../core/services/push_trigger_service.dart';
+import 'package:app_tenda/core/services/push_trigger_service.dart';
 
 class CamboneViewModel extends ChangeNotifier {
   final AIEventParser _aiParser;

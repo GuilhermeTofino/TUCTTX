@@ -1,5 +1,5 @@
-import '../../data/datasources/base_firestore_datasource.dart';
-import '../models/cambone_model.dart';
+import 'package:app_tenda/core/services/base_firestore_datasource.dart';
+import 'package:app_tenda/features/cambone/domain/models/cambone_model.dart';
 
 class CamboneRepository extends BaseFirestoreDataSource {
   Future<List<CamboneSchedule>> getSchedules(String tenantId) async {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../core/config/app_config.dart';
-import '../../../core/di/service_locator.dart';
-import '../../../core/routes/app_routes.dart';
-import '../../viewmodels/cambone/cambone_viewmodel.dart';
-import '../../viewmodels/auth/register_viewmodel.dart';
-import '../../widgets/custom_logo_loader.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
-import 'admin_cambone_view.dart'; // Added import
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/routes/app_routes.dart';
+import 'package:app_tenda/features/cambone/presentation/viewmodels/cambone_viewmodel.dart';
+import 'package:app_tenda/features/auth/presentation/viewmodels/register_viewmodel.dart';
+import 'package:app_tenda/core/widgets/custom_logo_loader.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/features/cambone/presentation/views/admin_cambone_view.dart'; // Added import
 
 class CamboneListView extends StatefulWidget {
   final bool isAdminMode;

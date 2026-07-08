@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_config.dart';
+import 'package:app_tenda/core/config/app_config.dart';
 
 class TenantFactory {
   static TenantConfig getTenant(String slug, AppEnvironment env) {

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../domain/repositories/notification_repository.dart';
-import '../datasources/base_firestore_datasource.dart';
+import 'package:app_tenda/core/services/notification_repository.dart';
+import 'package:app_tenda/core/services/base_firestore_datasource.dart';
 
 class FirebaseNotificationRepository extends BaseFirestoreDataSource
     implements NotificationRepository {

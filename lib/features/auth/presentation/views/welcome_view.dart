@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/config/app_config.dart';
-import '../../../core/routes/app_routes.dart'; // Importante para a navegação
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/routes/app_routes.dart'; // Importante para a navegação
 
 class WelcomeView extends StatelessWidget {
   const WelcomeView({super.key});

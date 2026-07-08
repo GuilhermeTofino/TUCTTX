@@ -1,4 +1,4 @@
-import '../models/menu_option_model.dart';
+import 'package:app_tenda/core/services/menu_option_model.dart';
 
 abstract class MenuRepository {
   Future<List<MenuOptionModel>> getMenus(String tenantId);

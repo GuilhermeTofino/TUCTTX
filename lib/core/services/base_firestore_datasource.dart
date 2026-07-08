@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../core/config/app_config.dart';
+import 'package:app_tenda/core/config/app_config.dart';
 
 abstract class BaseFirestoreDataSource {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;

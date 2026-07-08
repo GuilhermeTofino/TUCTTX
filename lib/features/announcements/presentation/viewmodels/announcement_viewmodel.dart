@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../../domain/models/announcement_model.dart';
-import '../../../domain/repositories/announcement_repository.dart';
-import '../../../core/services/push_trigger_service.dart';
-import '../../../core/di/service_locator.dart';
+import 'package:app_tenda/features/announcements/domain/models/announcement_model.dart';
+import 'package:app_tenda/features/announcements/domain/repositories/announcement_repository.dart';
+import 'package:app_tenda/core/services/push_trigger_service.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
 
 class AnnouncementViewModel extends ChangeNotifier {
   final AnnouncementRepository _repository = getIt<AnnouncementRepository>();

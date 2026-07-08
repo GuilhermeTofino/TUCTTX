@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../domain/models/entity_model.dart';
-import '../../domain/models/user_model.dart';
-import '../../domain/repositories/user_repository.dart';
-import '../datasources/base_firestore_datasource.dart';
+import 'package:app_tenda/features/profile/domain/models/entity_model.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
+import 'package:app_tenda/core/services/base_firestore_datasource.dart';
 
 class FirebaseUserRepository extends BaseFirestoreDataSource
     implements UserRepository {

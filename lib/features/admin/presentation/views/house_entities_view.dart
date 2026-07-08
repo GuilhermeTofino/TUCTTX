@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/config/app_config.dart';
-import '../../../../core/di/service_locator.dart';
-import '../../viewmodels/admin/house_entities_viewmodel.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/features/admin/presentation/viewmodels/house_entities_viewmodel.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class HouseEntitiesView extends StatelessWidget {
   const HouseEntitiesView({super.key});

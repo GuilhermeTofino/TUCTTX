@@ -1,10 +1,10 @@
-import 'package:app_tenda/presentation/viewmodels/announcements/announcement_viewmodel.dart';
+import 'package:app_tenda/features/announcements/presentation/viewmodels/announcement_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../core/di/service_locator.dart';
-import '../../../core/config/app_config.dart';
-import '../../../domain/models/announcement_model.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/features/announcements/domain/models/announcement_model.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class AnnouncementsView extends StatefulWidget {
   const AnnouncementsView({super.key});

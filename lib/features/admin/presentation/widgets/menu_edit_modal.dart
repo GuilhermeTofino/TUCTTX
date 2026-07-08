@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/models/menu_option_model.dart';
+import 'package:app_tenda/core/services/menu_option_model.dart';
 import 'package:uuid/uuid.dart';
 
 class MenuEditModal extends StatefulWidget {

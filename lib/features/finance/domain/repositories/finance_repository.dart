@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/financial_models.dart';
-import '../models/financial_goal_model.dart';
-import '../../data/datasources/base_firestore_datasource.dart';
+import 'package:app_tenda/features/finance/domain/models/financial_models.dart';
+import 'package:app_tenda/features/finance/domain/models/financial_goal_model.dart';
+import 'package:app_tenda/core/services/base_firestore_datasource.dart';
 
 abstract class FinanceRepository {
   Stream<List<MonthlyFeeModel>> getUserMonthlyFees(

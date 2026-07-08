@@ -1,4 +1,4 @@
-import 'entity_model.dart';
+import 'package:app_tenda/features/profile/domain/models/entity_model.dart';
 
 class UserModel {
   final String id;

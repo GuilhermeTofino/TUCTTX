@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../data/datasources/base_firestore_datasource.dart';
-import '../models/work_event_model.dart';
-import '../repositories/user_repository.dart';
-import '../../core/di/service_locator.dart';
-import '../../core/services/push_trigger_service.dart';
+import 'package:app_tenda/core/services/base_firestore_datasource.dart';
+import 'package:app_tenda/features/calendar/domain/models/work_event_model.dart';
+import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/services/push_trigger_service.dart';
 import 'package:intl/intl.dart';
 
 class EventRepository extends BaseFirestoreDataSource {

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
-import 'package:app_tenda/domain/models/user_model.dart';
-import 'package:app_tenda/domain/models/financial_models.dart';
-import 'package:app_tenda/presentation/viewmodels/finance/finance_viewmodel.dart';
-import 'package:app_tenda/presentation/views/admin/admin_monthly_fees_view.dart';
-import 'package:app_tenda/presentation/views/admin/admin_bazaar_debts_view.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/finance/domain/models/financial_models.dart';
+import 'package:app_tenda/features/finance/presentation/viewmodels/finance_viewmodel.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_monthly_fees_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_bazaar_debts_view.dart';
 
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class AdminMemberFullRecordView extends StatefulWidget {
   final UserModel member;

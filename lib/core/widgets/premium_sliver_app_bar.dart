@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/config/app_config.dart';
+import 'package:app_tenda/core/config/app_config.dart';
 
 class PremiumSliverAppBar extends StatelessWidget {
   final String title;

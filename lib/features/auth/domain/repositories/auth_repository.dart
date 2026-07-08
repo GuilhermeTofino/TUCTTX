@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:app_tenda/domain/models/user_model.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 
 abstract class AuthRepository {
   Future<UserModel?> signIn(String email, String password);

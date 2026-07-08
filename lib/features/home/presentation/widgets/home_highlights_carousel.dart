@@ -1,4 +1,4 @@
-import 'package:app_tenda/domain/models/announcement_model.dart';
+import 'package:app_tenda/features/announcements/domain/models/announcement_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

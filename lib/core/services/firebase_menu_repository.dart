@@ -1,6 +1,6 @@
-import '../../domain/models/menu_option_model.dart';
-import '../../domain/repositories/menu_repository.dart';
-import '../datasources/base_firestore_datasource.dart';
+import 'package:app_tenda/core/services/menu_option_model.dart';
+import 'package:app_tenda/core/services/menu_repository.dart';
+import 'package:app_tenda/core/services/base_firestore_datasource.dart';
 
 class FirebaseMenuRepository extends BaseFirestoreDataSource
     implements MenuRepository {

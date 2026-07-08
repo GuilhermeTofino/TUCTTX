@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:app_tenda/domain/models/work_event_model.dart';
+import 'package:app_tenda/features/calendar/domain/models/work_event_model.dart';
 
 class EventEditModal extends StatefulWidget {
   final WorkEvent event;

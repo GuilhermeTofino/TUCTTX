@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
-import '../config/app_config.dart'; // Ajustado para o novo caminho
+import 'package:app_tenda/core/config/app_config.dart'; // Ajustado para o novo caminho
 
 class FirebaseRemoteConfigs {
   // Credenciais Globais do projeto Firebase

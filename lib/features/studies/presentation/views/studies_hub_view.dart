@@ -1,11 +1,11 @@
-import 'package:app_tenda/presentation/viewmodels/studies/study_viewmodel.dart';
+import 'package:app_tenda/features/studies/presentation/viewmodels/study_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../core/di/service_locator.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
-import 'documents_list_view.dart';
-import 'audio_list_view.dart';
-import '../../../core/services/layout_service.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/features/studies/presentation/views/documents_list_view.dart';
+import 'package:app_tenda/features/studies/presentation/views/audio_list_view.dart';
+import 'package:app_tenda/core/services/layout_service.dart';
 
 class StudiesHubView extends StatefulWidget {
   const StudiesHubView({super.key});

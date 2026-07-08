@@ -1,10 +1,10 @@
-import 'package:app_tenda/presentation/viewmodels/home/home_viewmodel.dart';
+import 'package:app_tenda/features/home/presentation/viewmodels/home_viewmodel.dart';
 import 'package:flutter/material.dart';
-import '../../../core/di/service_locator.dart';
-import '../../../domain/models/menu_option_model.dart';
-import '../../../domain/repositories/menu_repository.dart';
-import '../../widgets/admin/menu_edit_modal.dart';
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/services/menu_option_model.dart';
+import 'package:app_tenda/core/services/menu_repository.dart';
+import 'package:app_tenda/features/admin/presentation/widgets/menu_edit_modal.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class MenuManagementView extends StatefulWidget {
   const MenuManagementView({super.key});

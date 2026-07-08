@@ -1,11 +1,11 @@
-import 'package:app_tenda/presentation/viewmodels/admin/member_management_viewmodel.dart';
+import 'package:app_tenda/features/admin/presentation/viewmodels/member_management_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/di/service_locator.dart';
-import '../../../domain/models/user_model.dart';
-import '../../widgets/custom_logo_loader.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/core/widgets/custom_logo_loader.dart';
 
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class AdminAmaciView extends StatefulWidget {
   final UserModel member;

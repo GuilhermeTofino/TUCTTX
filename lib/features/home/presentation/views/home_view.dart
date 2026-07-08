@@ -1,21 +1,21 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:app_tenda/presentation/widgets/custom_logo_loader.dart';
+import 'package:app_tenda/core/widgets/custom_logo_loader.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/core/routes/app_routes.dart';
-import 'package:app_tenda/presentation/viewmodels/home/home_viewmodel.dart';
-import 'package:app_tenda/presentation/viewmodels/announcements/announcement_viewmodel.dart';
-import 'package:app_tenda/presentation/viewmodels/finance/finance_viewmodel.dart';
-import 'package:app_tenda/presentation/viewmodels/calendar/calendar_viewmodel.dart';
+import 'package:app_tenda/features/home/presentation/viewmodels/home_viewmodel.dart';
+import 'package:app_tenda/features/announcements/presentation/viewmodels/announcement_viewmodel.dart';
+import 'package:app_tenda/features/finance/presentation/viewmodels/finance_viewmodel.dart';
+import 'package:app_tenda/features/calendar/presentation/viewmodels/calendar_viewmodel.dart';
 
-import 'package:app_tenda/domain/models/user_model.dart';
-import 'package:app_tenda/domain/models/announcement_model.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/announcements/domain/models/announcement_model.dart';
 import 'package:app_tenda/core/services/version_check_service.dart';
-import 'package:app_tenda/presentation/widgets/home/home_highlights_carousel.dart';
+import 'package:app_tenda/features/home/presentation/widgets/home_highlights_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:app_tenda/core/services/dynamic_island/dynamic_island_service.dart';
 

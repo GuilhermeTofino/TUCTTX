@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:app_tenda/domain/models/user_model.dart';
-import 'package:app_tenda/domain/repositories/user_repository.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
 import 'package:intl/intl.dart';
-import '../../../core/di/service_locator.dart';
-import '../../../core/services/push_trigger_service.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/services/push_trigger_service.dart';
 
-import 'package:app_tenda/domain/repositories/event_repository.dart';
+import 'package:app_tenda/features/calendar/domain/repositories/event_repository.dart';
 
 class MemberManagementViewModel extends ChangeNotifier {
   final UserRepository _userRepository;

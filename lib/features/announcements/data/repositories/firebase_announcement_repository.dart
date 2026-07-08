@@ -1,6 +1,6 @@
-import '../../domain/models/announcement_model.dart';
-import '../../domain/repositories/announcement_repository.dart';
-import '../datasources/base_firestore_datasource.dart';
+import 'package:app_tenda/features/announcements/domain/models/announcement_model.dart';
+import 'package:app_tenda/features/announcements/domain/repositories/announcement_repository.dart';
+import 'package:app_tenda/core/services/base_firestore_datasource.dart';
 
 class FirebaseAnnouncementRepository extends BaseFirestoreDataSource
     implements AnnouncementRepository {

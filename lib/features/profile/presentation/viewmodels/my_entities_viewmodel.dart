@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../domain/models/entity_model.dart';
-import '../../../../domain/repositories/user_repository.dart';
-import '../../viewmodels/home/home_viewmodel.dart';
-import '../../../../core/di/service_locator.dart';
+import 'package:app_tenda/features/profile/domain/models/entity_model.dart';
+import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
+import 'package:app_tenda/features/home/presentation/viewmodels/home_viewmodel.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
 
 class MyEntitiesViewModel extends ChangeNotifier {
   final UserRepository _userRepository = getIt<UserRepository>();

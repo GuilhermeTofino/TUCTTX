@@ -1,7 +1,7 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:io';
-import '../config/app_config.dart';
+import 'package:app_tenda/core/config/app_config.dart';
 
 class VersionCheckService {
   final FirebaseRemoteConfig _remoteConfig = FirebaseRemoteConfig.instance;

@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../core/di/service_locator.dart';
-import '../../../domain/models/entity_model.dart';
-import '../../../domain/models/menu_option_model.dart';
-import '../../../domain/models/user_model.dart';
-import '../../../domain/repositories/auth_repository.dart';
-import '../../../domain/repositories/menu_repository.dart';
-import '../../../core/services/notification_service.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/features/profile/domain/models/entity_model.dart';
+import 'package:app_tenda/core/services/menu_option_model.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/auth/domain/repositories/auth_repository.dart';
+import 'package:app_tenda/core/services/menu_repository.dart';
+import 'package:app_tenda/core/services/notification_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final AuthRepository _authRepository = getIt<AuthRepository>();

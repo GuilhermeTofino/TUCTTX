@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../config/app_config.dart';
-import '../../data/datasources/base_firestore_datasource.dart';
+import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/services/base_firestore_datasource.dart';
 
 class PushTriggerService extends BaseFirestoreDataSource {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

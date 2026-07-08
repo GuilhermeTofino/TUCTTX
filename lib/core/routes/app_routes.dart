@@ -1,25 +1,25 @@
-import 'package:app_tenda/presentation/views/admin/admin_hub_view.dart';
-import 'package:app_tenda/presentation/views/admin/member_management_view.dart';
-import 'package:app_tenda/presentation/views/admin/menu_management_view.dart';
-import 'package:app_tenda/presentation/views/calendar/calendar_view.dart';
-import 'package:app_tenda/presentation/views/finance/financial_hub_view.dart';
-import 'package:app_tenda/presentation/views/admin/admin_announcements_view.dart';
-import 'package:app_tenda/presentation/views/admin/admin_studies_view.dart';
-import 'package:app_tenda/presentation/views/admin/admin_cleaning_dashboard_view.dart';
-import 'package:app_tenda/presentation/views/announcements/announcements_view.dart';
-import 'package:app_tenda/presentation/views/home/home_view.dart';
-import 'package:app_tenda/presentation/views/auth/login_view.dart';
-import 'package:app_tenda/presentation/views/auth/register_view.dart';
-import 'package:app_tenda/presentation/views/studies/studies_hub_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_hub_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/member_management_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/menu_management_view.dart';
+import 'package:app_tenda/features/calendar/presentation/views/calendar_view.dart';
+import 'package:app_tenda/features/finance/presentation/views/financial_hub_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_announcements_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_studies_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_cleaning_dashboard_view.dart';
+import 'package:app_tenda/features/announcements/presentation/views/announcements_view.dart';
+import 'package:app_tenda/features/home/presentation/views/home_view.dart';
+import 'package:app_tenda/features/auth/presentation/views/login_view.dart';
+import 'package:app_tenda/features/auth/presentation/views/register_view.dart';
+import 'package:app_tenda/features/studies/presentation/views/studies_hub_view.dart';
 import 'package:flutter/material.dart';
-import 'package:app_tenda/presentation/views/auth/welcome_view.dart';
-import 'package:app_tenda/presentation/views/cambone/admin_cambone_view.dart';
-import 'package:app_tenda/presentation/views/cambone/cambone_list_view.dart';
-import 'package:app_tenda/presentation/views/profile/my_entities_view.dart';
-import 'package:app_tenda/presentation/views/admin/house_entities_view.dart';
+import 'package:app_tenda/features/auth/presentation/views/welcome_view.dart';
+import 'package:app_tenda/features/cambone/presentation/views/admin_cambone_view.dart';
+import 'package:app_tenda/features/cambone/presentation/views/cambone_list_view.dart';
+import 'package:app_tenda/features/profile/presentation/views/my_entities_view.dart';
+import 'package:app_tenda/features/admin/presentation/views/house_entities_view.dart';
 // Importe aqui quando criarmos os arquivos:
-// import '../../presentation/views/auth/login_view.dart';
-// import '../../presentation/views/auth/register_view.dart';
+// import 'package:app_tenda/presentation/views/auth/login_view.dart';
+// import 'package:app_tenda/presentation/views/auth/register_view.dart';
 
 class AppRoutes {
   static const String welcome = '/';

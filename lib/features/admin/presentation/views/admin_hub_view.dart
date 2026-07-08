@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app_tenda/core/routes/app_routes.dart';
-import 'package:app_tenda/presentation/views/admin/admin_finance_dashboard_view.dart';
-import 'package:app_tenda/presentation/widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/features/admin/presentation/views/admin_finance_dashboard_view.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class AdminHubView extends StatelessWidget {
   const AdminHubView({super.key});

@@ -1,4 +1,4 @@
-import '../models/study_document_model.dart';
+import 'package:app_tenda/features/studies/domain/models/study_document_model.dart';
 
 abstract class StudyRepository {
   Stream<List<StudyDocumentModel>> getDocuments(

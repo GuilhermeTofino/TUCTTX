@@ -1,12 +1,12 @@
-import 'package:app_tenda/presentation/viewmodels/admin/member_management_viewmodel.dart';
+import 'package:app_tenda/features/admin/presentation/viewmodels/member_management_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
-import 'package:app_tenda/domain/models/user_model.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../widgets/admin/member_options_modal.dart';
+import 'package:app_tenda/features/admin/presentation/widgets/member_options_modal.dart';
 
-import '../../widgets/premium_sliver_app_bar.dart';
+import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class MemberManagementView extends StatefulWidget {
   const MemberManagementView({super.key});
