@@ -39,6 +39,10 @@ fi
 flutter --version
 echo "✅ Flutter is ready"
 
+# Disable Swift Package Manager to avoid SPM dependency resolution issues on Xcode Cloud
+echo "📦 Disabling Swift Package Manager..."
+flutter config --no-enable-swift-package-manager
+
 # Install artifacts
 echo "📦 Precaching iOS artifacts..."
 flutter precache --ios
