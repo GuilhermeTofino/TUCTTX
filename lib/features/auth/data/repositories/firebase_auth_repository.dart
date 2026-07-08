@@ -212,7 +212,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
         if (!doc.exists) return null;
         return UserModel.fromMap(doc.data() as Map<String, dynamic>);
       } catch (e) {
-        dev.log("Erro no stream de auth: $e");
+        dev.log("Erro no stream de auth (esperado se não autenticado): $e");
         return null;
       }
     });

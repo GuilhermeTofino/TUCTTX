@@ -762,9 +762,12 @@ class _HomeViewState extends State<HomeView> {
             backgroundImage: user.photoUrl != null
                 ? NetworkImage(user.photoUrl!)
                 : null,
-            child: user.photoUrl == null
-                ? const Icon(Icons.person, color: Colors.grey, size: 30)
+            onForegroundImageError: user.photoUrl != null
+                ? (exception, stackTrace) {
+                    debugPrint("Erro ao carregar imagem de perfil: $exception");
+                  }
                 : null,
+            child: const Icon(Icons.person, color: Colors.grey, size: 30),
           ),
         ),
         Positioned(

@@ -354,9 +354,20 @@ class _LoginViewState extends State<LoginView> {
         borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(80)),
       ),
       child: Center(
-        child: Hero(
-          tag: 'logo',
-          child: Image.asset(tenant.logoPath, height: 300),
+        child: GestureDetector(
+          onTap: () {
+            if (AppConfig.instance.environment == AppEnvironment.dev) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.home,
+                (route) => false,
+              );
+            }
+          },
+          child: Hero(
+            tag: 'logo',
+            child: Image.asset(tenant.logoPath, height: 300),
+          ),
         ),
       ),
     );

@@ -231,31 +231,34 @@ class _ImportEventsViewState extends State<ImportEventsView> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.grey[100]!),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: tenant.primaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: tenant.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.auto_awesome, color: tenant.primaryColor, size: 20),
           ),
-          child: Icon(Icons.auto_awesome, color: tenant.primaryColor, size: 20),
-        ),
-        title: Text(
-          ev['title'],
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-        ),
-        subtitle: Text(
-          "${ev['date'].toString().split('T')[0]} • ${ev['type']}",
-          style: TextStyle(color: Colors.grey[600], fontSize: 13),
-        ),
-        trailing: IconButton(
-          icon: const Icon(
-            Icons.delete_sweep_outlined,
-            color: Colors.redAccent,
-            size: 22,
+          title: Text(
+            ev['title'],
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
-          onPressed: () => _viewModel.removePreviewEvent(index),
+          subtitle: Text(
+            "${ev['date'].toString().split('T')[0]} • ${ev['type']}",
+            style: TextStyle(color: Colors.grey[600], fontSize: 13),
+          ),
+          trailing: IconButton(
+            icon: const Icon(
+              Icons.delete_sweep_outlined,
+              color: Colors.redAccent,
+              size: 22,
+            ),
+            onPressed: () => _viewModel.removePreviewEvent(index),
+          ),
         ),
       ),
     );

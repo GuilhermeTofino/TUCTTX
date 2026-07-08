@@ -24,27 +24,47 @@ class HomeViewModel extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  Future<void> _mockDevUser() async {
+    _currentUser = UserModel(
+      id: 'mock_user_id',
+      name: 'Desenvolvedor Mock',
+      email: 'dev@tucttx.com',
+      role: 'admin',
+      tenantSlug: 'tucttx',
+      phone: '11999999999',
+      emergencyContact: '11999999998',
+      jaTirouSanto: true,
+      orixaFrente: 'Oxalá',
+      orixaJunto: 'Iemanjá',
+    );
+    _isLoading = false;
+    notifyListeners();
+    await loadMenus('tucttx');
+  }
+
   Future<void> loadCurrentUser() async {
     _isLoading = true;
     notifyListeners();
 
+    // Se estiver em modo de desenvolvimento (DEV), adicionamos um timer de segurança para disparar o mock
+    // caso a escuta de autenticação do Firebase retorne null (sem usuário logado)
     _authRepository.onAuthStateChanged.listen((user) {
-      _currentUser = user;
       if (user != null) {
-        // Captura e salva o token de notificação deste dispositivo
+        _currentUser = user;
         getIt<NotificationService>().saveDeviceToken(user.id);
-
-        // Inscreve o usuário nos tópicos do terreiro (ex: tucttx_dev_all)
         getIt<NotificationService>().subscribeToTenantTopics(
           user.tenantSlug,
           const String.fromEnvironment('ENV', defaultValue: 'dev'),
         );
-
-        // Assim que tivermos o usuário (e o tenant slug dele), carregamos os menus
         loadMenus(user.tenantSlug);
       } else {
-        _isLoading = false;
-        notifyListeners();
+        final isDev = const String.fromEnvironment('ENV', defaultValue: 'dev') == 'dev';
+        if (isDev) {
+          _mockDevUser();
+        } else {
+          _isLoading = false;
+          notifyListeners();
+        }
       }
     });
   }

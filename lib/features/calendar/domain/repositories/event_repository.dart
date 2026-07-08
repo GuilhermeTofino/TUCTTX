@@ -10,7 +10,6 @@ class EventRepository extends BaseFirestoreDataSource {
   Future<List<WorkEvent>> getEventsByTenant(String tenantId) async {
     try {
       final snapshot = await tenantCollection('events')
-          .where('date', isGreaterThanOrEqualTo: DateTime.now())
           .orderBy('date')
           .get();
 

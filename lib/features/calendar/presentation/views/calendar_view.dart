@@ -195,60 +195,64 @@ class _CalendarViewState extends State<CalendarView> {
     ).format(event.date).toUpperCase().replaceAll('.', '');
     final timeStr = DateFormat('HH:mm').format(event.date);
 
-    return GestureDetector(
-      onTap: () => _showEventDetailsBottomSheet(event, tenant),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+    final today = DateTime.now();
+    final startOfToday = DateTime(today.year, today.month, today.day);
+    final isPastEvent = event.date.isBefore(startOfToday);
+
+    final cardContent = Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            Container(
+              width: 6,
+              decoration: BoxDecoration(
+                color: isPastEvent
+                    ? Colors.grey
+                    : (event.type == 'Pública'
+                        ? Colors.green
+                        : tenant.primaryColor),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  bottomLeft: Radius.circular(24),
+                ),
+              ),
             ),
-          ],
-        ),
-        child: IntrinsicHeight(
-          child: Row(
-            children: [
-              Container(
-                width: 6,
-                decoration: BoxDecoration(
-                  color: event.type == 'Pública'
-                      ? Colors.green
-                      : tenant.primaryColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    bottomLeft: Radius.circular(24),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    dayStr,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: isPastEvent ? Colors.grey : tenant.primaryColor,
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      dayStr,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: tenant.primaryColor,
-                      ),
+                  Text(
+                    monthStr,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
                     ),
-                    Text(
-                      monthStr,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
               const VerticalDivider(width: 1, indent: 20, endIndent: 20),
               Expanded(
                 child: Padding(
@@ -288,6 +292,13 @@ class _CalendarViewState extends State<CalendarView> {
             ],
           ),
         ),
+      ); // Ponto e vírgula adicionado aqui para fechar a variável 'cardContent'
+
+    return GestureDetector(
+      onTap: () => _showEventDetailsBottomSheet(event, tenant),
+      child: Opacity(
+        opacity: isPastEvent ? 0.55 : 1.0,
+        child: cardContent,
       ),
     );
   }

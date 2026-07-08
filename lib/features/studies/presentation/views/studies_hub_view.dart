@@ -163,26 +163,29 @@ class _StudiesHubViewState extends State<StudiesHubView> {
           ),
         ],
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: option['color'].withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          leading: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: option['color'].withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(option['icon'], color: option['color']),
           ),
-          child: Icon(option['icon'], color: option['color']),
+          title: Text(
+            option['title'],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            option['subtitle'],
+            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+          ),
+          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+          onTap: () => _handleTopicTap(option),
         ),
-        title: Text(
-          option['title'],
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          option['subtitle'],
-          style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-        ),
-        trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-        onTap: () => _handleTopicTap(option),
       ),
     );
   }
