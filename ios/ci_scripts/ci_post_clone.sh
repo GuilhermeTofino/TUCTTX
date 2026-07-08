@@ -47,6 +47,19 @@ flutter precache --ios
 echo "📦 Installing dependencies..."
 flutter pub get
 
+# Generate iOS configuration and symlinks
+if [ -z "$TENANT" ]; then
+  echo "⚠️  WARNING: TENANT not set, skipping config-only build"
+else
+  if [ "${ENV:-prod}" = "dev" ]; then
+    FLAVOR="${TENANT}Dev"
+  else
+    FLAVOR="${TENANT}Prod"
+  fi
+  echo "📦 Generating iOS configuration for flavor $FLAVOR..."
+  flutter build ios --flavor "$FLAVOR" --config-only
+fi
+
 # Inject Tenant Config into Generated.xcconfig
 # NOTE: This must happen AFTER flutter pub get, otherwise flutter pub get will overwrite Generated.xcconfig
 echo "📦 Injecting Tenant Config..."
