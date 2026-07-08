@@ -24,6 +24,8 @@ class HomeViewModel extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  bool _isLoggingOut = false;
+
   Future<void> _mockDevUser() async {
     _currentUser = UserModel(
       id: 'mock_user_id',
@@ -50,6 +52,7 @@ class HomeViewModel extends ChangeNotifier {
     // caso a escuta de autenticação do Firebase retorne null (sem usuário logado)
     _authRepository.onAuthStateChanged.listen((user) {
       if (user != null) {
+        _isLoggingOut = false;
         _currentUser = user;
         getIt<NotificationService>().saveDeviceToken(user.id);
         getIt<NotificationService>().subscribeToTenantTopics(
@@ -58,8 +61,9 @@ class HomeViewModel extends ChangeNotifier {
         );
         loadMenus(user.tenantSlug);
       } else {
+        _currentUser = null;
         final isDev = const String.fromEnvironment('ENV', defaultValue: 'dev') == 'dev';
-        if (isDev) {
+        if (isDev && !_isLoggingOut) {
           _mockDevUser();
         } else {
           _isLoading = false;
@@ -96,6 +100,9 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
+    _isLoggingOut = true;
+    _currentUser = null;
+    notifyListeners();
     await _authRepository.signOut();
   }
 
