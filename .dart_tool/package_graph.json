@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "app_tenda",
-      "version": "1.26.070+1",
+      "version": "2.26.070+60",
       "dependencies": [
         "add_2_calendar",
         "audio_video_progress_bar",
