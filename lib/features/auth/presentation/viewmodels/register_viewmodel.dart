@@ -43,6 +43,13 @@ class RegisterViewModel extends ChangeNotifier {
 
     try {
       final user = await _authRepository.signUp(
+        // Um dos dois: 'inviteCode' (código repassado pelo dirigente da
+        // casa, pra entrar como filho/irmão de fé) ou 'newTenant' (um
+        // NewTenantInput, quando o dirigente está cadastrando a casa dele
+        // no próprio registro).
+        inviteCode: data['inviteCode'],
+        newTenant: data['newTenant'],
+        tenantLogo: data['tenantLogo'],
         name: data['name'],
         email: data['email'],
         phone: data['phone'],

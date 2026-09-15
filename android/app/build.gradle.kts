@@ -90,9 +90,9 @@ android {
     applicationVariants.all {
         val flavor = flavorName // ex: tucttxDev
         val isDev = flavor.contains("Dev")
-        val baseName = flavor.replace("Dev", "").replace("Prod", "").uppercase()
-        
-        val displayName = if (isDev) "[DEV] $baseName" else baseName
+
+        // Nome de exibição do app é fixo (EloApp), independente do tenant/flavor.
+        val displayName = if (isDev) "[DEV] EloApp" else "EloApp"
         resValue("string", "app_name", displayName)
     }
 

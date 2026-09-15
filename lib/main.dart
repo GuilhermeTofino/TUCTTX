@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'dart:developer' as dev;
 import 'package:app_tenda/app.dart';
 import 'package:app_tenda/core/config/app_config.dart';
-import 'package:app_tenda/core/config/tenant_factory.dart';
 import 'package:app_tenda/core/services/firebase_remote_configs.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -31,19 +30,14 @@ void main() async {
     await dotenv.load(fileName: ".env");
 
     // 1. Captura variáveis de ambiente
-    const slug = String.fromEnvironment('TENANT');
+    // Não existe mais --dart-define=TENANT: o app é único (EloApp) e a casa
+    // do usuário só é conhecida depois do login, resolvida via
+    // FirebaseAuthRepository (ver _resolveTenantForUser).
     const envString = String.fromEnvironment('ENV', defaultValue: 'dev');
 
-    if (slug.isEmpty) {
-      throw Exception(
-        "ERRO: O parâmetro TENANT deve ser passado via --dart-define=TENANT=slug",
-      );
-    }
-
-    // 2. Instancia a configuração global
+    // 2. Instancia a configuração global (ainda sem tenant)
     final env = envString == 'prod' ? AppEnvironment.prod : AppEnvironment.dev;
-    final tenant = TenantFactory.getTenant(slug, env);
-    AppConfig.instantiate(environment: env, tenant: tenant);
+    AppConfig.instantiate(environment: env);
 
     // 3. Inicializa Service Locator (Injeção de Dependências)
     await setupServiceLocator();

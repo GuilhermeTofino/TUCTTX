@@ -963,7 +963,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
-				APP_DISPLAY_NAME = TUCTTX;
+				APP_DISPLAY_NAME = EloApp;
 				APP_GROUP_ID = group.com.appTenda.tucttx;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
@@ -1039,7 +1039,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				APP_DISPLAY_NAME = "[DEV] EloApp";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1102,7 +1102,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */;
 			buildSettings = {
-				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				APP_DISPLAY_NAME = "[DEV] EloApp";
 				APP_GROUP_ID = group.com.appTenda.tucttx.dev;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
@@ -1132,7 +1132,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AFED5D23BEAE3733C2179850 /* tucttxDevDebug.xcconfig */;
 			buildSettings = {
-				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				APP_DISPLAY_NAME = "[DEV] EloApp";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -1153,7 +1153,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				APP_DISPLAY_NAME = TUCTTX;
+				APP_DISPLAY_NAME = EloApp;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1213,7 +1213,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */;
 			buildSettings = {
-				APP_DISPLAY_NAME = TUCTTX;
+				APP_DISPLAY_NAME = EloApp;
 				APP_GROUP_ID = group.com.appTenda.tucttx;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
@@ -1242,7 +1242,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AF13ED41936AE33D00AF4A77 /* tucttxProdRelease.xcconfig */;
 			buildSettings = {
-				APP_DISPLAY_NAME = TUCTTX;
+				APP_DISPLAY_NAME = EloApp;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -1284,7 +1284,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				APP_DISPLAY_NAME = "[DEV] EloApp";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1344,7 +1344,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */;
 			buildSettings = {
-				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				APP_DISPLAY_NAME = "[DEV] EloApp";
 				APP_GROUP_ID = group.com.appTenda.tucttx.dev;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
@@ -1373,7 +1373,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AFE777F22CC8546E34304B4B /* tucttxDevRelease.xcconfig */;
 			buildSettings = {
-				APP_DISPLAY_NAME = "[DEV] TUCTTX";
+				APP_DISPLAY_NAME = "[DEV] EloApp";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -1414,7 +1414,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				APP_DISPLAY_NAME = TUCTTX;
+				APP_DISPLAY_NAME = EloApp;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1477,7 +1477,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */;
 			buildSettings = {
-				APP_DISPLAY_NAME = TUCTTX;
+				APP_DISPLAY_NAME = EloApp;
 				APP_GROUP_ID = group.com.appTenda.tucttx;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				CLANG_ENABLE_MODULES = YES;
@@ -1507,7 +1507,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AF38C3903B0C21790D9A8B73 /* tucttxProdDebug.xcconfig */;
 			buildSettings = {
-				APP_DISPLAY_NAME = TUCTTX;
+				APP_DISPLAY_NAME = EloApp;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-tucttx";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;

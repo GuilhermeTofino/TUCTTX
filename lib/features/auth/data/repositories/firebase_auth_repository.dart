@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:developer' as dev;
 import 'package:app_tenda/core/config/app_config.dart';
+import 'package:app_tenda/core/config/tenant_repository.dart';
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 import 'package:app_tenda/features/auth/domain/repositories/auth_repository.dart';
 import 'package:app_tenda/core/services/base_firestore_datasource.dart';
@@ -12,7 +13,29 @@ import 'package:app_tenda/core/utils/auth_exception_handler.dart';
 class FirebaseAuthRepository extends BaseFirestoreDataSource
     implements AuthRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final String _tenantSlug = AppConfig.instance.tenant.tenantSlug;
+  final TenantRepository _tenantRepository = TenantRepository();
+
+  // Continua útil como atalho para código já rodando pós-login (upload de
+  // foto, etc). NUNCA usar em field initializer: o tenant só existe depois
+  // que o login/resolveTenantForUser resolve a casa.
+  String get _tenantSlug => AppConfig.instance.tenant.tenantSlug;
+
+  /// Descobre a casa do usuário logado e carrega a config dela no
+  /// [AppConfig], para então poder acessar as coleções tenant-scoped
+  /// (users, events, etc). É o primeiro passo depois de qualquer login bem
+  /// sucedido, e também ao restaurar sessão (onAuthStateChanged).
+  Future<void> _resolveTenantForUser(String uid) async {
+    final indexDoc = await userTenantIndexDocument(uid).get();
+    final data = indexDoc.data() as Map<String, dynamic>?;
+    final tenantSlug = data?['tenantSlug'] as String?;
+
+    if (!indexDoc.exists || tenantSlug == null) {
+      throw Exception("Acesso negado: Usuário não pertence a nenhuma casa.");
+    }
+
+    final tenant = await _tenantRepository.fetchTenant(tenantSlug);
+    AppConfig.instance.setTenant(tenant);
+  }
 
   @override
   Future<UserModel?> signIn(String email, String password) async {
@@ -24,6 +47,10 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
 
       final uid = result.user?.uid;
       if (uid == null) return null;
+
+      // Antes de tocar em qualquer coleção tenant-scoped, precisamos saber
+      // qual é a casa deste usuário.
+      await _resolveTenantForUser(uid);
 
       // Busca o perfil completo incluindo o campo 'role'
       final doc = await tenantDocument('users', uid).get();
@@ -38,6 +65,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
       }
     } catch (e) {
       dev.log("Erro no SignIn: $e");
+      AppConfig.instance.clearTenant();
       throw Exception(AuthExceptionHandler.handleException(e));
     }
   }
@@ -103,6 +131,9 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
 
   @override
   Future<UserModel?> signUp({
+    String? inviteCode,
+    NewTenantInput? newTenant,
+    File? tenantLogo,
     required String name,
     required String email,
     required String phone,
@@ -119,10 +150,14 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
     String role = 'user', // Suporte para definição de cargo no cadastro
   }) async {
     try {
+      final joiningExisting = newTenant == null;
+
       if (name.trim().isEmpty ||
           email.trim().isEmpty ||
           phone.trim().isEmpty ||
-          emergencyContact.trim().isEmpty) {
+          emergencyContact.trim().isEmpty ||
+          (joiningExisting &&
+              (inviteCode == null || inviteCode.trim().isEmpty))) {
         throw Exception("Por favor, preencha todos os campos obrigatórios.");
       }
 
@@ -132,6 +167,22 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
 
       dev.log("--- INICIANDO SIGNUP VALIDADO ---");
 
+      // Se está entrando numa casa existente, resolve o código de convite
+      // ANTES de criar o usuário, pra falhar cedo (código inválido) em vez
+      // de deixar o cadastro pela metade. Se está cadastrando uma casa
+      // nova, isso só é possível depois de termos o uid (vira o
+      // responsavelUid da casa), então acontece adiante.
+      String? slugFromInviteCode;
+      if (joiningExisting) {
+        slugFromInviteCode = await _tenantRepository.resolveSlugByInviteCode(
+          inviteCode!,
+        );
+        final tenant = await _tenantRepository.fetchTenant(
+          slugFromInviteCode,
+        );
+        AppConfig.instance.setTenant(tenant);
+      }
+
       final result = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -140,13 +191,38 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
       final uid = result.user?.uid;
       if (uid == null) return null;
 
+      // Resolve o slug final e o role: quem cadastra uma casa nova vira
+      // automaticamente o admin/dirigente dela.
+      String resolvedSlug;
+      String resolvedRole;
+
+      if (joiningExisting) {
+        resolvedSlug = slugFromInviteCode!;
+        resolvedRole = role;
+      } else {
+        resolvedSlug = await _tenantRepository.createTenant(
+          newTenant,
+          responsavelUid: uid,
+        );
+        if (tenantLogo != null) {
+          await _tenantRepository.uploadTenantLogo(tenantLogo, resolvedSlug);
+        }
+        final tenant = await _tenantRepository.fetchTenant(resolvedSlug);
+        AppConfig.instance.setTenant(tenant);
+        resolvedRole = 'admin';
+      }
+
+      // Registra o vínculo uid -> casa, usado pelo login pra descobrir onde
+      // buscar o perfil desse usuário.
+      await userTenantIndexDocument(uid).set({'tenantSlug': resolvedSlug});
+
       final newUser = UserModel(
         id: uid,
         name: name,
         email: email,
         phone: phone,
         emergencyContact: emergencyContact,
-        tenantSlug: _tenantSlug,
+        tenantSlug: resolvedSlug,
         jaTirouSanto: jaTirouSanto,
         jogoComTata: jogoComTata,
         orixaFrente: orixaFrente,
@@ -156,7 +232,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
         condicoesMedicas: condicoesMedicas,
         tipoSanguineo: tipoSanguineo,
         createdAt: DateTime.now(),
-        role: role, // Atribui o role (padrão 'user')
+        role: resolvedRole,
       );
 
       await tenantDocument('users', uid).set(newUser.toMap());
@@ -165,6 +241,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
       return newUser;
     } catch (e) {
       dev.log("ERRO NO SIGNUP: $e");
+      AppConfig.instance.clearTenant();
       throw Exception(AuthExceptionHandler.handleException(e));
     }
   }
@@ -180,7 +257,10 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
   }
 
   @override
-  Future<void> signOut() => _auth.signOut();
+  Future<void> signOut() async {
+    await _auth.signOut();
+    AppConfig.instance.clearTenant();
+  }
 
   @override
   Future<void> deleteAccount() async {
@@ -206,8 +286,18 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
   @override
   Stream<UserModel?> get onAuthStateChanged {
     return _auth.authStateChanges().asyncMap((firebaseUser) async {
-      if (firebaseUser == null) return null;
+      if (firebaseUser == null) {
+        AppConfig.instance.clearTenant();
+        return null;
+      }
       try {
+        // Ao reabrir o app com uma sessão já ativa, o AppConfig ainda não
+        // tem a casa carregada (isso não sobrevive ao restart) — resolve de
+        // novo antes de tentar ler o perfil do usuário.
+        if (!AppConfig.instance.hasTenant) {
+          await _resolveTenantForUser(firebaseUser.uid);
+        }
+
         final doc = await tenantDocument('users', firebaseUser.uid).get();
         if (!doc.exists) return null;
         return UserModel.fromMap(doc.data() as Map<String, dynamic>);

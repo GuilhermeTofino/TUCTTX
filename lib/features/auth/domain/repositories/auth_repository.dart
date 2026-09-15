@@ -1,10 +1,21 @@
 import 'dart:io';
+import 'package:app_tenda/core/config/tenant_repository.dart';
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 
 abstract class AuthRepository {
   Future<UserModel?> signIn(String email, String password);
 
+  /// Cadastra um novo usuário. Informe exatamente um dos dois:
+  /// - [inviteCode]: entra numa casa já existente, como membro comum. É o
+  ///   código que o dirigente daquela casa repassou (não uma lista pública
+  ///   de casas), pra evitar entrar na casa errada.
+  /// - [newTenant]: cadastra uma casa nova (o dirigente/responsável
+  ///   preenche os dados dela) e o usuário vira automaticamente o admin
+  ///   dessa casa.
   Future<UserModel?> signUp({
+    String? inviteCode,
+    NewTenantInput? newTenant,
+    File? tenantLogo,
     required String name,
     required String email,
     required String phone,
