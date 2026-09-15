@@ -2,11 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:developer' as dev;
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:app_tenda/app.dart';
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/config/tenant_factory.dart';
 import 'package:app_tenda/core/services/firebase_remote_configs.dart';
-import 'package:app_tenda/core/routes/app_routes.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:app_tenda/core/services/notification_service.dart';
@@ -46,7 +45,6 @@ void main() async {
     final tenant = TenantFactory.getTenant(slug, env);
     AppConfig.instantiate(environment: env, tenant: tenant);
 
-    // 3. Inicializa Service Locator (Injeção de Dependências)
     // 3. Inicializa Service Locator (Injeção de Dependências)
     await setupServiceLocator();
     await getIt<LayoutService>().init();
@@ -88,7 +86,7 @@ void main() async {
       cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
     );
 
-    runApp(const MyApp());
+    runApp(const App());
   } catch (e, stack) {
     dev.log("ERRO CRÍTICO NA INICIALIZAÇÃO: $e");
     dev.log("Stack: $stack");
@@ -96,52 +94,6 @@ void main() async {
       MaterialApp(
         home: Scaffold(body: Center(child: Text("Erro ao iniciar app: $e"))),
       ),
-    );
-  }
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final tenant = AppConfig.instance.tenant;
-
-    return MaterialApp(
-      title: tenant.appTitle,
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('pt', 'BR')],
-      theme: ThemeData(
-        useMaterial3: true,
-        primaryColor: tenant.primaryColor,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: tenant.primaryColor,
-          primary: tenant.primaryColor,
-          onPrimary: tenant.onPrimaryColor,
-        ),
-        appBarTheme: AppBarTheme(
-          backgroundColor: tenant.primaryColor,
-          foregroundColor: tenant.onPrimaryColor,
-          elevation: 0,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: tenant.primaryColor,
-            foregroundColor: tenant.onPrimaryColor,
-            minimumSize: const Size(64, 48),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-      ),
-      initialRoute: AppRoutes.welcome,
-      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }

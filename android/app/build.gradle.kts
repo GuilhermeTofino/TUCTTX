@@ -38,6 +38,9 @@ android {
 
     // 2. Configurar os Product Flavors
     productFlavors {
+        // Apenas o tenant "tucttx" está ativo por enquanto. Quando novos
+        // clientes forem adicionados, crie um novo par Dev/Prod aqui e
+        // um sourceSet correspondente em src/<tenant>/res.
         create("tucttxDev") {
             dimension = "client"
             applicationId = "com.appTenda.tucttx.dev"
@@ -45,24 +48,6 @@ android {
         create("tucttxProd") {
             dimension = "client"
             applicationId = "com.appTenda"
-        }
-
-        create("tu7eDev") {
-            dimension = "client"
-            applicationId = "com.appTenda.tu7e.dev"
-        }
-        create("tu7eProd") {
-            dimension = "client"
-            applicationId = "com.appTenda.tu7e"
-        }
-
-        create("tusvaDev") {
-            dimension = "client"
-            applicationId = "com.appTenda.tusva.dev"
-        }
-        create("tusvaProd") {
-            dimension = "client"
-            applicationId = "com.appTenda.tusva"
         }
     }
 
@@ -114,12 +99,6 @@ android {
     sourceSets {
         getByName("tucttxDev") { res.srcDirs("src/tucttx/res") }
         getByName("tucttxProd") { res.srcDirs("src/tucttx/res") }
-        
-        getByName("tu7eDev") { res.srcDirs("src/tu7e/res") }
-        getByName("tu7eProd") { res.srcDirs("src/tu7e/res") }
-        
-        getByName("tusvaDev") { res.srcDirs("src/tusva/res") }
-        getByName("tusvaProd") { res.srcDirs("src/tusva/res") }
     }
 }
 

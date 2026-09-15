@@ -35,11 +35,7 @@ workflows:
           echo "$CM_KEYSTORE" | base64 --decode > "$CM_BUILD_DIR/android/keystore.jks"
 
       - name: Create .env file
-        script: | 
-          echo "GEMINI_API_KEY=$GEMINI_API_KEY" > "$CM_BUILD_DIR/.env"
-
-      - name: Create .env file
-        script: | 
+        script: |
           echo "GEMINI_API_KEY=$GEMINI_API_KEY" > "$CM_BUILD_DIR/.env"
 
       - name: Get Flutter packages

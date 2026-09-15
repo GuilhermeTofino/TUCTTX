@@ -1,5 +1,0 @@
-#include "Release.xcconfig"
-#include "Generated.xcconfig"
-
-APP_DISPLAY_NAME = TU7E
-PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tu7e

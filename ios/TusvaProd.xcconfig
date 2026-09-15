@@ -1,5 +1,0 @@
-#include "Release.xcconfig"
-#include "Generated.xcconfig"
-
-APP_DISPLAY_NAME = TUSVA
-PRODUCT_BUNDLE_IDENTIFIER = com.appTenda.tusva
