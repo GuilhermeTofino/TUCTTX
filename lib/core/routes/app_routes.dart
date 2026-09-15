@@ -1,25 +1,14 @@
-import 'package:app_tenda/features/admin/presentation/views/admin_hub_view.dart';
-import 'package:app_tenda/features/admin/presentation/views/member_management_view.dart';
-import 'package:app_tenda/features/admin/presentation/views/menu_management_view.dart';
-import 'package:app_tenda/features/calendar/presentation/views/calendar_view.dart';
-import 'package:app_tenda/features/finance/presentation/views/financial_hub_view.dart';
-import 'package:app_tenda/features/admin/presentation/views/admin_announcements_view.dart';
-import 'package:app_tenda/features/admin/presentation/views/admin_studies_view.dart';
-import 'package:app_tenda/features/admin/presentation/views/admin_cleaning_dashboard_view.dart';
-import 'package:app_tenda/features/announcements/presentation/views/announcements_view.dart';
-import 'package:app_tenda/features/home/presentation/views/home_view.dart';
-import 'package:app_tenda/features/auth/presentation/views/login_view.dart';
-import 'package:app_tenda/features/auth/presentation/views/register_view.dart';
-import 'package:app_tenda/features/studies/presentation/views/studies_hub_view.dart';
 import 'package:flutter/material.dart';
-import 'package:app_tenda/features/auth/presentation/views/welcome_view.dart';
-import 'package:app_tenda/features/cambone/presentation/views/admin_cambone_view.dart';
-import 'package:app_tenda/features/cambone/presentation/views/cambone_list_view.dart';
-import 'package:app_tenda/features/profile/presentation/views/my_entities_view.dart';
-import 'package:app_tenda/features/admin/presentation/views/house_entities_view.dart';
-// Importe aqui quando criarmos os arquivos:
-// import 'package:app_tenda/presentation/views/auth/login_view.dart';
-// import 'package:app_tenda/presentation/views/auth/register_view.dart';
+
+// As views antigas foram removidas nesta branch (feature/new-layout) para
+// reconstrução do layout do zero. Conforme cada nova tela for criada,
+// importe-a aqui e troque o placeholder correspondente pelo builder real.
+//
+// Exemplo:
+// import 'package:app_tenda/features/auth/presentation/views/login_view.dart';
+// ...
+// case login:
+//   return MaterialPageRoute(builder: (_) => const LoginView());
 
 class AppRoutes {
   static const String welcome = '/';
@@ -44,75 +33,40 @@ class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case welcome:
-        return MaterialPageRoute(builder: (_) => const WelcomeView());
-
       case login:
-        return MaterialPageRoute(builder: (_) => const LoginView());
-
       case register:
-        // Por enquanto retornamos o erro até você me mandar o arquivo da RegisterView
-        return MaterialPageRoute(builder: (_) => const RegisterView());
-
       case home:
-        return MaterialPageRoute(builder: (_) => const HomeView());
-
       case calendar:
-        final args = settings.arguments as Map<String, dynamic>?;
-        final isAdminMode = args?['isAdminMode'] ?? false;
-        return MaterialPageRoute(
-          builder: (_) => CalendarView(isAdminMode: isAdminMode),
-        );
-
       case menuManagement:
-        return MaterialPageRoute(builder: (_) => const MenuManagementView());
-
       case adminHub:
-        return MaterialPageRoute(builder: (_) => const AdminHubView());
-
       case adminMembers:
-        return MaterialPageRoute(builder: (_) => const MemberManagementView());
-
       case financialHub:
-        return MaterialPageRoute(builder: (_) => const FinancialHubView());
-
       case adminAnnouncements:
-        return MaterialPageRoute(
-          builder: (_) => const AdminAnnouncementsView(),
-        );
-
       case announcements:
-        return MaterialPageRoute(builder: (_) => const AnnouncementsView());
-
       case studiesHub:
-        return MaterialPageRoute(builder: (_) => const StudiesHubView());
-
       case adminStudies:
-        return MaterialPageRoute(builder: (_) => const AdminStudiesView());
-
       case adminCleaningDashboard:
-        return MaterialPageRoute(
-          builder: (_) => const AdminCleaningDashboardView(),
-        );
-
       case camboneList:
-        final args = settings.arguments as Map<String, dynamic>?;
-        final isAdminMode = args?['isAdminMode'] ?? false;
-        return MaterialPageRoute(
-          builder: (_) => CamboneListView(isAdminMode: isAdminMode),
-        );
-
       case adminCambone:
-        return MaterialPageRoute(builder: (_) => const AdminCamboneView());
-
       case myEntities:
-        return MaterialPageRoute(builder: (_) => const MyEntitiesView());
-
       case houseEntities:
-        return MaterialPageRoute(builder: (_) => const HouseEntitiesView());
+        return _placeholderRoute(settings.name!);
 
       default:
         return _errorRoute("Rota não encontrada: ${settings.name}");
     }
+  }
+
+  /// Tela temporária para rotas cuja view ainda não foi recriada nesta branch.
+  static Route<dynamic> _placeholderRoute(String routeName) {
+    return MaterialPageRoute(
+      builder: (_) => Scaffold(
+        appBar: AppBar(title: Text(routeName)),
+        body: Center(
+          child: Text('Tela ainda não implementada para "$routeName".'),
+        ),
+      ),
+    );
   }
 
   static Route<dynamic> _errorRoute(String message) {
