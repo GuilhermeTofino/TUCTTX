@@ -20,6 +20,30 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "app_links",
+      "rootUri": "file:///Users/guilhermepulcinotofino/.pub-cache/hosted/pub.dev/app_links-7.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.12"
+    },
+    {
+      "name": "app_links_linux",
+      "rootUri": "file:///Users/guilhermepulcinotofino/.pub-cache/hosted/pub.dev/app_links_linux-1.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "app_links_platform_interface",
+      "rootUri": "file:///Users/guilhermepulcinotofino/.pub-cache/hosted/pub.dev/app_links_platform_interface-2.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.12"
+    },
+    {
+      "name": "app_links_web",
+      "rootUri": "file:///Users/guilhermepulcinotofino/.pub-cache/hosted/pub.dev/app_links_web-1.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "archive",
       "rootUri": "file:///Users/guilhermepulcinotofino/.pub-cache/hosted/pub.dev/archive-4.0.7",
       "packageUri": "lib/",
@@ -462,6 +486,12 @@
       "rootUri": "file:///Users/guilhermepulcinotofino/.pub-cache/hosted/pub.dev/google_generative_ai-0.4.7",
       "packageUri": "lib/",
       "languageVersion": "3.1"
+    },
+    {
+      "name": "gtk",
+      "rootUri": "file:///Users/guilhermepulcinotofino/.pub-cache/hosted/pub.dev/gtk-2.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "html",
