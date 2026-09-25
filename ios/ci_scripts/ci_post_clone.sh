@@ -103,7 +103,7 @@ else
   if grep -q "DART_DEFINES" "$XCCONFIG_PATH"; then
       # Append to existing line (using sed to replace end of line)
       # We assume the line doesn't end with a comma, so we add one.
-      sed -i '' "s/^DART_DEFINES.*/\&,$TENANT_B64,$ENV_B64/" "$XCCONFIG_PATH"
+      sed -i '' "s/^DART_DEFINES.*/&,$TENANT_B64,$ENV_B64/" "$XCCONFIG_PATH"
       echo "✅ Appended TENANT ($TENANT) and ENV ($ENV_DEF) to DART_DEFINES"
   else
      # Create line if not exists
