@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,6 +18,40 @@ import 'package:app_tenda/core/services/layout_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart'; // Para kDebugMode e PlatformDispatcher
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+Future<void> _initDeepLinks() async {
+  final appLinks = AppLinks();
+
+  try {
+    final initialUri = await appLinks.getInitialLink();
+    if (initialUri != null) _handleDeepLink(initialUri);
+  } catch (e) {
+    dev.log("Erro ao ler deep link inicial: $e");
+  }
+
+  appLinks.uriLinkStream.listen(_handleDeepLink);
+}
+
+void _handleDeepLink(Uri uri) {
+  if (uri.host != 'event') return;
+  final eventId = uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
+  if (eventId == null || eventId.isEmpty) return;
+
+  void navigate() {
+    navigatorKey.currentState?.pushNamed(
+      AppRoutes.calendar,
+      arguments: {'openEventId': eventId},
+    );
+  }
+
+  if (navigatorKey.currentState != null) {
+    navigate();
+  } else {
+    WidgetsBinding.instance.addPostFrameCallback((_) => navigate());
+  }
+}
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -89,6 +125,7 @@ void main() async {
     );
 
     runApp(const MyApp());
+    unawaited(_initDeepLinks());
   } catch (e, stack) {
     dev.log("ERRO CRÍTICO NA INICIALIZAÇÃO: $e");
     dev.log("Stack: $stack");
@@ -108,6 +145,7 @@ class MyApp extends StatelessWidget {
     final tenant = AppConfig.instance.tenant;
 
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: tenant.appTitle,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [

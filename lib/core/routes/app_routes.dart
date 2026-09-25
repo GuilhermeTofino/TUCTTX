@@ -59,8 +59,12 @@ class AppRoutes {
       case calendar:
         final args = settings.arguments as Map<String, dynamic>?;
         final isAdminMode = args?['isAdminMode'] ?? false;
+        final openEventId = args?['openEventId'] as String?;
         return MaterialPageRoute(
-          builder: (_) => CalendarView(isAdminMode: isAdminMode),
+          builder: (_) => CalendarView(
+            isAdminMode: isAdminMode,
+            initialEventId: openEventId,
+          ),
         );
 
       case menuManagement:

@@ -44,6 +44,8 @@ class DynamicIslandService {
     required String status,
     String? eventDescription,
     String? primaryColor,
+    String? tenantSlug,
+    String? eventId,
   }) async {
     // Garantir que o serviço está inicializado
     await initialize();
@@ -56,6 +58,8 @@ class DynamicIslandService {
       'eventDescription': eventDescription,
       'status': status,
       'primaryColor': primaryColor ?? '#673AB7',
+      'tenantSlug': tenantSlug ?? '',
+      'eventId': eventId ?? '',
     };
 
     // Salvar dados do evento para restaurar depois (se um aviso sobrescrever)
@@ -128,6 +132,7 @@ class DynamicIslandService {
     required String content,
     bool isImportant = false,
     String? primaryColor,
+    String? tenantSlug,
   }) async {
     // Garantir que o serviço está inicializado
     await initialize();
@@ -149,6 +154,7 @@ class DynamicIslandService {
       'eventDescription': content,
       'status': status,
       'primaryColor': primaryColor ?? '#673AB7',
+      'tenantSlug': tenantSlug ?? '',
     };
 
     try {

@@ -13,4 +13,9 @@ import UIKit
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
   }
+
+  override func applicationDidBecomeActive(_ application: UIApplication) {
+    application.applicationIconBadgeNumber = 0
+    super.applicationDidBecomeActive(application)
+  }
 }

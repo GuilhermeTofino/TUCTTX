@@ -1190,6 +1190,8 @@ PODS:
   - abseil/xcprivacy (1.20240722.0)
   - add_2_calendar (0.0.1):
     - Flutter
+  - app_links (7.0.0):
+    - Flutter
   - audio_session (0.0.1):
     - Flutter
   - BoringSSL-GRPC (0.0.37):
@@ -1594,6 +1596,7 @@ PODS:
 
 DEPENDENCIES:
   - add_2_calendar (from `.symlinks/plugins/add_2_calendar/ios`)
+  - app_links (from `.symlinks/plugins/app_links/ios`)
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - device_calendar (from `.symlinks/plugins/device_calendar/ios`)
@@ -1664,6 +1667,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   add_2_calendar:
     :path: ".symlinks/plugins/add_2_calendar/ios"
+  app_links:
+    :path: ".symlinks/plugins/app_links/ios"
   audio_session:
     :path: ".symlinks/plugins/audio_session/ios"
   cloud_firestore:
@@ -1720,6 +1725,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   abseil: a05cc83bf02079535e17169a73c5be5ba47f714b
   add_2_calendar: 78896c85421aeb7c19988c2b3aad71983089b7e3
+  app_links: a754cbec3c255bd4bbb4d236ecc06f28cd9a7ce8
   audio_session: 9bb7f6c970f21241b19f5a3658097ae459681ba0
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
   cloud_firestore: 4bd00c3464706d9e09dabac0bb8e9610456109f5
@@ -1783,6 +1789,6 @@ SPEC CHECKSUMS:
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
 
-PODFILE CHECKSUM: 36ec77a4e0a1040c52e1300a4359f430cfcc81fa
+PODFILE CHECKSUM: 44e03074eaae2b8dcd0dbd947992041f15d4faa6
 
 COCOAPODS: 1.16.2

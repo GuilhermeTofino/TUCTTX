@@ -19,7 +19,7 @@ class FirebaseRemoteConfigs {
       appIds = {
         'tucttx': {
           AppEnvironment.dev: '1:201327273520:ios:9f4f613b5ab70956a56ff5',
-          AppEnvironment.prod: '1:201327273520:ios:a379a2131bb5a361a56ff5',
+          AppEnvironment.prod: '1:201327273520:ios:d9ef41716d69b515a56ff5',
         },
         'tu7e': {
           AppEnvironment.dev: '1:201327273520:ios:0f65388973997387a56ff5',

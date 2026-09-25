@@ -1,4 +1,5 @@
 import 'package:app_tenda/features/calendar/presentation/views/import_events_view.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:app_tenda/core/config/app_config.dart';
@@ -13,7 +14,12 @@ import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
 class CalendarView extends StatefulWidget {
   final bool isAdminMode;
-  const CalendarView({super.key, this.isAdminMode = false});
+  final String? initialEventId;
+  const CalendarView({
+    super.key,
+    this.isAdminMode = false,
+    this.initialEventId,
+  });
 
   @override
   State<CalendarView> createState() => _CalendarViewState();
@@ -24,15 +30,43 @@ class _CalendarViewState extends State<CalendarView> {
   final _calendarService = getIt<CalendarService>();
   final _authVM = getIt<RegisterViewModel>();
   DateTime _selectedMonth = DateTime.now();
+  bool _handledInitialEvent = false;
 
   @override
   void initState() {
     super.initState();
     _loadEvents();
+    if (widget.initialEventId != null) {
+      _viewModel.addListener(_openInitialEventWhenReady);
+    }
+  }
+
+  void _openInitialEventWhenReady() {
+    if (_handledInitialEvent ||
+        _viewModel.isLoading ||
+        widget.initialEventId == null) {
+      return;
+    }
+    final event = _viewModel.events
+        .where((e) => e.id == widget.initialEventId)
+        .firstOrNull;
+    if (event == null) return;
+
+    _handledInitialEvent = true;
+    _viewModel.removeListener(_openInitialEventWhenReady);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _showEventDetailsBottomSheet(event, AppConfig.instance.tenant);
+    });
   }
 
   void _loadEvents() {
     _viewModel.loadEvents(AppConfig.instance.tenant.tenantSlug);
+  }
+
+  @override
+  void dispose() {
+    _viewModel.removeListener(_openInitialEventWhenReady);
+    super.dispose();
   }
 
   void _changeMonth(int increment) {

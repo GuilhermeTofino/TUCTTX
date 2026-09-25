@@ -214,6 +214,7 @@ class _HomeViewState extends State<HomeView> {
       content: announcement.content,
       isImportant: announcement.isImportant,
       primaryColor: hexColor,
+      tenantSlug: AppConfig.instance.tenant.tenantSlug,
     );
   }
 
@@ -271,6 +272,8 @@ class _HomeViewState extends State<HomeView> {
         status: status,
         eventDescription: nextEvent.description,
         primaryColor: hexColor,
+        tenantSlug: AppConfig.instance.tenant.tenantSlug,
+        eventId: nextEvent.id,
       );
     }
   }
@@ -762,12 +765,14 @@ class _HomeViewState extends State<HomeView> {
             backgroundImage: user.photoUrl != null
                 ? NetworkImage(user.photoUrl!)
                 : null,
-            onForegroundImageError: user.photoUrl != null
+            onBackgroundImageError: user.photoUrl != null
                 ? (exception, stackTrace) {
                     debugPrint("Erro ao carregar imagem de perfil: $exception");
                   }
                 : null,
-            child: const Icon(Icons.person, color: Colors.grey, size: 30),
+            child: user.photoUrl == null
+                ? const Icon(Icons.person, color: Colors.grey, size: 30)
+                : null,
           ),
         ),
         Positioned(

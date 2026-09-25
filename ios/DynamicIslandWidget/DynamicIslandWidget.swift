@@ -29,21 +29,11 @@ struct AppLiveActivityWidget: Widget {
                 // EXPANDED VIEW - Premium Design
                 DynamicIslandExpandedRegion(.leading) {
                     HStack(spacing: 8) {
-                        ZStack {
-                            Circle()
-                                .fill(getPrimaryColor(context).opacity(0.15))
-                                .frame(width: 36, height: 36)
-                            
-                            Image(systemName: getIcon(context))
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [getPrimaryColor(context), getPrimaryColor(context).opacity(0.7)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        }
+                        Image(getAppIconName(context))
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 36, height: 36)
+                            .clipShape(RoundedRectangle(cornerRadius: 9))
                         
                         VStack(alignment: .leading, spacing: 2) {
                             Text((getData(context, "eventType") ?? "EVENTO").uppercased())
@@ -82,60 +72,59 @@ struct AppLiveActivityWidget: Widget {
                 }
                 
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(spacing: 12) {
-                        // Title with gradient
-                        Text(getData(context, "eventName") ?? "Novo Evento")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.primary, .primary.opacity(0.8)],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
+                    Link(destination: getDeepLinkURL(context) ?? URL(string: "apptenda://home")!) {
+                        VStack(spacing: 12) {
+                            // Title with gradient
+                            Text(getData(context, "eventName") ?? "Novo Evento")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.primary, .primary.opacity(0.8)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
                                 )
-                            )
-                            .multilineTextAlignment(.center)
-                            .lineLimit(2)
-                        
-                        // Description
-                        if let description = getData(context, "eventDescription") {
-                            Text(description)
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2)
-                        }
-                        
-                        // Decorative divider
-                        Capsule()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        getPrimaryColor(context).opacity(0.3),
-                                        getPrimaryColor(context).opacity(0.6),
-                                        getPrimaryColor(context).opacity(0.3)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
+
+                            // Description
+                            if let description = getData(context, "eventDescription") {
+                                Text(description)
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(2)
+                            }
+
+                            // Decorative divider
+                            Capsule()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            getPrimaryColor(context).opacity(0.3),
+                                            getPrimaryColor(context).opacity(0.6),
+                                            getPrimaryColor(context).opacity(0.3)
+                                        ],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
                                 )
-                            )
-                            .frame(width: 60, height: 3)
+                                .frame(width: 60, height: 3)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .buttonStyle(.plain)
                 }
-                
+
             } compactLeading: {
-                // COMPACT LEADING - Premium Icon
-                ZStack {
-                    Circle()
-                        .fill(getPrimaryColor(context).opacity(0.2))
-                        .frame(width: 28, height: 28)
-                    
-                    Image(systemName: getIcon(context))
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(getPrimaryColor(context))
-                }
-                
+                // COMPACT LEADING - App Icon
+                Image(getAppIconName(context))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+
             } compactTrailing: {
                 // COMPACT TRAILING - Time with style
                 Text(getData(context, "eventDate") ?? "--:--")
@@ -150,11 +139,12 @@ struct AppLiveActivityWidget: Widget {
                     )
                 
             } minimal: {
-                // MINIMAL - Just the icon with glow
-                Image(systemName: getIcon(context))
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(getPrimaryColor(context))
-                    .shadow(color: getPrimaryColor(context).opacity(0.5), radius: 4)
+                // MINIMAL - App Icon
+                Image(getAppIconName(context))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 18, height: 18)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
             }
         }
     }
@@ -192,6 +182,22 @@ struct AppLiveActivityWidget: Widget {
         if type == "AVISO" { return "megaphone.fill" }
         return "calendar.badge.clock"
     }
+
+    func getAppIconName(_ context: ActivityViewContext<LiveActivitiesAppAttributes>) -> String {
+        let tenantSlug = getData(context, "tenantSlug") ?? ""
+        switch tenantSlug {
+        case "tucttx": return "AppIcon-tucttx"
+        case "tu7e": return "AppIcon-tu7e"
+        case "tusva": return "AppIcon-tusva"
+        default: return "AppIcon"
+        }
+    }
+
+    func getDeepLinkURL(_ context: ActivityViewContext<LiveActivitiesAppAttributes>) -> URL? {
+        let eventId = getData(context, "eventId") ?? ""
+        if eventId.isEmpty { return URL(string: "apptenda://home") }
+        return URL(string: "apptenda://event/\(eventId)")
+    }
 }
 
 // MARK: - Lock Screen View (Premium Design)
@@ -214,16 +220,12 @@ struct LockScreenView: View {
                 // Left side - Icon + Info
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 8) {
-                        ZStack {
-                            Circle()
-                                .fill(getPrimaryColor(context).opacity(0.15))
-                                .frame(width: 32, height: 32)
-                            
-                            Image(systemName: getIcon(context))
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(getPrimaryColor(context))
-                        }
-                        
+                        Image(getAppIconName(context))
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 32, height: 32)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+
                         Text((getData(context, "eventType") ?? "EVENTO").uppercased())
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(.secondary)
@@ -273,6 +275,7 @@ struct LockScreenView: View {
         }
         .activityBackgroundTint(Color.clear)
         .activitySystemActionForegroundColor(getPrimaryColor(context))
+        .widgetURL(getDeepLinkURL(context))
     }
     
     func getData(_ context: ActivityViewContext<LiveActivitiesAppAttributes>, _ key: String) -> String? {
@@ -306,6 +309,22 @@ struct LockScreenView: View {
         if type == "IMPORTANTE" { return "exclamationmark.triangle.fill" }
         if type == "AVISO" { return "megaphone.fill" }
         return "calendar.badge.clock"
+    }
+
+    func getAppIconName(_ context: ActivityViewContext<LiveActivitiesAppAttributes>) -> String {
+        let tenantSlug = getData(context, "tenantSlug") ?? ""
+        switch tenantSlug {
+        case "tucttx": return "AppIcon-tucttx"
+        case "tu7e": return "AppIcon-tu7e"
+        case "tusva": return "AppIcon-tusva"
+        default: return "AppIcon"
+        }
+    }
+
+    func getDeepLinkURL(_ context: ActivityViewContext<LiveActivitiesAppAttributes>) -> URL? {
+        let eventId = getData(context, "eventId") ?? ""
+        if eventId.isEmpty { return URL(string: "apptenda://home") }
+        return URL(string: "apptenda://event/\(eventId)")
     }
 }
 
