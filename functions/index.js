@@ -1,10 +1,112 @@
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { defineSecret } = require("firebase-functions/params");
 const { initializeApp } = require("firebase-admin/app");
 const { getMessaging } = require("firebase-admin/messaging");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+const { getRemoteConfig } = require("firebase-admin/remote-config");
+const { GoogleAuth } = require("google-auth-library");
 
 initializeApp();
+
+const PLAY_PUBLISHER_KEY = defineSecret("PLAY_PUBLISHER_KEY");
+
+// Tenants cujo release em loja é acompanhado para forçar atualização.
+// Adicione uma entrada aqui quando outro tenant passar a publicar via CI.
+const FORCE_UPDATE_TENANTS = [
+    {
+        slug: "tucttx",
+        androidPackage: "com.appTenda",
+        iosBundleId: "com.appTenda.tucttx",
+        playStoreUrl: "https://play.google.com/store/apps/details?id=com.appTenda",
+        appStoreUrl: "https://apps.apple.com/app/id6758684822",
+    },
+];
+
+async function getLiveAndroidVersion(packageName, serviceAccountJson) {
+    const auth = new GoogleAuth({
+        credentials: JSON.parse(serviceAccountJson),
+        scopes: ["https://www.googleapis.com/auth/androidpublisher"],
+    });
+    const client = await auth.getClient();
+    const base = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${packageName}`;
+
+    const edit = await client.request({ method: "POST", url: `${base}/edits` });
+    const editId = edit.data.id;
+
+    try {
+        const track = await client.request({ url: `${base}/edits/${editId}/tracks/production` });
+        return track.data.releases?.[0]?.name || null;
+    } finally {
+        await client.request({ method: "DELETE", url: `${base}/edits/${editId}` }).catch(() => {});
+    }
+}
+
+async function getLiveIosVersion(bundleId) {
+    const res = await fetch(`https://itunes.apple.com/lookup?bundleId=${bundleId}`);
+    const data = await res.json();
+    return data.results?.[0]?.version || null;
+}
+
+/**
+ * Roda periodicamente e sincroniza o Remote Config (chaves *_min_required_version_*)
+ * com a versão realmente publicada em produção nas lojas. Assim que uma nova versão
+ * fica pública (Play Store ou App Store), usuários em versões antigas passam a ser
+ * obrigados a atualizar — sem nenhum passo manual após o release.
+ */
+exports.syncForceUpdateVersion = onSchedule({
+    schedule: "every 30 minutes",
+    region: "southamerica-east1",
+    secrets: [PLAY_PUBLISHER_KEY],
+}, async () => {
+    const rc = getRemoteConfig();
+    const template = await rc.getTemplate();
+    let changed = false;
+
+    for (const tenant of FORCE_UPDATE_TENANTS) {
+        try {
+            const liveAndroid = await getLiveAndroidVersion(tenant.androidPackage, PLAY_PUBLISHER_KEY.value());
+            const key = `${tenant.slug}_min_required_version_android`;
+            const current = template.parameters[key]?.defaultValue?.value;
+            if (liveAndroid && liveAndroid !== current) {
+                template.parameters[key] = { defaultValue: { value: liveAndroid }, valueType: "STRING" };
+                template.parameters[`${tenant.slug}_force_update_store_url_android`] = {
+                    defaultValue: { value: tenant.playStoreUrl },
+                    valueType: "STRING",
+                };
+                changed = true;
+                console.log(`[${tenant.slug}] Android min version: ${current} -> ${liveAndroid}`);
+            }
+        } catch (e) {
+            console.error(`[${tenant.slug}] Erro ao checar versão Android:`, e.message);
+        }
+
+        try {
+            const liveIos = await getLiveIosVersion(tenant.iosBundleId);
+            const key = `${tenant.slug}_min_required_version_ios`;
+            const current = template.parameters[key]?.defaultValue?.value;
+            if (liveIos && liveIos !== current) {
+                template.parameters[key] = { defaultValue: { value: liveIos }, valueType: "STRING" };
+                template.parameters[`${tenant.slug}_force_update_store_url_ios`] = {
+                    defaultValue: { value: tenant.appStoreUrl },
+                    valueType: "STRING",
+                };
+                changed = true;
+                console.log(`[${tenant.slug}] iOS min version: ${current} -> ${liveIos}`);
+            }
+        } catch (e) {
+            console.error(`[${tenant.slug}] Erro ao checar versão iOS:`, e.message);
+        }
+    }
+
+    if (changed) {
+        await rc.validateTemplate(template);
+        await rc.publishTemplate(template);
+        console.log("Remote Config publicado com novas versões mínimas.");
+    } else {
+        console.log("Nenhuma mudança de versão detectada.");
+    }
+});
 
 /**
  * Escuta a coleção 'notifications_queue' e envia a notificação via FCM.
