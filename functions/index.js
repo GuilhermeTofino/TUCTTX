@@ -17,7 +17,7 @@ const FORCE_UPDATE_TENANTS = [
     {
         slug: "tucttx",
         androidPackage: "com.appTenda",
-        iosBundleId: "com.appTenda.tucttx",
+        appStoreId: "6758684822",
         playStoreUrl: "https://play.google.com/store/apps/details?id=com.appTenda",
         appStoreUrl: "https://apps.apple.com/app/id6758684822",
     },
@@ -42,10 +42,16 @@ async function getLiveAndroidVersion(packageName, serviceAccountJson) {
     }
 }
 
-async function getLiveIosVersion(bundleId) {
-    const res = await fetch(`https://itunes.apple.com/lookup?bundleId=${bundleId}`);
-    const data = await res.json();
-    return data.results?.[0]?.version || null;
+async function getLiveIosVersion(appStoreId) {
+    // A API legada itunes.apple.com/lookup fica com cache desatualizado por um
+    // bom tempo após a Apple liberar a versão. A própria página pública da loja
+    // reflete a versão real assim que fica "Pronta para Venda".
+    const res = await fetch(`https://apps.apple.com/br/app/id${appStoreId}`, {
+        headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" },
+    });
+    const html = await res.text();
+    const match = html.match(/"style":"overview".*?"primarySubtitle":"Vers[ãa]o ([0-9.]+)"/);
+    return match ? match[1] : null;
 }
 
 /**
@@ -82,7 +88,7 @@ exports.syncForceUpdateVersion = onSchedule({
         }
 
         try {
-            const liveIos = await getLiveIosVersion(tenant.iosBundleId);
+            const liveIos = await getLiveIosVersion(tenant.appStoreId);
             const key = `${tenant.slug}_min_required_version_ios`;
             const current = template.parameters[key]?.defaultValue?.value;
             if (liveIos && liveIos !== current) {
