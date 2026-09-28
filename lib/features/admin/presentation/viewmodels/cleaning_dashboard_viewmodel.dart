@@ -56,8 +56,13 @@ class CleaningDashboardViewModel extends ChangeNotifier {
             )
             .toList();
 
-        // Ordenar por maior comparecimento
-        _ranking.sort((a, b) => b.attendanceCount.compareTo(a.attendanceCount));
+        // Ordenar por maior comparecimento; em caso de empate, ordem alfabética
+        // (mesmo critério usado em scripts/admin/faxina-ranking-notify.js)
+        _ranking.sort((a, b) {
+          final byCount = b.attendanceCount.compareTo(a.attendanceCount);
+          if (byCount != 0) return byCount;
+          return a.name.compareTo(b.name);
+        });
 
         _isLoading = false;
         notifyListeners();

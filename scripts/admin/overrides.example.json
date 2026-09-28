@@ -1,0 +1,5 @@
+{
+  "_comment": "Copie este arquivo para overrides.json (gitignored) e preencha quando o script apontar nomes AMBIGUOS ou SEM_USUARIO que você reconhece manualmente. Chave = nome exatamente como aparece no ranking (com apelido entre aspas, se houver). Valor = uid do documento em users/{uid}.",
+  "Milena \"Nena\"": "7lMSwOr6jZgHo8NXfLukrrt9Ew82",
+  "Milena \"ruiva\"": "aMosZReZoZWgKhv3PgXPoqHhzum1"
+}

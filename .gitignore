@@ -17,3 +17,9 @@ ios/Flutter/flutter_export_environment.sh
 
 # Environment
 .env
+
+# Admin scripts (scripts/admin)
+scripts/admin/node_modules/
+scripts/admin/overrides.json
+scripts/admin/*serviceAccount*.json
+scripts/admin/*firebase-adminsdk*.json
