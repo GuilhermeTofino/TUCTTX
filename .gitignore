@@ -21,5 +21,7 @@ ios/Flutter/flutter_export_environment.sh
 # Admin scripts (scripts/admin)
 scripts/admin/node_modules/
 scripts/admin/overrides.json
+scripts/admin/event-overrides.json
+scripts/admin/escala_faxina.csv
 scripts/admin/*serviceAccount*.json
 scripts/admin/*firebase-adminsdk*.json

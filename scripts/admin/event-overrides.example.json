@@ -1,0 +1,5 @@
+{
+  "_comment": "Copie este arquivo para event-overrides.json (gitignored) e preencha quando o script apontar mais de 1 evento no mesmo dia. Chave = data no formato YYYY-MM-DD. Valor = id do documento em events/{id} que deve receber a presença.",
+  "2026-03-28": "eNKcws4wOAmaMDVLInIt",
+  "2026-04-18": "IuwYKQzXy05Z9mlFDaGm"
+}
