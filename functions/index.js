@@ -60,6 +60,31 @@ async function getLiveIosVersion(appStoreId) {
  * fica pública (Play Store ou App Store), usuários em versões antigas passam a ser
  * obrigados a atualizar — sem nenhum passo manual após o release.
  */
+// Encontra onde um parâmetro já existe (raiz ou dentro de algum grupo) e retorna
+// um objeto { get, set } apontando pro lugar certo — evita duplicar a chave caso
+// ela já tenha sido criada manualmente num grupo no console do Firebase.
+function findParameterSlot(template, key) {
+    if (template.parameters[key] !== undefined) {
+        return {
+            get: () => template.parameters[key],
+            set: (value) => { template.parameters[key] = value; },
+        };
+    }
+    for (const group of Object.values(template.parameterGroups || {})) {
+        if (group.parameters?.[key] !== undefined) {
+            return {
+                get: () => group.parameters[key],
+                set: (value) => { group.parameters[key] = value; },
+            };
+        }
+    }
+    // Não existe em lugar nenhum ainda: cria na raiz.
+    return {
+        get: () => undefined,
+        set: (value) => { template.parameters[key] = value; },
+    };
+}
+
 exports.syncForceUpdateVersion = onSchedule({
     schedule: "every 30 minutes",
     region: "southamerica-east1",
@@ -72,14 +97,12 @@ exports.syncForceUpdateVersion = onSchedule({
     for (const tenant of FORCE_UPDATE_TENANTS) {
         try {
             const liveAndroid = await getLiveAndroidVersion(tenant.androidPackage, PLAY_PUBLISHER_KEY.value());
-            const key = `${tenant.slug}_min_required_version_android`;
-            const current = template.parameters[key]?.defaultValue?.value;
+            const versionSlot = findParameterSlot(template, `${tenant.slug}_min_required_version_android`);
+            const current = versionSlot.get()?.defaultValue?.value;
             if (liveAndroid && liveAndroid !== current) {
-                template.parameters[key] = { defaultValue: { value: liveAndroid }, valueType: "STRING" };
-                template.parameters[`${tenant.slug}_force_update_store_url_android`] = {
-                    defaultValue: { value: tenant.playStoreUrl },
-                    valueType: "STRING",
-                };
+                versionSlot.set({ defaultValue: { value: liveAndroid }, valueType: "STRING" });
+                const urlSlot = findParameterSlot(template, `${tenant.slug}_force_update_store_url_android`);
+                urlSlot.set({ defaultValue: { value: tenant.playStoreUrl }, valueType: "STRING" });
                 changed = true;
                 console.log(`[${tenant.slug}] Android min version: ${current} -> ${liveAndroid}`);
             }
@@ -89,14 +112,12 @@ exports.syncForceUpdateVersion = onSchedule({
 
         try {
             const liveIos = await getLiveIosVersion(tenant.appStoreId);
-            const key = `${tenant.slug}_min_required_version_ios`;
-            const current = template.parameters[key]?.defaultValue?.value;
+            const versionSlot = findParameterSlot(template, `${tenant.slug}_min_required_version_ios`);
+            const current = versionSlot.get()?.defaultValue?.value;
             if (liveIos && liveIos !== current) {
-                template.parameters[key] = { defaultValue: { value: liveIos }, valueType: "STRING" };
-                template.parameters[`${tenant.slug}_force_update_store_url_ios`] = {
-                    defaultValue: { value: tenant.appStoreUrl },
-                    valueType: "STRING",
-                };
+                versionSlot.set({ defaultValue: { value: liveIos }, valueType: "STRING" });
+                const urlSlot = findParameterSlot(template, `${tenant.slug}_force_update_store_url_ios`);
+                urlSlot.set({ defaultValue: { value: tenant.appStoreUrl }, valueType: "STRING" });
                 changed = true;
                 console.log(`[${tenant.slug}] iOS min version: ${current} -> ${liveIos}`);
             }
@@ -171,6 +192,68 @@ exports.processNotificationQueue = onDocumentCreated({
     } catch (error) {
         console.error("Erro ao processar notificação da fila:", error);
         await event.data.ref.update({ status: 'error', error: error.message });
+    }
+});
+
+/**
+ * Escuta confirmações de presença em eventos (events/{eventId}/confirmations/{userId})
+ * e notifica os admins do tenant. Não depende de nenhuma mudança no app — o app já
+ * grava esse documento hoje, então não precisa de nova versão nas lojas.
+ */
+exports.notifyAdminsOnPresenceConfirmed = onDocumentCreated({
+    document: "environments/{env}/tenants/{tenantId}/events/{eventId}/confirmations/{userId}",
+    region: "southamerica-east1"
+}, async (event) => {
+    const { env, tenantId, eventId, userId } = event.params;
+    const confirmation = event.data.data();
+    const db = getFirestore();
+
+    try {
+        const tenantRoot = db.collection("environments").doc(env).collection("tenants").doc(tenantId);
+
+        const eventDoc = await tenantRoot.collection("events").doc(eventId).get();
+        if (!eventDoc.exists) {
+            console.log(`[${tenantId}] Evento ${eventId} não encontrado, ignorando confirmação de ${confirmation.name}.`);
+            return;
+        }
+        const eventData = eventDoc.data();
+
+        const eventDate = eventData.date?.toDate();
+        const formattedDate = eventDate
+            ? `${eventDate.getDate().toString().padStart(2, "0")}/${(eventDate.getMonth() + 1).toString().padStart(2, "0")}`
+            : "";
+
+        const adminsSnap = await tenantRoot.collection("users").where("role", "==", "admin").get();
+        const tokens = [];
+        adminsSnap.forEach((doc) => {
+            if (doc.id === userId) return; // não notifica o próprio admin que confirmou
+            const adminTokens = doc.data().fcmTokens;
+            if (Array.isArray(adminTokens)) tokens.push(...adminTokens);
+        });
+
+        if (tokens.length === 0) {
+            console.log(`[${tenantId}] Nenhum admin com token FCM para notificar sobre a confirmação de ${confirmation.name}.`);
+            return;
+        }
+
+        const confirmationsCountSnap = await tenantRoot
+            .collection("events").doc(eventId).collection("confirmations")
+            .count().get();
+        const confirmedCount = confirmationsCountSnap.data().count;
+
+        await db.collection("notifications_queue").add({
+            tokens,
+            title: `🗓️ ${confirmation.name} vai na gira!`,
+            body: `${confirmation.name} acabou de confirmar presença na "${eventData.title}"${formattedDate ? ` (dia ${formattedDate})` : ""}. Já são ${confirmedCount} confirmado${confirmedCount === 1 ? "" : "s"}!`,
+            tenantId,
+            env,
+            status: "pending",
+            createdAt: FieldValue.serverTimestamp(),
+            data: { type: "presence_confirmed", eventId },
+        });
+        console.log(`[${tenantId}] Notificação enfileirada: ${confirmation.name} -> ${tokens.length} admin(s) sobre "${eventData.title}".`);
+    } catch (error) {
+        console.error("Erro ao notificar admins sobre confirmação de presença:", error);
     }
 });
 
