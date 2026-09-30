@@ -30,6 +30,16 @@ void main() {
       );
     });
 
+    test('decisão do financeiro leva o membro ao hub financeiro', () {
+      final destination = PushNavigationService.parse({
+        'type': 'payment_receipt_decision',
+        'approved': 'true',
+      });
+
+      expect(destination, isNotNull);
+      expect(destination!.route, AppRoutes.financialHub);
+    });
+
     test('pushes de outros tipos não navegam', () {
       expect(PushNavigationService.parse({'type': 'presence_confirmed'}), isNull);
       expect(PushNavigationService.parse({}), isNull);

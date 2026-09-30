@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app_tenda/core/services/base_firestore_datasource.dart';
+import 'package:app_tenda/features/finance/domain/models/financial_models.dart';
+import 'package:app_tenda/features/finance/domain/payment_decision.dart';
 import 'package:app_tenda/features/finance/domain/models/payment_request_model.dart';
 
 abstract class PaymentRequestRepository {
@@ -31,6 +34,20 @@ abstract class PaymentRequestRepository {
   /// Baixa o comprovante pelo caminho do Storage (leitura autenticada, sem
   /// link público). Null se o arquivo não existir mais (ex.: limpeza anual).
   Future<ReceiptFile?> downloadReceipt(String path);
+
+  /// Aprova ou rejeita um mês, em transação: atualiza a solicitação e, se
+  /// aprovado, baixa a mensalidade como paga. Lança [StateError] se o mês já
+  /// foi decidido (ex.: por outro aprovador) e [ArgumentError] para dados
+  /// inválidos.
+  Future<void> decideItem({
+    required String requestId,
+    required int month,
+    required int year,
+    required bool approve,
+    required String approverId,
+    double? correctedValue,
+    String? rejectReason,
+  });
 }
 
 class ReceiptFile {
@@ -106,11 +123,9 @@ class FirebasePaymentRequestRepository extends BaseFirestoreDataSource
 
   @override
   Stream<List<PaymentRequestModel>> getPendingRequests() {
+    // 'pending_approval' vale enquanto houver mês sem decisão (ver overallStatus).
     return tenantCollection('payment_requests')
-        .where('status', whereIn: [
-          PaymentRequestStatus.pendingApproval.value,
-          PaymentRequestStatus.partial.value,
-        ])
+        .where('status', isEqualTo: PaymentRequestStatus.pendingApproval.value)
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
@@ -136,6 +151,69 @@ class FirebasePaymentRequestRepository extends BaseFirestoreDataSource
       if (e.code == 'object-not-found') return null;
       rethrow;
     }
+  }
+
+  @override
+  Future<void> decideItem({
+    required String requestId,
+    required int month,
+    required int year,
+    required bool approve,
+    required String approverId,
+    double? correctedValue,
+    String? rejectReason,
+  }) async {
+    final requestRef = tenantDocument('payment_requests', requestId);
+
+    await firestore.runTransaction((tx) async {
+      final snap = await tx.get(requestRef);
+      if (!snap.exists) throw StateError('request-not-found');
+      final request = PaymentRequestModel.fromMap(
+        snap.data() as Map<String, dynamic>,
+        snap.id,
+      );
+      if (request.userId == approverId) throw StateError('own-request');
+
+      // Relê o estado dentro da transação: se outro aprovador decidiu o mês
+      // antes, applyDecision lança 'item-already-decided'.
+      final items = applyDecision(
+        request.items,
+        month: month,
+        year: year,
+        approve: approve,
+        approverId: approverId,
+        now: DateTime.now(),
+        correctedValue: correctedValue,
+        rejectReason: rejectReason,
+      );
+
+      tx.update(requestRef, {
+        'items': items.map((i) => i.toMap()).toList(),
+        'status': overallStatus(items).value,
+      });
+
+      if (approve) {
+        final decided = items.firstWhere(
+          (i) => i.month == month && i.year == year,
+        );
+        final feeRef = tenantCollection('financial')
+            .doc(request.userId)
+            .collection('monthly_fees')
+            .doc(decided.feeId);
+        // paidAt = data em que o membro pagou (base da contabilidade).
+        tx.set(feeRef, {
+          'userId': request.userId,
+          'month': decided.month,
+          'year': decided.year,
+          'value': decided.value,
+          'status': FinanceStatus.paid.name,
+          'paidAt': Timestamp.fromDate(request.paidDate),
+          'updatedAt': FieldValue.serverTimestamp(),
+          'paymentRequestId': requestId,
+          'approvedBy': approverId,
+        }, SetOptions(merge: true));
+      }
+    });
   }
 
   @override

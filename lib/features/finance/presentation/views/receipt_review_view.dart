@@ -5,6 +5,7 @@ import 'package:pdfx/pdfx.dart';
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/features/finance/domain/models/payment_request_model.dart';
+import 'package:app_tenda/features/finance/domain/receipt_submission_validator.dart';
 import 'package:app_tenda/features/finance/domain/repositories/payment_request_repository.dart';
 import 'package:app_tenda/features/finance/presentation/viewmodels/receipt_approval_viewmodel.dart';
 import 'package:app_tenda/features/home/presentation/viewmodels/home_viewmodel.dart';
@@ -26,7 +27,12 @@ class _ReceiptReviewViewState extends State<ReceiptReviewView> {
   final _approvalVM = getIt<ReceiptApprovalViewModel>();
   final _homeVM = getIt<HomeViewModel>();
 
-  late final Future<_ReviewState> _future = _load();
+  late Future<_ReviewState> _future = _load();
+
+  void _reload() => setState(() => _future = _load());
+
+  bool _isDeciding = false;
+
 
   Future<_ReviewState> _load() async {
     final user = _homeVM.currentUser;
@@ -133,20 +139,182 @@ class _ReceiptReviewViewState extends State<ReceiptReviewView> {
         const SizedBox(height: 16),
         _ReceiptPreview(path: request.receiptPath, viewModel: _approvalVM),
         const SizedBox(height: 16),
-        ...request.items.map(
-          (i) => ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text('${i.month.toString().padLeft(2, '0')}/${i.year}'),
-            trailing: Text(money.format(i.value)),
-            subtitle: Text(_statusLabel(i.status)),
-          ),
-        ),
+        ...request.items.map((i) => _buildItem(request, i, money)),
         if (request.message != null) ...[
           const SizedBox(height: 12),
           Text('Mensagem: ${request.message}'),
         ],
       ],
     );
+  }
+
+  Widget _buildItem(
+    PaymentRequestModel request,
+    PaymentRequestItem item,
+    NumberFormat money,
+  ) {
+    final pending = item.status == PaymentItemStatus.pendingApproval;
+    final corrected = item.originalValue != null
+        ? ' (informado ${money.format(item.originalValue)})'
+        : '';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text('${item.month.toString().padLeft(2, '0')}/${item.year}'),
+          trailing: Text(money.format(item.value)),
+          subtitle: Text(
+            item.status == PaymentItemStatus.rejected &&
+                    item.rejectReason != null
+                ? 'Rejeitado: ${item.rejectReason}'
+                : '${_statusLabel(item.status)}$corrected',
+          ),
+        ),
+        if (pending)
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _isDeciding
+                      ? null
+                      : () => _reject(request, item),
+                  child: const Text('Rejeitar'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton(
+                  onPressed: _isDeciding
+                      ? null
+                      : () => _approve(request, item),
+                  child: const Text('Aprovar'),
+                ),
+              ),
+            ],
+          ),
+        const Divider(height: 24),
+      ],
+    );
+  }
+
+  Future<void> _approve(
+    PaymentRequestModel request,
+    PaymentRequestItem item,
+  ) async {
+    final controller = TextEditingController(
+      text: item.value.toStringAsFixed(2).replaceAll('.', ','),
+    );
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Aprovar ${item.month}/${item.year}?'),
+        content: TextField(
+          controller: controller,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(
+            labelText: 'Valor recebido (R\$)',
+            helperText: 'Corrija se diferir do comprovante.',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Aprovar'),
+          ),
+        ],
+      ),
+    );
+    final value = ReceiptSubmissionValidator.parseMoney(controller.text);
+    controller.dispose();
+    if (confirmed != true) return;
+
+    await _decide(
+      request,
+      item,
+      approve: true,
+      correctedValue: value,
+      invalidValue: value == null,
+    );
+  }
+
+  Future<void> _reject(
+    PaymentRequestModel request,
+    PaymentRequestItem item,
+  ) async {
+    final controller = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Rejeitar ${item.month}/${item.year}?'),
+        content: TextField(
+          controller: controller,
+          maxLines: 3,
+          decoration: const InputDecoration(
+            labelText: 'Motivo (obrigatório)',
+            helperText: 'O membro receberá este motivo.',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Rejeitar'),
+          ),
+        ],
+      ),
+    );
+    final reason = controller.text;
+    controller.dispose();
+    if (confirmed != true) return;
+
+    await _decide(request, item, approve: false, rejectReason: reason);
+  }
+
+  Future<void> _decide(
+    PaymentRequestModel request,
+    PaymentRequestItem item, {
+    required bool approve,
+    double? correctedValue,
+    bool invalidValue = false,
+    String? rejectReason,
+  }) async {
+    if (invalidValue) {
+      _showMessage('Informe um valor válido.');
+      return;
+    }
+
+    setState(() => _isDeciding = true);
+    final error = await _approvalVM.decide(
+      request: request,
+      item: item,
+      approve: approve,
+      correctedValue: correctedValue,
+      rejectReason: rejectReason,
+    );
+    if (!mounted) return;
+    setState(() => _isDeciding = false);
+
+    if (error != null) {
+      _showMessage(error);
+      // Se outro aprovador decidiu, recarrega para mostrar o estado atual.
+      _reload();
+      return;
+    }
+    _showMessage(approve ? 'Mês aprovado e baixado.' : 'Mês rejeitado.');
+    _reload();
+  }
+
+  void _showMessage(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
   String _statusLabel(PaymentItemStatus status) {

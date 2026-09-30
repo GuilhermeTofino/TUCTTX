@@ -23,6 +23,10 @@ class MonthlyFeeModel {
     this.updatedAt,
   });
 
+  /// Data que conta para o "recebido": quando foi pago; sem `paidAt`
+  /// (registro antigo), o mês de competência.
+  DateTime get receivedDate => paidAt ?? DateTime(year, month);
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,

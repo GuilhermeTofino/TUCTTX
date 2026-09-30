@@ -81,12 +81,14 @@ class _AdminFinanceDashboardViewState extends State<AdminFinanceDashboardView> {
   double _calculateTotalRecieved() {
     double total = 0;
 
-    // Mensalidades
+    // Mensalidades: contam no período em que foram pagas (paidAt), não no mês
+    // de competência.
     for (final list in _userFees.values) {
       for (final fee in list) {
+        final received = fee.receivedDate;
         bool matchesPeriod = _isAnnualView
-            ? fee.year == _selectedYear
-            : fee.year == _selectedYear && fee.month == _selectedMonth;
+            ? received.year == _selectedYear
+            : received.year == _selectedYear && received.month == _selectedMonth;
 
         if (matchesPeriod && fee.status == FinanceStatus.paid) {
           total += fee.value;

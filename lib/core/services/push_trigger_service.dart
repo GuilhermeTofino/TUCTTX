@@ -90,6 +90,27 @@ class PushTriggerService extends BaseFirestoreDataSource {
     );
   }
 
+  /// Avisa o membro da decisão do financeiro sobre um mês do comprovante.
+  Future<void> notifyReceiptDecision({
+    required String userName,
+    required List<String> userTokens,
+    required String month,
+    required bool approved,
+    String? reason,
+  }) async {
+    if (userTokens.isEmpty) return;
+
+    await _enqueueNotification(
+      tokens: userTokens,
+      title: approved ? '✅ Pagamento confirmado' : '⚠️ Comprovante recusado',
+      body: approved
+          ? 'Olá $userName! O pagamento de $month foi confirmado. Obrigado!'
+          : 'Olá $userName! O comprovante de $month foi recusado: $reason. '
+                'Você pode enviar novamente.',
+      data: {'type': 'payment_receipt_decision', 'approved': '$approved'},
+    );
+  }
+
   /// Notifica sobre dívida de bazar em aberto.
   Future<void> notifyBazaarDebt({
     required String userName,
