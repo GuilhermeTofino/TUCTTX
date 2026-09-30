@@ -29,3 +29,7 @@ scripts/admin/escala_faxina.csv
 scripts/admin/*serviceAccount*.json
 scripts/admin/*firebase-adminsdk*.json
 env.json
+
+# Gerados por ferramentas locais (dependem da versão do SDK/SO de cada dev)
+.widget_preview/
+.DS_Store
