@@ -21,6 +21,14 @@ service cloud.firestore {
           return get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data;
         }
 
+        // Pertence a ESTE tenant: tem perfil em users/ deste mesmo caminho. O projeto
+        // Firebase é um só para todos os tenants, então sem isso qualquer usuário
+        // logado leria os dados de outro tenant só trocando o caminho.
+        function inTenant() {
+          return request.auth != null &&
+            exists(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid));
+        }
+
         function isAdmin() {
           return request.auth != null && me().role == 'admin';
         }
@@ -50,10 +58,10 @@ service cloud.firestore {
         // Path: /environments/{env}/tenants/{tenantId}/users/{userId}
         // -----------------------------------------------------------------------
         match /users/{userId} {
-          // Leitura: aberta a autenticados, como no app em produção (o app lê o
-          // perfil mesmo antes de o documento existir; get() sobre doc inexistente
-          // daria erro e negaria a leitura).
-          allow read: if request.auth != null;
+          // Leitura: o próprio documento sempre (o login precisa saber se o perfil
+          // existe neste tenant); os dos outros, só quem pertence ao tenant.
+          allow read: if request.auth != null &&
+            (request.auth.uid == userId || inTenant());
 
           // Cadastro: só do próprio uid e sem se conceder skills.
           //  - app novo cria como 'visitor' (status 'active');
@@ -121,7 +129,7 @@ service cloud.firestore {
         // Path: .../settings/{docId}   (ex.: settings/finance -> approverIds)
         // -----------------------------------------------------------------------
         match /settings/{docId} {
-          allow read: if request.auth != null;
+          allow read: if inTenant();
           allow write: if isAdmin();
         }
 
@@ -148,7 +156,7 @@ service cloud.firestore {
         // Path: .../menus/{menuId}
         // -----------------------------------------------------------------------
         match /menus/{menuId} {
-          allow read: if request.auth != null;
+          allow read: if inTenant();
           allow write: if request.auth != null && 
             get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
         }
@@ -198,7 +206,7 @@ service cloud.firestore {
         // -----------------------------------------------------------------------
         match /events/{eventId} {
           // Visitante enxerga o calendário; o resto é de membros.
-          allow read: if request.auth != null;
+          allow read: if inTenant();
           allow write: if hasSkill('calendario.gerenciar');
           // Faxina: quem tem a skill altera SÓ escala e presença de faxina.
           allow update: if hasSkill('limpeza.gerenciar') &&
@@ -206,7 +214,7 @@ service cloud.firestore {
               .hasOnly(['cleaningCrew', 'confirmedAttendance', 'updatedAt']);
 
           match /confirmations/{userId} {
-            allow read: if request.auth != null;
+            allow read: if inTenant();
             allow write: if isMember() && request.auth.uid == userId;
           }
         }

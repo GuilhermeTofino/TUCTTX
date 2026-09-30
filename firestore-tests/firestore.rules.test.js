@@ -50,6 +50,9 @@ beforeEach(async () => {
     for (const [uid, data] of Object.entries(USERS)) {
       await setDoc(doc(db, `${TENANT}/users/${uid}`), data);
     }
+    // Usuário que só existe em OUTRO tenant do mesmo projeto Firebase.
+    await setDoc(doc(db, `environments/dev/tenants/tu7e/users/OUTRO_TENANT`), { role: "admin", status: "active", skills: [], name: "Outro" });
+    await setDoc(doc(db, `${TENANT}/menus/M1`), { title: "Calendário" });
     await setDoc(doc(db, `${TENANT}/settings/finance`), { approverIds: ["ADMIN"] });
     await setDoc(doc(db, `${TENANT}/events/E1`), { title: "Gira", cleaningCrew: [], confirmedAttendance: [] });
     await setDoc(doc(db, `${TENANT}/announcements/A1`), { title: "Aviso" });
@@ -116,6 +119,24 @@ describe("users: admin e moderação", () => {
   test("membro sem a skill não altera 'entities' de outro", () => assertFails(updateDoc(ref(as("MEMBRO"), "users/S_ENT"), { entities: [] })));
   test("leitura por autenticado", () => assertSucceeds(getDoc(ref(as("VISIT"), "users/MEMBRO"))));
   test("leitura sem login", () => assertFails(getDoc(ref(anon(), "users/MEMBRO"))));
+});
+
+describe("isolamento entre tenants", () => {
+  test("usuário de outro tenant NÃO lê usuários deste", () => assertFails(getDoc(ref(as("OUTRO_TENANT"), "users/MEMBRO"))));
+  test("usuário de outro tenant NÃO lê eventos", () => assertFails(getDoc(ref(as("OUTRO_TENANT"), "events/E1"))));
+  test("usuário de outro tenant NÃO lê menus", () => assertFails(getDoc(ref(as("OUTRO_TENANT"), "menus/M1"))));
+  test("usuário de outro tenant NÃO lê a lista de aprovadores", () => assertFails(getDoc(ref(as("OUTRO_TENANT"), "settings/finance"))));
+  test("usuário de outro tenant NÃO lê confirmações de presença", () => assertFails(getDoc(ref(as("OUTRO_TENANT"), "events/E1/confirmations/MEMBRO"))));
+  test("nem sendo admin no outro tenant altera usuários deste", () => assertFails(updateDoc(ref(as("OUTRO_TENANT"), "users/MEMBRO"), { role: "admin" })));
+  test("nem sendo admin no outro tenant publica aqui", () => assertFails(setDoc(ref(as("OUTRO_TENANT"), "announcements/X"), { title: "x" })));
+  test("quem não tem perfil em nenhum tenant NÃO lê usuários", () => assertFails(getDoc(ref(as("SEM_PERFIL"), "users/MEMBRO"))));
+  test("mas lê o PRÓPRIO documento mesmo sem perfil (o login checa se existe)", () =>
+    assertSucceeds(getDoc(ref(as("SEM_PERFIL"), "users/SEM_PERFIL"))));
+  test("quem pertence ao tenant lê usuários, eventos e menus", async () => {
+    await assertSucceeds(getDoc(ref(as("VISIT"), "users/MEMBRO")));
+    await assertSucceeds(getDoc(ref(as("VISIT"), "events/E1")));
+    await assertSucceeds(getDoc(ref(as("MEMBRO"), "menus/M1")));
+  });
 });
 
 describe("users/private (saúde)", () => {
