@@ -7,6 +7,7 @@ import 'dart:developer' as dev;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/config/tenant_factory.dart';
+import 'package:app_tenda/core/config/emulator_setup.dart';
 import 'package:app_tenda/core/services/firebase_remote_configs.dart';
 import 'package:app_tenda/core/routes/app_routes.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
@@ -125,6 +126,9 @@ void main() async {
       cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
     );
 
+    // Só com --dart-define=USE_EMULATOR=true. Tem de vir DEPOIS das settings acima.
+    await EmulatorSetup.connectIfEnabled();
+
     getIt<PushNavigationService>().attach(navigatorKey);
 
     runApp(const MyApp());
@@ -184,6 +188,14 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: AppRoutes.welcome,
       onGenerateRoute: AppRoutes.generateRoute,
+      builder: (context, child) => EmulatorSetup.enabled
+          ? Banner(
+              message: 'EMULADOR',
+              location: BannerLocation.topEnd,
+              color: Colors.deepOrange,
+              child: child ?? const SizedBox.shrink(),
+            )
+          : (child ?? const SizedBox.shrink()),
     );
   }
 }
