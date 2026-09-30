@@ -1,5 +1,7 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/features/finance/domain/models/payment_request_model.dart';
@@ -198,13 +200,7 @@ class _ReceiptPreviewState extends State<_ReceiptPreview> {
             'Comprovante indisponível (arquivo removido).',
           );
         }
-        if (file.isPdf) {
-          return _note(
-            Icons.picture_as_pdf,
-            'O comprovante é um PDF. A visualização de PDF ainda não está '
-            'disponível no app.',
-          );
-        }
+        if (file.isPdf) return _PdfPreview(bytes: file.bytes);
         return ClipRRect(
           borderRadius: BorderRadius.circular(14),
           child: InteractiveViewer(
@@ -228,6 +224,52 @@ class _ReceiptPreviewState extends State<_ReceiptPreview> {
           const SizedBox(width: 12),
           Expanded(child: Text(text)),
         ],
+      ),
+    );
+  }
+}
+
+/// PDF aberto a partir dos bytes já baixados (nada é gravado em disco).
+class _PdfPreview extends StatefulWidget {
+  final Uint8List bytes;
+  const _PdfPreview({required this.bytes});
+
+  @override
+  State<_PdfPreview> createState() => _PdfPreviewState();
+}
+
+class _PdfPreviewState extends State<_PdfPreview> {
+  late final PdfControllerPinch _controller = PdfControllerPinch(
+    document: PdfDocument.openData(widget.bytes),
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 480,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: PdfViewPinch(
+        controller: _controller,
+        builders: PdfViewPinchBuilders<DefaultBuilderOptions>(
+          options: const DefaultBuilderOptions(),
+          documentLoaderBuilder: (_) =>
+              const Center(child: CircularProgressIndicator()),
+          pageLoaderBuilder: (_) =>
+              const Center(child: CircularProgressIndicator()),
+          errorBuilder: (_, __) => const Center(
+            child: Text('Não foi possível abrir o PDF do comprovante.'),
+          ),
+        ),
       ),
     );
   }
