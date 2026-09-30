@@ -6,6 +6,9 @@ import 'package:app_tenda/core/services/menu_option_model.dart';
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 import 'package:app_tenda/features/auth/domain/repositories/auth_repository.dart';
 import 'package:app_tenda/core/services/menu_repository.dart';
+import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
+import 'package:app_tenda/features/home/domain/menu_visibility.dart';
+import 'package:app_tenda/features/profile/domain/models/health_data_model.dart';
 import 'package:app_tenda/core/services/notification_service.dart';
 import 'package:app_tenda/features/finance/presentation/viewmodels/payment_request_viewmodel.dart';
 import 'package:app_tenda/features/finance/presentation/viewmodels/receipt_approval_viewmodel.dart';
@@ -27,6 +30,33 @@ class HomeViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   bool _isLoggingOut = false;
+
+  HealthData? _health;
+
+  /// Tipo sanguíneo do próprio usuário: da subcoleção privada; cai no campo do
+  /// documento (antigo) enquanto ele não foi migrado.
+  String? get bloodType => _health?.tipoSanguineo ?? _currentUser?.tipoSanguineo;
+
+  Future<void> _loadOwnHealth(String uid) async {
+    try {
+      _health = await getIt<UserRepository>().getHealth(uid);
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Erro ao carregar dados de saúde: $e");
+    }
+  }
+
+  /// Chamado pela edição de perfil após salvar, para o cartão da Home atualizar.
+  void updateOwnHealth(HealthData? health) {
+    _health = health;
+    notifyListeners();
+  }
+
+  /// Atualiza a cópia local do perfil (ex.: após editar o cadastro).
+  void updateCurrentUser(UserModel user) {
+    _currentUser = user;
+    notifyListeners();
+  }
 
   Future<void> _mockDevUser() async {
     _currentUser = UserModel(
@@ -62,6 +92,7 @@ class HomeViewModel extends ChangeNotifier {
           const String.fromEnvironment('ENV', defaultValue: 'dev'),
         );
         loadMenus(user.tenantSlug);
+        _loadOwnHealth(user.id);
       } else {
         _currentUser = null;
         final isDev = const String.fromEnvironment('ENV', defaultValue: 'dev') == 'dev';
@@ -81,7 +112,7 @@ class HomeViewModel extends ChangeNotifier {
       // Filter out 'health' menu as requested by user
       _menus = rawMenus.where((m) => m.action != 'internal:health').toList();
 
-      // INJECTION: Add House Entities Menu manually for ALL users
+      // INJECTION: Add House Entities Menu manually for ALL members
       _menus.add(
         MenuOptionModel(
           id: 'house_entities',
@@ -93,6 +124,10 @@ class HomeViewModel extends ChangeNotifier {
           order: 999,
         ),
       );
+
+      // Visitante só enxerga o calendário.
+      final user = _currentUser;
+      if (user != null) _menus = menusFor(user, _menus);
     } catch (e) {
       debugPrint("Erro ao carregar menus: $e");
     } finally {
@@ -104,6 +139,7 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> signOut() async {
     _isLoggingOut = true;
     _currentUser = null;
+    _health = null;
     // Não deixa a fila/estado financeiro da conta anterior para a próxima.
     getIt<PaymentRequestViewModel>().clear();
     getIt<ReceiptApprovalViewModel>().clear();

@@ -5,6 +5,7 @@ import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/features/finance/presentation/viewmodels/receipt_approval_viewmodel.dart';
 import 'package:app_tenda/features/home/presentation/viewmodels/home_viewmodel.dart';
+import 'package:app_tenda/core/services/permission_service.dart';
 
 class AdminHubView extends StatefulWidget {
   const AdminHubView({super.key});
@@ -26,6 +27,12 @@ class _AdminHubViewState extends State<AdminHubView> {
 
   @override
   Widget build(BuildContext context) {
+    final user = getIt<HomeViewModel>().currentUser;
+    final permission = getIt<PermissionService>();
+    // Sem usuário (não deveria acontecer aqui), nada é liberado.
+    bool can(bool Function(PermissionService p) rule) =>
+        user != null && rule(permission) == true;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       body: CustomScrollView(
@@ -63,88 +70,97 @@ class _AdminHubViewState extends State<AdminHubView> {
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                       children: [
-                        _buildAdminCard(
-                          context,
-                          title: "Atalhos",
-                          subtitle: "Menus da Home",
-                          icon: Icons.grid_view_rounded,
-                          color: Colors.blue,
-                          route: AppRoutes.menuManagement,
-                        ),
-                        _buildAdminCard(
-                          context,
-                          title: "Membros",
-                          subtitle: "Lista de Filhos",
-                          icon: Icons.people_alt_rounded,
-                          color: Colors.orange,
-                          route: AppRoutes.adminMembers,
-                        ),
-                        _buildAdminCard(
-                          context,
-                          title: "Financeiro",
-                          subtitle: "Dashboard",
-                          icon: Icons.analytics_rounded,
-                          color: Colors.purple,
-                          onTap: () => Navigator.push(
+                        if (can((p) => p.canManageMembers(user!)))
+                          _buildAdminCard(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const AdminFinanceDashboardView(),
+                            title: "Atalhos",
+                            subtitle: "Menus da Home",
+                            icon: Icons.grid_view_rounded,
+                            color: Colors.blue,
+                            route: AppRoutes.menuManagement,
+                          ),
+                        if (can((p) => p.canManageMembers(user!)))
+                          _buildAdminCard(
+                            context,
+                            title: "Membros",
+                            subtitle: "Lista de Filhos",
+                            icon: Icons.people_alt_rounded,
+                            color: Colors.orange,
+                            route: AppRoutes.adminMembers,
+                          ),
+                        if (can((p) => p.canManageFinancial(user!)))
+                          _buildAdminCard(
+                            context,
+                            title: "Financeiro",
+                            subtitle: "Dashboard",
+                            icon: Icons.analytics_rounded,
+                            color: Colors.purple,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const AdminFinanceDashboardView(),
+                              ),
                             ),
                           ),
-                        ),
-                        _buildAdminCard(
-                          context,
-                          title: "Escalas",
-                          subtitle: "Giras e Faxina",
-                          icon: Icons.calendar_month_rounded,
-                          color: Colors.green,
-                          onTap: () => Navigator.pushNamed(
+                        if (can((p) => p.canManageCalendar(user!)))
+                          _buildAdminCard(
                             context,
-                            AppRoutes.calendar,
-                            arguments: {'isAdminMode': true},
-                          ),
-                        ),
-                        _buildAdminCard(
-                          context,
-                          title: "Cambones",
-                          subtitle: "Gerenciar Escalas",
-                          icon: Icons.people_alt_rounded,
-                          color: Colors.blueGrey,
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            AppRoutes.camboneList,
-                            arguments: {'isAdminMode': true},
-                          ),
-                        ),
-                        _buildAdminCard(
-                          context,
-                          title: "Avisos",
-                          subtitle: "Enviar Push",
-                          icon: Icons.notification_add_rounded,
-                          color: Colors.redAccent,
-                          onTap: () {
-                            Navigator.pushNamed(
+                            title: "Escalas",
+                            subtitle: "Giras e Faxina",
+                            icon: Icons.calendar_month_rounded,
+                            color: Colors.green,
+                            onTap: () => Navigator.pushNamed(
                               context,
-                              AppRoutes.adminAnnouncements,
-                            );
-                          },
-                        ),
-                        _buildAdminCard(
-                          context,
-                          title: "Estudos",
-                          subtitle: "Gerenciar PDFs",
-                          icon: Icons.library_books_rounded,
-                          color: Colors.indigo,
-                          route: AppRoutes.adminStudies,
-                        ),
-                        _buildAdminCard(
-                          context,
-                          title: "Ranking Faxina",
-                          subtitle: "Estatísticas de presença",
-                          icon: Icons.analytics_rounded,
-                          color: Colors.teal,
-                          route: AppRoutes.adminCleaningDashboard,
-                        ),
+                              AppRoutes.calendar,
+                              arguments: {'isAdminMode': true},
+                            ),
+                          ),
+                        if (can((p) => p.canManageCalendar(user!)))
+                          _buildAdminCard(
+                            context,
+                            title: "Cambones",
+                            subtitle: "Gerenciar Escalas",
+                            icon: Icons.people_alt_rounded,
+                            color: Colors.blueGrey,
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              AppRoutes.camboneList,
+                              arguments: {'isAdminMode': true},
+                            ),
+                          ),
+                        if (can((p) => p.canPostBulletin(user!)))
+                          _buildAdminCard(
+                            context,
+                            title: "Avisos",
+                            subtitle: "Enviar Push",
+                            icon: Icons.notification_add_rounded,
+                            color: Colors.redAccent,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.adminAnnouncements,
+                              );
+                            },
+                          ),
+                        if (can((p) => p.canManageStudies(user!)))
+                          _buildAdminCard(
+                            context,
+                            title: "Estudos",
+                            subtitle: "Gerenciar PDFs",
+                            icon: Icons.library_books_rounded,
+                            color: Colors.indigo,
+                            route: AppRoutes.adminStudies,
+                          ),
+                        if (can((p) => p.canManageCleaning(user!)))
+                          _buildAdminCard(
+                            context,
+                            title: "Ranking Faxina",
+                            subtitle: "Estatísticas de presença",
+                            icon: Icons.analytics_rounded,
+                            color: Colors.teal,
+                            route: AppRoutes.adminCleaningDashboard,
+                          ),
                         // Só aparece para admins da lista de aprovadores do financeiro.
                         if (_approvalVM.isApprover)
                           _buildAdminCard(

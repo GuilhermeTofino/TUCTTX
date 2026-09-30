@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/services/base_firestore_datasource.dart';
 
@@ -16,17 +17,25 @@ class PushTriggerService extends BaseFirestoreDataSource {
     final tenantId = AppConfig.instance.tenant.tenantSlug;
     final env = AppConfig.instance.environment.name;
 
-    await _firestore.collection('notifications_queue').add({
-      'topic': topic,
-      'tokens': tokens,
-      'title': title,
-      'body': body,
-      'data': data,
-      'tenantId': tenantId,
-      'env': env,
-      'status': 'pending',
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    // Melhor esforço: as regras só deixam enfileirar push a admin ou a quem tem a
+    // skill 'notificacoes.enviar'. Quem só tem, por exemplo, 'mural.publicar' salva
+    // o aviso normalmente e o push simplesmente não sai — sem erro para o usuário.
+    try {
+      await _firestore.collection('notifications_queue').add({
+        'topic': topic,
+        'tokens': tokens,
+        'title': title,
+        'body': body,
+        'data': data,
+        'tenantId': tenantId,
+        'env': env,
+        'status': 'pending',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } on FirebaseException catch (e) {
+      if (e.code != 'permission-denied') rethrow;
+      debugPrint('Push não enfileirado (sem permissão): $title');
+    }
   }
 
   /// Notifica todos os usuários do tenant sobre um novo evento.

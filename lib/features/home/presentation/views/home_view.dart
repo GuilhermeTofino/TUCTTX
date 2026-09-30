@@ -16,6 +16,8 @@ import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 import 'package:app_tenda/features/announcements/domain/models/announcement_model.dart';
 import 'package:app_tenda/core/services/version_check_service.dart';
 import 'package:app_tenda/core/services/push_navigation_service.dart';
+import 'package:app_tenda/core/services/permission_service.dart';
+import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
 import 'package:app_tenda/features/home/presentation/widgets/home_highlights_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:app_tenda/core/services/dynamic_island/dynamic_island_service.dart';
@@ -225,7 +227,10 @@ class _HomeViewState extends State<HomeView> {
       getIt<PushNavigationService>().onHomeReady();
 
       final tenantSlug = _viewModel.currentUser!.tenantSlug;
-      _announcementVM.listenToAnnouncements(tenantSlug);
+      // Visitante não lê o mural (firestore.rules): nem tenta escutar.
+      if (_viewModel.currentUser!.isMember) {
+        _announcementVM.listenToAnnouncements(tenantSlug);
+      }
 
       // Carregar eventos e atualizar Dynamic Island
       _calendarVM.loadEvents(tenantSlug).then((_) {
@@ -380,6 +385,8 @@ class _HomeViewState extends State<HomeView> {
                   // 1. Fixed Header
                   _buildFixedHeader(user, tenant),
 
+                  if (user.isVisitor) _buildVisitorBanner(user),
+
                   // 2. Fixed Content (Carousel + Title)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -413,6 +420,72 @@ class _HomeViewState extends State<HomeView> {
         );
       },
     );
+  }
+
+  String _roleLabel(UserModel user) {
+    switch (user.role) {
+      case 'admin':
+        return "Administrador";
+      case 'user':
+        return "Filho(a) de Santo";
+      default:
+        return user.isPendingApproval
+            ? "Visitante · aguardando aprovação"
+            : "Visitante";
+    }
+  }
+
+  /// Visitante só vê o calendário; daqui ele pede para virar membro.
+  Widget _buildVisitorBanner(UserModel user) {
+    final pending = user.isPendingApproval;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.orange.withOpacity(0.25)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            pending ? Icons.hourglass_top_rounded : Icons.info_outline,
+            color: Colors.orange[800],
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              pending
+                  ? "Seu pedido de acesso foi enviado. Aguarde a aprovação da casa."
+                  : "Você entrou como visitante e só vê o calendário. Peça acesso para participar da casa.",
+              style: const TextStyle(fontSize: 13),
+            ),
+          ),
+          if (!pending) ...[
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: () => _requestApproval(user),
+              child: const Text("Pedir acesso"),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _requestApproval(UserModel user) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await getIt<UserRepository>().requestApproval(user.id);
+      _viewModel.updateCurrentUser(user.copyWith(status: 'pending_approval'));
+      messenger.showSnackBar(
+        const SnackBar(content: Text("Pedido enviado! A casa vai analisar.")),
+      );
+    } catch (_) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text("Não foi possível enviar o pedido. Tente novamente.")),
+      );
+    }
   }
 
   Widget _buildFixedHeader(UserModel user, tenant) {
@@ -488,17 +561,20 @@ class _HomeViewState extends State<HomeView> {
         ),
         Row(
           children: [
-            if (user.role == 'admin')
+            // Admin, ou membro com alguma skill de gestão (painel filtra por skill).
+            if (getIt<PermissionService>().canAccessAdminHub(user))
               _buildTopIconButton(
                 Icons.admin_panel_settings_outlined,
                 () => Navigator.pushNamed(context, AppRoutes.adminHub),
               ),
-            const SizedBox(width: 8),
-            _buildTopIconButton(
-              Icons.notifications_active_outlined,
-              () => Navigator.pushNamed(context, AppRoutes.announcements),
-              showBadge: _announcementVM.hasUnread,
-            ),
+            if (user.isMember) ...[
+              const SizedBox(width: 8),
+              _buildTopIconButton(
+                Icons.notifications_active_outlined,
+                () => Navigator.pushNamed(context, AppRoutes.announcements),
+                showBadge: _announcementVM.hasUnread,
+              ),
+            ],
             const SizedBox(width: 8),
             _buildTopIconButton(
               Icons.settings_outlined,
@@ -713,9 +789,7 @@ class _HomeViewState extends State<HomeView> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          user.role == 'admin'
-                              ? "Administrador"
-                              : "Filho(a) de Santo",
+                          _roleLabel(user),
                           style: TextStyle(
                             fontSize: 11,
                             color: Colors.grey[600],
@@ -726,7 +800,7 @@ class _HomeViewState extends State<HomeView> {
                       ],
                     ),
                   ),
-                  _buildBloodBadge(user.tipoSanguineo ?? "N/I"),
+                  _buildBloodBadge(_viewModel.bloodType ?? "N/I"),
                 ],
               ),
               const Divider(height: 32, thickness: 1),
@@ -865,6 +939,16 @@ class _HomeViewState extends State<HomeView> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 24),
+              ListTile(
+                leading: const Icon(Icons.person_outline),
+                title: const Text("Editar Meu Cadastro"),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, AppRoutes.editProfile);
+                },
+              ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.groups_3_outlined),
                 title: const Text("Minhas Entidades"),
