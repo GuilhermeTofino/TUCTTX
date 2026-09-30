@@ -33,16 +33,33 @@ service cloud.firestore {
         // Path: /environments/{env}/tenants/{tenantId}/users/{userId}
         // -----------------------------------------------------------------------
         match /users/{userId} {
+          // Leitura: aberta a autenticados, como no app em produção (o app lê o
+          // perfil mesmo antes de o documento existir; get() sobre doc inexistente
+          // daria erro e negaria a leitura).
           allow read: if request.auth != null;
-          // Novo cadastro nasce como 'user'; apenas admin cria com outro papel.
-          allow create: if request.auth != null &&
-            (request.resource.data.get('role', 'user') == 'user' || isAdmin());
-          // O proprio usuario edita o perfil, mas nao muda o proprio 'role'.
-          // Apenas admin altera 'role' (promover/rebaixar membros).
-          allow update: if request.auth != null && (
+
+          // Cadastro: só do próprio uid e sem se conceder skills.
+          //  - app novo cria como 'visitor' (status 'active');
+          //  - versões antigas do app nas lojas criam como 'user' (sem status/skills);
+          //  - só admin cria com outro papel ou em nome de outra pessoa.
+          allow create: if request.auth != null && (
+            isAdmin() ||
             (request.auth.uid == userId &&
-              request.resource.data.get('role', 'user') == resource.data.get('role', 'user')) ||
-            isAdmin());
+              request.resource.data.get('skills', []) == [] &&
+              ((request.resource.data.get('role', 'user') == 'visitor' &&
+                  request.resource.data.get('status', 'active') == 'active') ||
+                request.resource.data.get('role', 'user') == 'user')));
+
+          // Atualização: admin altera qualquer campo (papel, skills, status).
+          // O próprio usuário edita dados pessoais, mas nunca role, skills nem
+          // status. get() com padrão porque documentos antigos não têm skills/status.
+          allow update: if request.auth != null && (
+            isAdmin() ||
+            (request.auth.uid == userId &&
+              request.resource.data.get('role', 'user') == resource.data.get('role', 'user') &&
+              request.resource.data.get('skills', []) == resource.data.get('skills', []) &&
+              request.resource.data.get('status', 'active') == resource.data.get('status', 'active')));
+
           allow delete: if request.auth != null && request.auth.uid == userId;
         }
 

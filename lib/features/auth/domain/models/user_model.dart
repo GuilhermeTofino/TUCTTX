@@ -9,7 +9,9 @@ class UserModel {
   final String tenantSlug;
   final DateTime? createdAt;
   final String? photoUrl;
-  final String role;
+  final String role; // 'visitor' | 'user' | 'admin'
+  final String status; // 'active' | 'pending_approval'
+  final List<String> skills; // lista de skill keys
 
   // NOVO CAMPO: Lista de tokens para notificações
   final List<String>? fcmTokens;
@@ -29,6 +31,10 @@ class UserModel {
   final DateTime? lastAmaciDate;
   final DateTime? nextAmaciDate;
 
+  // Campos Pessoais Adicionais
+  final DateTime? dataNascimento;
+  final String? endereco;
+
   // NOVO CAMPO: Lista de entidades (Minhas Entidades)
   final List<EntityModel>? entities;
 
@@ -41,7 +47,9 @@ class UserModel {
     required this.tenantSlug,
     this.createdAt,
     this.photoUrl,
-    this.role = 'user',
+    this.role = 'visitor',
+    this.status = 'active',
+    this.skills = const [],
     this.fcmTokens,
     required this.jaTirouSanto,
     this.jogoComTata = false,
@@ -53,6 +61,8 @@ class UserModel {
     this.tipoSanguineo,
     this.lastAmaciDate,
     this.nextAmaciDate,
+    this.dataNascimento,
+    this.endereco,
     this.entities,
   });
 
@@ -68,6 +78,8 @@ class UserModel {
     DateTime? createdAt,
     String? photoUrl,
     String? role,
+    String? status,
+    List<String>? skills,
     List<String>? fcmTokens,
     bool? jaTirouSanto,
     bool? jogoComTata,
@@ -79,6 +91,8 @@ class UserModel {
     String? tipoSanguineo,
     DateTime? lastAmaciDate,
     DateTime? nextAmaciDate,
+    DateTime? dataNascimento,
+    String? endereco,
     List<EntityModel>? entities,
   }) {
     return UserModel(
@@ -91,6 +105,8 @@ class UserModel {
       createdAt: createdAt ?? this.createdAt,
       photoUrl: photoUrl ?? this.photoUrl,
       role: role ?? this.role,
+      status: status ?? this.status,
+      skills: skills ?? this.skills,
       fcmTokens: fcmTokens ?? this.fcmTokens,
       jaTirouSanto: jaTirouSanto ?? this.jaTirouSanto,
       jogoComTata: jogoComTata ?? this.jogoComTata,
@@ -102,6 +118,8 @@ class UserModel {
       tipoSanguineo: tipoSanguineo ?? this.tipoSanguineo,
       lastAmaciDate: lastAmaciDate ?? this.lastAmaciDate,
       nextAmaciDate: nextAmaciDate ?? this.nextAmaciDate,
+      dataNascimento: dataNascimento ?? this.dataNascimento,
+      endereco: endereco ?? this.endereco,
       entities: entities ?? this.entities,
     );
   }
@@ -117,6 +135,8 @@ class UserModel {
       'createdAt': createdAt?.toIso8601String(),
       'photoUrl': photoUrl,
       'role': role,
+      'status': status,
+      'skills': skills,
       'fcmTokens': fcmTokens,
       'jaTirouSanto': jaTirouSanto,
       'jogoComTata': jogoComTata,
@@ -128,6 +148,8 @@ class UserModel {
       'tipoSanguineo': tipoSanguineo,
       'lastAmaciDate': lastAmaciDate?.toIso8601String(),
       'nextAmaciDate': nextAmaciDate?.toIso8601String(),
+      'dataNascimento': dataNascimento?.toIso8601String(),
+      'endereco': endereco,
       'entities': entities?.map((x) => x.toMap()).toList(),
     };
   }
@@ -152,7 +174,9 @@ class UserModel {
           ? DateTime.parse(map['createdAt'])
           : null,
       photoUrl: map['photoUrl'],
-      role: map['role'] ?? 'user',
+      role: map['role'] ?? 'visitor',
+      status: map['status'] ?? 'active',
+      skills: map['skills'] != null ? List<String>.from(map['skills']) : [],
       fcmTokens: map['fcmTokens'] != null
           ? List<String>.from(map['fcmTokens'])
           : null,
@@ -162,6 +186,10 @@ class UserModel {
       nextAmaciDate: map['nextAmaciDate'] != null
           ? DateTime.parse(map['nextAmaciDate'])
           : null,
+      dataNascimento: map['dataNascimento'] != null
+          ? DateTime.parse(map['dataNascimento'])
+          : null,
+      endereco: map['endereco'],
       entities: map['entities'] != null
           ? List<EntityModel>.from(
               (map['entities'] as List).map(

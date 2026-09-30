@@ -432,3 +432,182 @@ exports.checkLateFees = onSchedule({
 
     console.log("Verificação de mensalidades concluída.");
 });
+
+/**
+ * Função agendada para enviar lembretes de eventos (gira) do dia seguinte e do mesmo dia.
+ * Executa diariamente às 07:00 (Brasília).
+ */
+exports.sendEventReminders = onSchedule({
+    schedule: "every day 07:00",
+    timeZone: "America/Sao_Paulo",
+    region: "southamerica-east1"
+}, async (event) => {
+    const db = getFirestore();
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    console.log(`Iniciando envio de lembretes de eventos para ${today.toISOString()}`);
+
+    const envs = ['dev', 'prod'];
+
+    for (const env of envs) {
+        const tenantsSnap = await db.collection("environments").doc(env).collection("tenants").get();
+
+        for (const tenantDoc of tenantsSnap.docs) {
+            const tenantId = tenantDoc.id;
+
+            // Busca eventos de amanhã
+            const tomorrowStart = new Date(tomorrow);
+            tomorrowStart.setHours(0, 0, 0, 0);
+            const tomorrowEnd = new Date(tomorrow);
+            tomorrowEnd.setHours(23, 59, 59, 999);
+
+            const tomorrowEventsSnap = await tenantDoc.ref.collection("events")
+                .where("date", ">=", tomorrowStart.toISOString())
+                .where("date", "<=", tomorrowEnd.toISOString())
+                .get();
+
+            for (const eventDoc of tomorrowEventsSnap.docs) {
+                const eventData = eventDoc.data();
+
+                // Busca todos os usuários do tenant (não visitantes, ou conforme audience)
+                const usersSnap = await tenantDoc.ref.collection("users").get();
+
+                for (const userDoc of usersSnap.docs) {
+                    const userData = userDoc.data();
+                    const userId = userDoc.id;
+
+                    // Filtra: só envia para role != 'visitor' ou conforme audience do evento
+                    const shouldNotify = userData.role !== 'visitor' ||
+                        (eventData.audience && eventData.audience.includes('visitor'));
+
+                    if (shouldNotify && userData.fcmTokens && userData.fcmTokens.length > 0) {
+                        const firstName = userData.name.split(' ')[0];
+                        const eventTitle = eventData.title || 'Evento';
+
+                        await db.collection("notifications_queue").add({
+                            tokens: userData.fcmTokens,
+                            title: `📅 Lembrete: ${eventTitle}`,
+                            body: `Olá ${firstName}! Amanhã tem ${eventTitle}. Preparar ${eventData.description || 'tudo certo'}`,
+                            tenantId: tenantId,
+                            env: env,
+                            status: "pending",
+                            createdAt: FieldValue.serverTimestamp(),
+                            data: { type: "lembrete_vespera", eventId: eventDoc.id, category: "event" }
+                        });
+                    }
+                }
+            }
+
+            // Busca eventos de hoje
+            const todayStart = new Date(today);
+            todayStart.setHours(0, 0, 0, 0);
+            const todayEnd = new Date(today);
+            todayEnd.setHours(23, 59, 59, 999);
+
+            const todayEventsSnap = await tenantDoc.ref.collection("events")
+                .where("date", ">=", todayStart.toISOString())
+                .where("date", "<=", todayEnd.toISOString())
+                .get();
+
+            for (const eventDoc of todayEventsSnap.docs) {
+                const eventData = eventDoc.data();
+
+                const usersSnap = await tenantDoc.ref.collection("users").get();
+
+                for (const userDoc of usersSnap.docs) {
+                    const userData = userDoc.data();
+                    const userId = userDoc.id;
+
+                    const shouldNotify = userData.role !== 'visitor' ||
+                        (eventData.audience && eventData.audience.includes('visitor'));
+
+                    if (shouldNotify && userData.fcmTokens && userData.fcmTokens.length > 0) {
+                        const firstName = userData.name.split(' ')[0];
+                        const eventTime = eventData.time || 'horário não definido';
+                        const eventTitle = eventData.title || 'Evento';
+
+                        await db.collection("notifications_queue").add({
+                            tokens: userData.fcmTokens,
+                            title: `🕯️ Hoje: ${eventTitle}`,
+                            body: `Olá ${firstName}! Hoje tem ${eventTitle} às ${eventTime}. Detalhes: ${eventData.description || 'verifique no calendário'}`,
+                            tenantId: tenantId,
+                            env: env,
+                            status: "pending",
+                            createdAt: FieldValue.serverTimestamp(),
+                            data: { type: "lembrete_dia", eventId: eventDoc.id, category: "event" }
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    console.log("Envio de lembretes de eventos concluído.");
+});
+
+/**
+ * Trigger disparado quando um documento de confirmação de presença é criado ou atualizado.
+ * Notifica todos os admins do tenant sobre quem confirmou/não confirmou presença.
+ */
+exports.notifyAttendanceConfirmation = onDocumentCreated({
+    document: "environments/{env}/tenants/{tenantId}/events/{eventId}/confirmations/{userId}",
+    region: "southamerica-east1"
+}, async (event) => {
+    const db = getFirestore();
+    const { env, tenantId, eventId, userId } = event.params;
+    const confirmationData = event.data.data();
+
+    try {
+        // Busca dados do usuário que confirmou
+        const userDoc = await db
+            .collection("environments").doc(env)
+            .collection("tenants").doc(tenantId)
+            .collection("users").doc(userId).get();
+
+        const userData = userDoc.data();
+
+        // Busca todos os admins do tenant
+        const adminsSnap = await db
+            .collection("environments").doc(env)
+            .collection("tenants").doc(tenantId)
+            .collection("users")
+            .where("role", "==", "admin")
+            .get();
+
+        // Busca dados do evento
+        const eventDoc = await db
+            .collection("environments").doc(env)
+            .collection("tenants").doc(tenantId)
+            .collection("events").doc(eventId).get();
+
+        const eventData = eventDoc.data();
+        const eventTitle = eventData?.title || 'Evento';
+        const userName = userData?.name || 'Usuário desconhecido';
+        const confirmationStatus = confirmationData.confirmed ? 'confirmou presença' : 'não confirmou';
+
+        // Enfileira notificação para cada admin
+        for (const adminDoc of adminsSnap.docs) {
+            const adminData = adminDoc.data();
+
+            if (adminData.fcmTokens && adminData.fcmTokens.length > 0) {
+                await db.collection("notifications_queue").add({
+                    tokens: adminData.fcmTokens,
+                    title: `📋 Confirmação: ${eventTitle}`,
+                    body: `${userName} ${confirmationStatus} para ${eventTitle}`,
+                    tenantId: tenantId,
+                    env: env,
+                    status: "pending",
+                    createdAt: FieldValue.serverTimestamp(),
+                    data: { type: "attendance_notification", eventId: eventId, userId: userId }
+                });
+            }
+        }
+
+        console.log(`Notificação de confirmação enviada para admins: ${userName} - ${eventTitle}`);
+
+    } catch (error) {
+        console.error("Erro ao processar confirmação de presença:", error);
+    }
+});

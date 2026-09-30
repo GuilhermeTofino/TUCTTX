@@ -4,6 +4,7 @@ import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart
 import 'package:intl/intl.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/core/services/push_trigger_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:app_tenda/features/calendar/domain/repositories/event_repository.dart';
 import 'package:app_tenda/features/finance/domain/repositories/payment_request_repository.dart';
@@ -19,6 +20,8 @@ class MemberManagementViewModel extends ChangeNotifier {
 
   MemberManagementViewModel(this._userRepository);
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   Set<String> _approverIds = {};
 
   /// Se [userId] está na lista de aprovadores do financeiro.
@@ -28,9 +31,14 @@ class MemberManagementViewModel extends ChangeNotifier {
   List<UserModel> _filteredMembers = [];
   bool _isLoading = false;
   String _searchQuery = "";
+  List<Map<String, dynamic>> _auditHistory = [];
 
   List<UserModel> get members => _filteredMembers;
   bool get isLoading => _isLoading;
+  List<Map<String, dynamic>> get auditHistory => _auditHistory;
+
+  List<UserModel> get pendingApprovalMembers =>
+      _allMembers.where((u) => u.status == 'pending_approval').toList();
 
   Future<void> loadMembers() async {
     _isLoading = true;
@@ -211,6 +219,202 @@ class MemberManagementViewModel extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint("Erro ao alterar permissão de admin: $e");
+      rethrow;
+    }
+  }
+
+  String? _tenantId;
+  String? _env;
+
+  void setContext(String tenantId, String env) {
+    _tenantId = tenantId;
+    _env = env;
+  }
+
+  Future<void> approveUserAsFilho(UserModel user) async {
+    if (_tenantId == null || _env == null) return;
+
+    final updatedUser = user.copyWith(role: 'user', status: 'active');
+    try {
+      await _recordAuditLog(
+        user.id,
+        'role_change',
+        {'role': user.role, 'status': user.status},
+        {'role': 'user', 'status': 'active'},
+      );
+      await _userRepository.saveUserProfile(updatedUser);
+
+      final index = _allMembers.indexWhere((u) => u.id == user.id);
+      if (index != -1) {
+        _allMembers[index] = updatedUser;
+        _applyFilter();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Erro ao aprovar usuário: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> updateUserSkills(UserModel user, List<String> newSkills) async {
+    if (_tenantId == null || _env == null) return;
+
+    final updatedUser = user.copyWith(skills: newSkills);
+    try {
+      await _recordAuditLog(
+        user.id,
+        'skill_change',
+        {'skills': user.skills},
+        {'skills': newSkills},
+      );
+      await _userRepository.saveUserProfile(updatedUser);
+
+      final index = _allMembers.indexWhere((u) => u.id == user.id);
+      if (index != -1) {
+        _allMembers[index] = updatedUser;
+        _applyFilter();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Erro ao atualizar skills: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> demoteToVisitor(UserModel user) async {
+    if (_tenantId == null || _env == null) return;
+
+    final updatedUser = user.copyWith(
+      role: 'visitor',
+      status: 'active',
+      skills: [],
+    );
+    try {
+      await _recordAuditLog(
+        user.id,
+        'role_change',
+        {'role': user.role, 'status': user.status, 'skills': user.skills},
+        {'role': 'visitor', 'status': 'active', 'skills': []},
+      );
+      await _userRepository.saveUserProfile(updatedUser);
+
+      final index = _allMembers.indexWhere((u) => u.id == user.id);
+      if (index != -1) {
+        _allMembers[index] = updatedUser;
+        _applyFilter();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Erro ao rebaixar para visitante: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> loadAuditHistory(String userId) async {
+    if (_tenantId == null || _env == null) return;
+
+    try {
+      final snapshot = await _firestore
+          .collection('environments')
+          .doc(_env)
+          .collection('tenants')
+          .doc(_tenantId)
+          .collection('audit_log')
+          .where('targetUserId', isEqualTo: userId)
+          .orderBy('timestamp', descending: true)
+          .limit(50)
+          .get();
+
+      _auditHistory = snapshot.docs.map((doc) {
+        return {...doc.data(), 'id': doc.id};
+      }).toList();
+
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Erro ao carregar histórico de auditoria: $e");
+    }
+  }
+
+  Future<void> undoAuditLog(String auditLogId, UserModel targetUser) async {
+    if (_tenantId == null || _env == null) return;
+
+    try {
+      final auditDoc = await _firestore
+          .collection('environments')
+          .doc(_env)
+          .collection('tenants')
+          .doc(_tenantId)
+          .collection('audit_log')
+          .doc(auditLogId)
+          .get();
+
+      if (!auditDoc.exists) return;
+
+      final before = auditDoc['before'] as Map<String, dynamic>;
+      final restoredUser = targetUser.copyWith(
+        role: before['role'] as String?,
+        status: before['status'] as String?,
+        skills: (before['skills'] as List?)?.cast<String>(),
+      );
+
+      await _firestore
+          .collection('environments')
+          .doc(_env)
+          .collection('tenants')
+          .doc(_tenantId)
+          .collection('audit_log')
+          .doc(auditLogId)
+          .update({'undone': true});
+
+      await _recordAuditLog(
+        targetUser.id,
+        'undo',
+        before,
+        restoredUser.toMap(),
+      );
+
+      await _userRepository.saveUserProfile(restoredUser);
+
+      final index = _allMembers.indexWhere((u) => u.id == targetUser.id);
+      if (index != -1) {
+        _allMembers[index] = restoredUser;
+        _applyFilter();
+      }
+
+      await loadAuditHistory(targetUser.id);
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Erro ao desfazer ação: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> _recordAuditLog(
+    String targetUserId,
+    String action,
+    Map<String, dynamic> before,
+    Map<String, dynamic> after,
+  ) async {
+    if (_tenantId == null || _env == null) return;
+
+    try {
+      await _firestore
+          .collection('environments')
+          .doc(_env)
+          .collection('tenants')
+          .doc(_tenantId)
+          .collection('audit_log')
+          .add({
+        'targetUserId': targetUserId,
+        'actorId': 'current_user_id', // Será preenchido pelo admin logado
+        'action': action,
+        'before': before,
+        'after': after,
+        'timestamp': FieldValue.serverTimestamp(),
+        'undone': false,
+      });
+    } catch (e) {
+      debugPrint("Erro ao gravar audit_log: $e");
       rethrow;
     }
   }

@@ -15,6 +15,9 @@ ios/Flutter/flutter_export_environment.sh
 # VS Code
 .vscode/launch.json
 
+# Node
+functions/node_modules
+
 # Environment
 .env
 
@@ -25,3 +28,4 @@ scripts/admin/event-overrides.json
 scripts/admin/escala_faxina.csv
 scripts/admin/*serviceAccount*.json
 scripts/admin/*firebase-adminsdk*.json
+env.json
