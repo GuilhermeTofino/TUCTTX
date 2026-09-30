@@ -6,6 +6,7 @@ const { getMessaging } = require("firebase-admin/messaging");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { getRemoteConfig } = require("firebase-admin/remote-config");
 const { GoogleAuth } = require("google-auth-library");
+const { buildPaymentReceiptPush, collectApproverTokens } = require("./payment_receipt_push");
 
 initializeApp();
 
@@ -254,6 +255,58 @@ exports.notifyAdminsOnPresenceConfirmed = onDocumentCreated({
         console.log(`[${tenantId}] Notificação enfileirada: ${confirmation.name} -> ${tokens.length} admin(s) sobre "${eventData.title}".`);
     } catch (error) {
         console.error("Erro ao notificar admins sobre confirmação de presença:", error);
+    }
+});
+
+/**
+ * Escuta comprovantes enviados por membros (payment_requests/{requestId}) e avisa
+ * os aprovadores do financeiro (settings/finance -> approverIds), exceto o próprio
+ * solicitante.
+ */
+exports.notifyApproversOnPaymentRequest = onDocumentCreated({
+    document: "environments/{env}/tenants/{tenantId}/payment_requests/{requestId}",
+    region: "southamerica-east1"
+}, async (event) => {
+    const { env, tenantId, requestId } = event.params;
+    const request = event.data.data();
+    const db = getFirestore();
+
+    try {
+        if (request.status !== "pending_approval") return;
+
+        const tenantRoot = db.collection("environments").doc(env).collection("tenants").doc(tenantId);
+
+        const settingsDoc = await tenantRoot.collection("settings").doc("finance").get();
+        const approverIds = settingsDoc.exists ? (settingsDoc.data().approverIds || []) : [];
+        if (approverIds.length === 0) {
+            console.warn(`[${tenantId}] settings/finance sem approverIds: comprovante ${requestId} ficou sem notificação.`);
+            return;
+        }
+
+        const userDocs = await Promise.all(approverIds.map((id) => tenantRoot.collection("users").doc(id).get()));
+        const usersById = {};
+        userDocs.forEach((doc) => { if (doc.exists) usersById[doc.id] = doc.data(); });
+
+        const tokens = collectApproverTokens({ approverIds, usersById, requesterId: request.userId });
+        if (tokens.length === 0) {
+            console.warn(`[${tenantId}] Nenhum aprovador com token FCM para o comprovante ${requestId}.`);
+            return;
+        }
+
+        const push = buildPaymentReceiptPush({ request, requestId, tenantId, env });
+        await db.collection("notifications_queue").add({
+            tokens,
+            title: push.title,
+            body: push.body,
+            tenantId,
+            env,
+            status: "pending",
+            createdAt: FieldValue.serverTimestamp(),
+            data: push.data,
+        });
+        console.log(`[${tenantId}] Comprovante ${requestId} enfileirado para ${tokens.length} token(s) de aprovadores.`);
+    } catch (error) {
+        console.error("Erro ao notificar aprovadores sobre comprovante:", error);
     }
 });
 
