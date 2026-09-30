@@ -18,7 +18,6 @@ import 'package:app_tenda/core/services/version_check_service.dart';
 import 'package:app_tenda/core/services/push_navigation_service.dart';
 import 'package:app_tenda/core/services/permission_service.dart';
 import 'package:app_tenda/features/profile/domain/profile_completion.dart';
-import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
 import 'package:app_tenda/features/home/presentation/widgets/home_highlights_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:app_tenda/core/services/dynamic_island/dynamic_island_service.dart';
@@ -386,7 +385,6 @@ class _HomeViewState extends State<HomeView> {
                   // 1. Fixed Header
                   _buildFixedHeader(user, tenant),
 
-                  if (user.isVisitor) _buildVisitorBanner(user),
                   if (needsProfileCompletion(user)) _buildCompleteProfileBanner(),
 
                   // 2. Fixed Content (Carousel + Title)
@@ -437,44 +435,6 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  /// Consulente só vê o calendário; daqui ele pede para virar membro.
-  Widget _buildVisitorBanner(UserModel user) {
-    final pending = user.isPendingApproval;
-    return Container(
-      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.orange.withOpacity(0.25)),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            pending ? Icons.hourglass_top_rounded : Icons.info_outline,
-            color: Colors.orange[800],
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              pending
-                  ? "Seu pedido de acesso foi enviado. Aguarde a aprovação da casa."
-                  : "Você entrou como consulente e só vê o calendário. Peça acesso para participar da casa.",
-              style: const TextStyle(fontSize: 13),
-            ),
-          ),
-          if (!pending) ...[
-            const SizedBox(width: 8),
-            TextButton(
-              onPressed: () => _requestApproval(user),
-              child: const Text("Pedir acesso"),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
   /// Membro recém-aprovado: falta o que o cadastro curto de consulente não pediu.
   Widget _buildCompleteProfileBanner() {
     return Container(
@@ -503,21 +463,6 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
     );
-  }
-
-  Future<void> _requestApproval(UserModel user) async {
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      await getIt<UserRepository>().requestApproval(user.id);
-      _viewModel.updateCurrentUser(user.copyWith(status: 'pending_approval'));
-      messenger.showSnackBar(
-        const SnackBar(content: Text("Pedido enviado! A casa vai analisar.")),
-      );
-    } catch (_) {
-      messenger.showSnackBar(
-        const SnackBar(content: Text("Não foi possível enviar o pedido. Tente novamente.")),
-      );
-    }
   }
 
   Widget _buildFixedHeader(UserModel user, tenant) {

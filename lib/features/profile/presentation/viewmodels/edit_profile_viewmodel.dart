@@ -147,6 +147,25 @@ class EditProfileViewModel extends ChangeNotifier {
     }
   }
 
+  /// Consulente pedindo para virar membro. Só grava status = 'pending_approval'
+  /// (nunca role: quem aprova/atribui role é o admin). Retorna a mensagem de
+  /// erro, ou null.
+  Future<String?> requestApproval() async {
+    final current = _user;
+    if (current == null) return 'Cadastro ainda não carregado.';
+
+    try {
+      await _userRepository.requestApproval(current.id);
+      _user = current.copyWith(status: 'pending_approval');
+      getIt<HomeViewModel>().updateCurrentUser(_user!);
+      notifyListeners();
+      return null;
+    } catch (e) {
+      debugPrint('Erro ao pedir acesso: $e');
+      return 'Não foi possível enviar o pedido. Tente novamente.';
+    }
+  }
+
   /// Valida e grava. Só toca nos campos pessoais (nunca role/status/skills) e
   /// grava a saúde na subcoleção privada. Retorna a mensagem de erro, ou null.
   Future<String?> save(ProfileInput input) async {

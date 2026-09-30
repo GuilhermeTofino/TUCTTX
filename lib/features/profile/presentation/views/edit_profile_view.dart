@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/core/routes/app_routes.dart';
+import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 import 'package:app_tenda/features/profile/domain/models/health_data_model.dart';
 import 'package:app_tenda/features/profile/domain/profile_validation.dart';
 import 'package:app_tenda/features/profile/presentation/viewmodels/edit_profile_viewmodel.dart';
@@ -51,8 +52,16 @@ class _EditProfileViewState extends State<EditProfileView> {
   @override
   void dispose() {
     for (final c in [
-      _name, _phone, _emergency, _endereco, _orixaFrente, _orixaJunto,
-      _tipoSanguineo, _alergias, _medicamentos, _condicoes,
+      _name,
+      _phone,
+      _emergency,
+      _endereco,
+      _orixaFrente,
+      _orixaJunto,
+      _tipoSanguineo,
+      _alergias,
+      _medicamentos,
+      _condicoes,
     ]) {
       c.dispose();
     }
@@ -133,8 +142,15 @@ class _EditProfileViewState extends State<EditProfileView> {
     Navigator.pop(context);
   }
 
-  void _snack(String message) =>
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  void _snack(String message) => ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text(message)));
+
+  Future<void> _requestApproval() async {
+    final error = await _viewModel.requestApproval();
+    if (!mounted) return;
+    _snack(error ?? 'Pedido enviado! A casa vai analisar.');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +159,10 @@ class _EditProfileViewState extends State<EditProfileView> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text('Editar Meu Cadastro', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Editar Meu Cadastro',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: tenant.primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -163,7 +182,10 @@ class _EditProfileViewState extends State<EditProfileView> {
                   children: [
                     Text(_viewModel.loadError!, textAlign: TextAlign.center),
                     const SizedBox(height: 16),
-                    OutlinedButton(onPressed: _viewModel.load, child: const Text('Tentar de novo')),
+                    OutlinedButton(
+                      onPressed: _viewModel.load,
+                      child: const Text('Tentar de novo'),
+                    ),
                   ],
                 ),
               ),
@@ -190,6 +212,8 @@ class _EditProfileViewState extends State<EditProfileView> {
           Center(child: _buildPhoto(tenant)),
           const SizedBox(height: 24),
 
+          if (basic) _buildAccessRequestCard(user),
+
           _section('Dados pessoais'),
           TextFormField(
             controller: _name,
@@ -210,15 +234,24 @@ class _EditProfileViewState extends State<EditProfileView> {
           TextFormField(
             initialValue: user.email,
             enabled: false,
-            decoration: _dec('E-mail', helper: 'O e-mail é o seu login e não pode ser alterado aqui.'),
+            decoration: _dec(
+              'E-mail',
+              helper: 'O e-mail é o seu login e não pode ser alterado aqui.',
+            ),
           ),
 
           if (!basic) ...[
             const SizedBox(height: 12),
             TextFormField(
               controller: _emergency,
-              decoration: _dec('Contato de emergência', helper: 'Nome e telefone de quem devemos avisar.'),
-              validator: (v) => ProfileValidation.required(v, 'Informe um contato de emergência.'),
+              decoration: _dec(
+                'Contato de emergência',
+                helper: 'Nome e telefone de quem devemos avisar.',
+              ),
+              validator: (v) => ProfileValidation.required(
+                v,
+                'Informe um contato de emergência.',
+              ),
             ),
             const SizedBox(height: 12),
             InkWell(
@@ -259,20 +292,28 @@ class _EditProfileViewState extends State<EditProfileView> {
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Joga com Tata?'),
+              title: const Text('Jogou com o Pai kamgamba?'),
               value: _jogoComTata,
               onChanged: (v) => setState(() => _jogoComTata = v),
             ),
             const SizedBox(height: 8),
-            TextFormField(controller: _orixaFrente, decoration: _dec('Santo de cabeça (Orixá de frente)')),
+            TextFormField(
+              controller: _orixaFrente,
+              decoration: _dec('Santo de cabeça (Orixá de frente)'),
+            ),
             const SizedBox(height: 12),
-            TextFormField(controller: _orixaJunto, decoration: _dec('Orixá junto')),
+            TextFormField(
+              controller: _orixaJunto,
+              decoration: _dec('Orixá junto'),
+            ),
             const SizedBox(height: 4),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.groups_3_outlined),
               title: const Text('Minhas Entidades'),
-              subtitle: const Text('Gerencie suas entidades em uma tela própria.'),
+              subtitle: const Text(
+                'Gerencie suas entidades em uma tela própria.',
+              ),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () => Navigator.pushNamed(context, AppRoutes.myEntities),
             ),
@@ -298,13 +339,28 @@ class _EditProfileViewState extends State<EditProfileView> {
                 ],
               ),
             ),
-            TextFormField(controller: _tipoSanguineo, decoration: _dec('Tipo sanguíneo')),
+            TextFormField(
+              controller: _tipoSanguineo,
+              decoration: _dec('Tipo sanguíneo'),
+            ),
             const SizedBox(height: 12),
-            TextFormField(controller: _alergias, maxLines: 2, decoration: _dec('Alergias')),
+            TextFormField(
+              controller: _alergias,
+              maxLines: 2,
+              decoration: _dec('Alergias'),
+            ),
             const SizedBox(height: 12),
-            TextFormField(controller: _medicamentos, maxLines: 2, decoration: _dec('Medicamentos')),
+            TextFormField(
+              controller: _medicamentos,
+              maxLines: 2,
+              decoration: _dec('Medicamentos'),
+            ),
             const SizedBox(height: 12),
-            TextFormField(controller: _condicoes, maxLines: 2, decoration: _dec('Condições médicas')),
+            TextFormField(
+              controller: _condicoes,
+              maxLines: 2,
+              decoration: _dec('Condições médicas'),
+            ),
           ],
 
           const SizedBox(height: 28),
@@ -316,8 +372,12 @@ class _EditProfileViewState extends State<EditProfileView> {
             ),
             child: saving
                 ? const SizedBox(
-                    height: 20, width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
                 : const Text('Salvar'),
           ),
@@ -341,10 +401,14 @@ class _EditProfileViewState extends State<EditProfileView> {
           radius: 52,
           backgroundColor: const Color(0xFFE9ECEF),
           backgroundImage: image,
-          child: image == null ? const Icon(Icons.person, size: 52, color: Colors.grey) : null,
+          child: image == null
+              ? const Icon(Icons.person, size: 52, color: Colors.grey)
+              : null,
         ),
         if (_viewModel.isUploadingPhoto)
-          const Positioned.fill(child: Center(child: CircularProgressIndicator()))
+          const Positioned.fill(
+            child: Center(child: CircularProgressIndicator()),
+          )
         else
           Material(
             color: tenant.primaryColor,
@@ -362,11 +426,58 @@ class _EditProfileViewState extends State<EditProfileView> {
     );
   }
 
+  /// Consulente só vê o calendário; daqui ele pede para virar filho da casa.
+  Widget _buildAccessRequestCard(UserModel user) {
+    final pending = user.isPendingApproval;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.orange.withOpacity(0.25)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(
+                pending ? Icons.hourglass_top_rounded : Icons.info_outline,
+                color: Colors.orange[800],
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  pending
+                      ? "Seu pedido de acesso foi enviado. Aguarde a aprovação da casa."
+                      : "Você entrou como consulente e só vê o calendário.",
+                  style: const TextStyle(fontSize: 13),
+                ),
+              ),
+            ],
+          ),
+          if (!pending) ...[
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: _requestApproval,
+              child: const Text("Pedir meu acesso como filho da casa"),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _section(String title) => Padding(
     padding: const EdgeInsets.only(top: 24, bottom: 12),
     child: Text(
       title,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.5,
+      ),
     ),
   );
 
