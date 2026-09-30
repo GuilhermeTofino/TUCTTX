@@ -15,7 +15,13 @@ class FeatureFlags {
   ///
   /// Não mexe em defaults nem no intervalo de busca: o VersionCheckService usa o
   /// mesmo Remote Config e ajustar isso aqui poderia alterar a atualização forçada.
-  Future<bool> visitorSignupEnabled() async {
+  Future<bool>? _visitorSignup;
+
+  /// A resposta vale para a sessão inteira: a tela de cadastro (que decide entre o
+  /// formulário curto e o completo) e o envio têm de concordar.
+  Future<bool> visitorSignupEnabled() => _visitorSignup ??= _fetchVisitorSignup();
+
+  Future<bool> _fetchVisitorSignup() async {
     if (EmulatorSetup.enabled) return true; // no emulador o fluxo é para testar
     try {
       await _remoteConfig.fetchAndActivate().timeout(const Duration(seconds: 8));

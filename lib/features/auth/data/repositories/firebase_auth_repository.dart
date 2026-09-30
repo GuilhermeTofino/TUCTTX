@@ -121,10 +121,12 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
     String role = 'user', // Quem chama decide (ver signup_role.dart); padrão = comportamento de sempre
   }) async {
     try {
+      // Consulente se cadastra só com o básico; o contato de emergência é cobrado de
+      // quem entra como membro (e de todo cadastro completo, como sempre foi).
       if (name.trim().isEmpty ||
           email.trim().isEmpty ||
           phone.trim().isEmpty ||
-          emergencyContact.trim().isEmpty) {
+          (role != 'visitor' && emergencyContact.trim().isEmpty)) {
         throw Exception("Por favor, preencha todos os campos obrigatórios.");
       }
 

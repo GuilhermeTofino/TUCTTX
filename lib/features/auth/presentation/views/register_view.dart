@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
+import 'package:app_tenda/core/services/feature_flags.dart';
 import 'package:app_tenda/core/routes/app_routes.dart';
 import 'package:app_tenda/features/auth/presentation/viewmodels/register_viewmodel.dart';
 
@@ -42,6 +43,18 @@ class _RegisterViewState extends State<RegisterView> {
   final _condicoesController = TextEditingController();
   String? _selectedTipoSanguineo;
 
+  /// true = cadastro de consulente (só o básico, uma etapa); false = cadastro completo
+  /// de sempre (3 etapas). Vem do interruptor `<tenant>_visitor_signup_enabled`.
+  bool? _basic;
+
+  @override
+  void initState() {
+    super.initState();
+    getIt<FeatureFlags>().visitorSignupEnabled().then((enabled) {
+      if (mounted) setState(() => _basic = enabled);
+    });
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -61,6 +74,15 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     final tenant = AppConfig.instance.tenant;
+
+    // Ainda descobrindo qual cadastro mostrar (curto ou completo).
+    if (_basic == null) {
+      return Scaffold(
+        backgroundColor: Colors.grey[50],
+        body: const Center(child: CustomLogoLoader()),
+      );
+    }
+    final basic = _basic!;
 
     return ListenableBuilder(
       listenable: _viewModel,
@@ -86,7 +108,7 @@ class _RegisterViewState extends State<RegisterView> {
                 child: Column(
                   children: [
                     _buildTopBar(tenant),
-                    _buildCustomStepper(tenant),
+                    if (!basic) _buildCustomStepper(tenant),
                     Expanded(
                       child: Container(
                         margin: const EdgeInsets.only(top: 10),
@@ -111,8 +133,11 @@ class _RegisterViewState extends State<RegisterView> {
                               setState(() => _currentStep = i),
                           children: [
                             _buildStep1(tenant),
-                            _buildStep2(tenant),
-                            _buildStep3(tenant),
+                            // Consulente: só o básico. Fé e saúde ficam para quando for aprovado.
+                            if (!basic) ...[
+                              _buildStep2(tenant),
+                              _buildStep3(tenant),
+                            ],
                           ],
                         ),
                       ),
@@ -134,7 +159,9 @@ class _RegisterViewState extends State<RegisterView> {
       key: _formKeyStep1,
       child: _buildPageContent(
         title: "Vamos começar!",
-        subtitle: "Preencha seus dados básicos para criar sua conta.",
+        subtitle: _basic == true
+            ? "Só o básico: nome, e-mail, telefone e uma senha."
+            : "Preencha seus dados básicos para criar sua conta.",
         children: [
           _buildPremiumInput(
             "Nome Completo",
@@ -160,13 +187,14 @@ class _RegisterViewState extends State<RegisterView> {
             type: TextInputType.phone,
             validator: (v) => v!.length < 10 ? "Telefone inválido" : null,
           ),
-          _buildPremiumInput(
-            "Contato Emergência",
-            _emergencyController,
-            Icons.contact_emergency_outlined,
-            validator: (v) =>
-                v!.isEmpty ? "Obrigatório para sua segurança" : null,
-          ),
+          if (_basic != true)
+            _buildPremiumInput(
+              "Contato Emergência",
+              _emergencyController,
+              Icons.contact_emergency_outlined,
+              validator: (v) =>
+                  v!.isEmpty ? "Obrigatório para sua segurança" : null,
+            ),
           _buildPremiumInput(
             "Senha",
             _passwordController,
@@ -176,9 +204,13 @@ class _RegisterViewState extends State<RegisterView> {
                 v!.length < 6 ? "A senha deve ter no mínimo 6 dígitos" : null,
           ),
           const SizedBox(height: 20),
-          _buildActionButton("PRÓXIMO PASSO", () {
-            if (_formKeyStep1.currentState!.validate()) _nextPage();
-          }),
+          _buildActionButton(
+            _basic == true ? "CRIAR CONTA" : "PRÓXIMO PASSO",
+            () {
+              if (!_formKeyStep1.currentState!.validate()) return;
+              _basic == true ? _handleFinalize() : _nextPage();
+            },
+          ),
         ],
       ),
     );
@@ -617,6 +649,7 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
   String _getStepTitle() {
+    if (_basic == true) return "Criar conta";
     if (_currentStep == 0) return "Cadastro Inicial";
     if (_currentStep == 1) return "Sua Fé";
     return "Sua Saúde";
@@ -630,22 +663,34 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
   void _handleFinalize() async {
+    // Consulente: só o básico. Nada de fé, saúde ou contato de emergência aqui.
+    final basicData = <String, dynamic>{
+      'name': _nameController.text.trim(),
+      'email': _emailController.text.trim(),
+      'phone': _phoneController.text.trim(),
+      'emergencyContact': '',
+      'password': _passwordController.text,
+      'jaTirouSanto': false,
+      'jogoComTata': false,
+    };
     final success = await _viewModel.registerUser(
-      data: {
-        'name': _nameController.text.trim(),
-        'email': _emailController.text.trim(),
-        'phone': _phoneController.text.trim(),
-        'emergencyContact': _emergencyController.text.trim(),
-        'password': _passwordController.text,
-        'jaTirouSanto': _jaTirouSanto ?? false,
-        'jogoComTata': _jogoComTata ?? false,
-        'orixaFrente': _frenteController.text,
-        'orixaJunto': _juntoController.text,
-        'alergias': _alergiasController.text,
-        'medicamentos': _medicamentosController.text,
-        'condicoesMedicas': _condicoesController.text,
-        'tipoSanguineo': _selectedTipoSanguineo,
-      },
+      data: _basic == true
+          ? basicData
+          : {
+              'name': _nameController.text.trim(),
+              'email': _emailController.text.trim(),
+              'phone': _phoneController.text.trim(),
+              'emergencyContact': _emergencyController.text.trim(),
+              'password': _passwordController.text,
+              'jaTirouSanto': _jaTirouSanto ?? false,
+              'jogoComTata': _jogoComTata ?? false,
+              'orixaFrente': _frenteController.text,
+              'orixaJunto': _juntoController.text,
+              'alergias': _alergiasController.text,
+              'medicamentos': _medicamentosController.text,
+              'condicoesMedicas': _condicoesController.text,
+              'tipoSanguineo': _selectedTipoSanguineo,
+            },
     );
 
     if (success && mounted) {
