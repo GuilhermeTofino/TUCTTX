@@ -161,10 +161,23 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
         role: role, // padrão 'visitor'; status 'active' e skills [] vêm do modelo
       );
 
-      // O documento do usuário não leva dados de saúde (qualquer membro o lê):
-      // eles vão para a subcoleção privada.
-      await tenantDocument('users', uid).set(newUser.toMap());
+      // O perfil é o que dá acesso ao app. Se ele não for gravado, o login recém-criado
+      // ficaria "órfão" (sem perfil): não entraria no app e o mesmo e-mail não poderia
+      // ser usado para tentar de novo. Então desfaz o login e devolve o erro.
+      try {
+        // O documento do usuário não leva dados de saúde (qualquer membro o lê).
+        await tenantDocument('users', uid).set(newUser.toMap());
+      } catch (e) {
+        try {
+          await result.user?.delete();
+        } catch (deleteError) {
+          dev.log("Não foi possível desfazer o login criado: $deleteError");
+        }
+        rethrow;
+      }
 
+      // Saúde é opcional e vai para a subcoleção privada. Se falhar, o cadastro
+      // continua valendo: a pessoa informa de novo em "Editar Meu Cadastro".
       final health = HealthData(
         alergias: alergias,
         medicamentos: medicamentos,
@@ -172,13 +185,17 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
         tipoSanguineo: tipoSanguineo,
       );
       if (!health.isEmpty) {
-        await tenantDocument('users', uid)
-            .collection('private')
-            .doc('health')
-            .set({
-              ...health.toMap(),
-              'updatedAt': FieldValue.serverTimestamp(),
-            });
+        try {
+          await tenantDocument('users', uid)
+              .collection('private')
+              .doc('health')
+              .set({
+                ...health.toMap(),
+                'updatedAt': FieldValue.serverTimestamp(),
+              });
+        } catch (e) {
+          dev.log("Dados de saúde não gravados no cadastro: $e");
+        }
       }
 
       dev.log("--- CADASTRO FINALIZADO ---");
