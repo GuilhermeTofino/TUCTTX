@@ -20,6 +20,8 @@ import 'package:app_tenda/core/services/notification_service.dart';
 import 'package:app_tenda/core/services/push_trigger_service.dart';
 import 'package:app_tenda/core/services/calendar_service.dart';
 import 'package:app_tenda/features/finance/domain/repositories/finance_repository.dart';
+import 'package:app_tenda/features/finance/domain/repositories/payment_request_repository.dart';
+import 'package:app_tenda/features/finance/presentation/viewmodels/payment_request_viewmodel.dart';
 import 'package:app_tenda/features/announcements/domain/repositories/announcement_repository.dart';
 import 'package:app_tenda/features/announcements/data/repositories/firebase_announcement_repository.dart';
 import 'package:app_tenda/features/announcements/presentation/viewmodels/announcement_viewmodel.dart';
@@ -49,6 +51,9 @@ Future<void> setupServiceLocator() async {
   );
   getIt.registerLazySingleton<FinanceRepository>(
     () => FirebaseFinanceRepository(),
+  );
+  getIt.registerLazySingleton<PaymentRequestRepository>(
+    () => FirebasePaymentRequestRepository(),
   );
   getIt.registerLazySingleton<AnnouncementRepository>(
     () => FirebaseAnnouncementRepository(),
@@ -96,6 +101,9 @@ Future<void> setupServiceLocator() async {
     () => MemberManagementViewModel(getIt<UserRepository>()),
   );
   getIt.registerLazySingleton<FinanceViewModel>(() => FinanceViewModel());
+  getIt.registerLazySingleton<PaymentRequestViewModel>(
+    () => PaymentRequestViewModel(),
+  );
   getIt.registerLazySingleton<AnnouncementViewModel>(
     () => AnnouncementViewModel(),
   );

@@ -4,6 +4,8 @@ import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/features/finance/domain/models/financial_models.dart';
 import 'package:app_tenda/features/finance/presentation/viewmodels/finance_viewmodel.dart';
+import 'package:app_tenda/features/finance/presentation/viewmodels/payment_request_viewmodel.dart';
+import 'package:app_tenda/features/finance/presentation/views/send_receipt_view.dart';
 import 'package:app_tenda/features/home/presentation/viewmodels/home_viewmodel.dart';
 
 class MonthlyFeesView extends StatefulWidget {
@@ -16,6 +18,7 @@ class MonthlyFeesView extends StatefulWidget {
 class _MonthlyFeesViewState extends State<MonthlyFeesView> {
   final _financeVM = getIt<FinanceViewModel>();
   final _homeVM = getIt<HomeViewModel>();
+  final _requestVM = getIt<PaymentRequestViewModel>();
 
   @override
   void initState() {
@@ -23,6 +26,7 @@ class _MonthlyFeesViewState extends State<MonthlyFeesView> {
     final user = _homeVM.currentUser;
     if (user != null) {
       _financeVM.listenToFinancialData(user.tenantSlug, user.id);
+      _requestVM.listenToRequests(user.id);
     }
   }
 
@@ -41,8 +45,17 @@ class _MonthlyFeesViewState extends State<MonthlyFeesView> {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const SendReceiptView()),
+        ),
+        backgroundColor: tenant.primaryColor,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.receipt_long),
+        label: const Text('Enviar comprovante'),
+      ),
       body: ListenableBuilder(
-        listenable: _financeVM,
+        listenable: Listenable.merge([_financeVM, _requestVM]),
         builder: (context, _) {
           if (_financeVM.isLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -137,7 +150,35 @@ class _MonthlyFeesViewState extends State<MonthlyFeesView> {
               ],
             ),
           ),
-          _buildStatusBadge(fee.status),
+          _requestVM.monthsUnderReview.contains(fee.id) &&
+                  fee.status != FinanceStatus.paid
+              ? _buildReviewBadge()
+              : _buildStatusBadge(fee.status),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReviewBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.hourglass_top, color: Colors.blue, size: 14),
+          SizedBox(width: 6),
+          Text(
+            "EM ANÁLISE",
+            style: TextStyle(
+              color: Colors.blue,
+              fontWeight: FontWeight.bold,
+              fontSize: 10,
+            ),
+          ),
         ],
       ),
     );
