@@ -143,3 +143,36 @@ node set-finance-approvers.js --show                         # lista atual
 Os comprovantes ficam em `receipts/{ano}/{userId}/{requestId}`, na pasta do ano do mês mais recente que o comprovante cobre. A Function `deleteExpiredReceipts` roda em 1º de janeiro (03:00, America/Sao_Paulo) e apaga os arquivos de anos **anteriores** ao atual; o ano corrente nunca é tocado.
 
 Só o arquivo é removido. A solicitação e os dados contábeis (valor, `paidAt`, aprovador) continuam no Firestore; a tela de revisão passa a mostrar "comprovante indisponível".
+
+---
+
+# Papéis, skills e dados de saúde
+
+Modelo de acesso: `visitor` (só vê o calendário), `user` (filho de santo; acessa mural, estudos, financeiro etc. e tem as **skills** que o admin marcar) e `admin` (todas as skills + gestão de membros). Todo cadastro novo nasce visitante e pede acesso pelo app; o admin aprova em Painel administrativo → Membros. Toda mudança de papel/skills vai para o `audit_log` e pode ser desfeita pelo histórico do membro.
+
+Skills: `calendario.gerenciar`, `mural.publicar`, `estudos.gerenciar`, `financeiro.gerenciar`, `bazar.gerenciar`, `limpeza.gerenciar`, `entidades.moderar`, `notificacoes.enviar`. As regras (`firestore.rules`/`storage.rules`) conhecem exatamente estas 8; se mudar uma, mude em `PermissionService` também. Gestão de membros, atalhos da Home e aprovação de comprovantes continuam só do admin.
+
+Variáveis dos scripts abaixo: `ADMIN_ENV` (default `dev`), `ADMIN_TENANT_ID` (default `tucttx`), `ADMIN_SERVICE_ACCOUNT_PATH`.
+
+## Catálogo de skills (opcional)
+
+```bash
+cd scripts/admin
+node seed-skills-catalog.js          # preview
+node seed-skills-catalog.js --apply  # grava (não sobrescreve rótulos já editados)
+```
+
+O app funciona sem o catálogo (usa rótulos padrão). Serve para o admin ajustar rótulo e descrição.
+
+## Migrar dados de saúde para a subcoleção privada
+
+Alergias, medicamentos, condições médicas e tipo sanguíneo são dado pessoal sensível (LGPD). Antes ficavam no documento do usuário, que qualquer membro logado lê. Agora ficam em `users/{uid}/private/health` (só o dono e os admins leem).
+
+```bash
+node migrate-private-health.js          # preview: só contagens, nunca imprime os valores
+node migrate-private-health.js --apply  # copia para o privado e remove do documento aberto
+```
+
+- Idempotente; o que já estiver no privado prevalece.
+- **Em produção, rode só depois de a versão nova estar nas lojas e a atualização estar forçada.** O app antigo ainda grava saúde no documento aberto; rode de novo depois, sem risco.
+- Enquanto não migrar, a tela de perfil e a ficha do admin caem nos campos antigos do documento.

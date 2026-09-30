@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
+import 'package:app_tenda/features/profile/domain/models/health_data_model.dart';
 import 'package:app_tenda/features/finance/domain/models/financial_models.dart';
 import 'package:app_tenda/features/finance/presentation/viewmodels/finance_viewmodel.dart';
 import 'package:app_tenda/features/admin/presentation/views/admin_monthly_fees_view.dart';
@@ -23,9 +25,28 @@ class AdminMemberFullRecordView extends StatefulWidget {
 class _AdminMemberFullRecordViewState extends State<AdminMemberFullRecordView> {
   final _financeVM = getIt<FinanceViewModel>();
 
+  /// Saúde do membro, lida da subcoleção privada (admin tem acesso). Enquanto a
+  /// migração não rodou, cai nos campos antigos do documento do usuário.
+  late HealthData _health = HealthData(
+    alergias: widget.member.alergias,
+    medicamentos: widget.member.medicamentos,
+    condicoesMedicas: widget.member.condicoesMedicas,
+    tipoSanguineo: widget.member.tipoSanguineo,
+  );
+
+  Future<void> _loadHealth() async {
+    try {
+      final health = await getIt<UserRepository>().getHealth(widget.member.id);
+      if (health != null && mounted) setState(() => _health = health);
+    } catch (_) {
+      // Mantém o que veio do documento; a ficha continua utilizável.
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadHealth();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _financeVM.listenToFinancialData(
         widget.member.tenantSlug,
@@ -313,7 +334,7 @@ class _AdminMemberFullRecordViewState extends State<AdminMemberFullRecordView> {
               child: _buildInfoRow(
                 Icons.bloodtype,
                 "Tipo Sanguíneo",
-                widget.member.tipoSanguineo ?? "Não inf.",
+                _health.tipoSanguineo ?? "Não inf.",
                 iconColor: Colors.red,
               ),
             ),
@@ -340,19 +361,19 @@ class _AdminMemberFullRecordViewState extends State<AdminMemberFullRecordView> {
         const Divider(),
         _buildInfoList(
           "Alergias",
-          widget.member.alergias,
+          _health.alergias,
           Icons.warning_amber_rounded,
         ),
         const SizedBox(height: 12),
         _buildInfoList(
           "Medicamentos",
-          widget.member.medicamentos,
+          _health.medicamentos,
           Icons.medication_outlined,
         ),
         const SizedBox(height: 12),
         _buildInfoList(
           "Condições Médicas",
-          widget.member.condicoesMedicas,
+          _health.condicoesMedicas,
           Icons.favorite_border,
         ),
       ],
