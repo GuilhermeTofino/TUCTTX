@@ -33,3 +33,4 @@ env.json
 # Gerados por ferramentas locais (dependem da versão do SDK/SO de cada dev)
 .widget_preview/
 .DS_Store
+functions-whatsapp/node_modules
