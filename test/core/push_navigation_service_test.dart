@@ -40,6 +40,13 @@ void main() {
       expect(destination!.route, AppRoutes.financialHub);
     });
 
+    test('aprovação como membro abre "Editar Meu Cadastro"', () {
+      final destination = PushNavigationService.parse({'type': 'profile_completion'});
+
+      expect(destination, isNotNull);
+      expect(destination!.route, AppRoutes.editProfile);
+    });
+
     test('pushes de outros tipos não navegam', () {
       expect(PushNavigationService.parse({'type': 'presence_confirmed'}), isNull);
       expect(PushNavigationService.parse({}), isNull);

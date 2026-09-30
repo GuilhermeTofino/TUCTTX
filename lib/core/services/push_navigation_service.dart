@@ -28,6 +28,8 @@ class PushNavigationService {
           AppRoutes.receiptReview,
           {'requestId': requestId},
         );
+      case 'profile_completion':
+        return const PushDestination(AppRoutes.editProfile, {});
       case 'payment_receipt_decision':
         return const PushDestination(AppRoutes.financialHub, {});
       default:

@@ -120,6 +120,23 @@ class PushTriggerService extends BaseFirestoreDataSource {
     );
   }
 
+  /// Avisa o consulente que foi aprovado como membro e o convida a completar o cadastro.
+  Future<void> notifyApprovedAsMember({
+    required String userName,
+    required List<String> userTokens,
+  }) async {
+    if (userTokens.isEmpty) return;
+
+    await _enqueueNotification(
+      tokens: userTokens,
+      title: '🎉 Você agora é membro da casa!',
+      body:
+          'Olá $userName! Sua entrada foi aprovada. Toque para completar o seu cadastro: '
+          'contato de emergência, fundamento e saúde.',
+      data: {'type': 'profile_completion'},
+    );
+  }
+
   /// Notifica sobre dívida de bazar em aberto.
   Future<void> notifyBazaarDebt({
     required String userName,

@@ -283,6 +283,24 @@ class MemberManagementViewModel extends ChangeNotifier {
     }
     _guardAccessChange(user, losesAdmin: false);
     await _changeAccess(user, {'role': 'user', 'status': 'active'});
+    await _notifyApproved(user);
+  }
+
+  /// Avisa quem acabou de ser aprovado para completar o cadastro. Melhor esforço:
+  /// a aprovação já foi gravada e um push que falha não pode desfazê-la (o aviso
+  /// na Home cobre quem não receber).
+  Future<void> _notifyApproved(UserModel user) async {
+    try {
+      final fresh = await _userRepository.getUserProfile(user.id);
+      final tokens = fresh?.fcmTokens;
+      if (tokens == null || tokens.isEmpty) return;
+      await _pushService.notifyApprovedAsMember(
+        userName: user.name.split(' ')[0],
+        userTokens: tokens,
+      );
+    } catch (e) {
+      debugPrint("Erro ao avisar membro aprovado: $e");
+    }
   }
 
   /// Define as skills de um membro (role 'user'). Admin já tem todas.

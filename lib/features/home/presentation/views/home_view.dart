@@ -17,6 +17,7 @@ import 'package:app_tenda/features/announcements/domain/models/announcement_mode
 import 'package:app_tenda/core/services/version_check_service.dart';
 import 'package:app_tenda/core/services/push_navigation_service.dart';
 import 'package:app_tenda/core/services/permission_service.dart';
+import 'package:app_tenda/features/profile/domain/profile_completion.dart';
 import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
 import 'package:app_tenda/features/home/presentation/widgets/home_highlights_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -386,6 +387,7 @@ class _HomeViewState extends State<HomeView> {
                   _buildFixedHeader(user, tenant),
 
                   if (user.isVisitor) _buildVisitorBanner(user),
+                  if (needsProfileCompletion(user)) _buildCompleteProfileBanner(),
 
                   // 2. Fixed Content (Carousel + Title)
                   Padding(
@@ -468,6 +470,36 @@ class _HomeViewState extends State<HomeView> {
               child: const Text("Pedir acesso"),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  /// Membro recém-aprovado: falta o que o cadastro curto de consulente não pediu.
+  Widget _buildCompleteProfileBanner() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.07),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.blue.withOpacity(0.25)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.assignment_ind_outlined, color: Colors.blue[700]),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Text(
+              "Bem-vindo(a) à casa! Complete o seu cadastro: contato de emergência, fundamento e saúde.",
+              style: TextStyle(fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 8),
+          TextButton(
+            onPressed: () => Navigator.pushNamed(context, AppRoutes.editProfile),
+            child: const Text("Completar"),
+          ),
         ],
       ),
     );
