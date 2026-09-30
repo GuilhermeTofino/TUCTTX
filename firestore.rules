@@ -16,9 +16,26 @@ service cloud.firestore {
         // -----------------------------------------------------------------------
         // HELPERS
         // -----------------------------------------------------------------------
+        // Perfil de quem faz a requisição, dentro deste tenant.
+        function me() {
+          return get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data;
+        }
+
         function isAdmin() {
+          return request.auth != null && me().role == 'admin';
+        }
+
+        // Membro = 'user' ou 'admin'. Visitante ('visitor') só vê o calendário.
+        function isMember() {
+          return request.auth != null && me().role in ['user', 'admin'];
+        }
+
+        // Admin tem todas as skills; 'user' precisa da skill na própria lista.
+        // Visitante nunca tem skill. (Skill keys: ver PermissionService no app.)
+        function hasSkill(key) {
           return request.auth != null &&
-            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
+            (me().role == 'admin' ||
+              (me().role == 'user' && key in me().get('skills', [])));
         }
 
         // Admin que consta na lista de aprovadores do financeiro.
@@ -58,9 +75,45 @@ service cloud.firestore {
             (request.auth.uid == userId &&
               request.resource.data.get('role', 'user') == resource.data.get('role', 'user') &&
               request.resource.data.get('skills', []) == resource.data.get('skills', []) &&
-              request.resource.data.get('status', 'active') == resource.data.get('status', 'active')));
+              request.resource.data.get('status', 'active') == resource.data.get('status', 'active')) ||
+            // Visitante pede aprovação: única mudança de status que o próprio
+            // usuário faz (active -> pending_approval), sem tocar em papel/skills.
+            (request.auth.uid == userId &&
+              resource.data.get('role', 'user') == 'visitor' &&
+              request.resource.data.get('role', 'user') == 'visitor' &&
+              request.resource.data.get('skills', []) == resource.data.get('skills', []) &&
+              resource.data.get('status', 'active') == 'active' &&
+              request.resource.data.get('status', 'active') == 'pending_approval') ||
+            // Moderação de entidades: quem tem a skill altera SÓ o campo 'entities'.
+            (hasSkill('entidades.moderar') &&
+              request.resource.data.diff(resource.data).affectedKeys().hasOnly(['entities'])));
 
           allow delete: if request.auth != null && request.auth.uid == userId;
+
+          // Dados sensíveis (saúde): só o dono grava; dono e admins leem. Ficam
+          // fora do documento do usuário, que qualquer membro logado consegue ler.
+          match /private/{docId} {
+            allow read: if request.auth != null &&
+              (request.auth.uid == userId || isAdmin());
+            allow write: if request.auth != null && request.auth.uid == userId;
+          }
+        }
+
+        // -----------------------------------------------------------------------
+        // AUDIT LOG (mudanças de papel/skills) e CATÁLOGO DE SKILLS — só admin.
+        // O log só aceita 'undone' como alteração; nunca é apagado.
+        // -----------------------------------------------------------------------
+        match /audit_log/{logId} {
+          allow read: if isAdmin();
+          allow create: if isAdmin() &&
+            request.resource.data.actorId == request.auth.uid;
+          allow update: if isAdmin() &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['undone']);
+          allow delete: if false;
+        }
+
+        match /skills_catalog/{skillId} {
+          allow read, write: if isAdmin();
         }
 
         // -----------------------------------------------------------------------
@@ -81,7 +134,7 @@ service cloud.firestore {
         match /payment_requests/{requestId} {
           allow read: if request.auth != null &&
             (resource.data.userId == request.auth.uid || isFinanceApprover());
-          allow create: if request.auth != null &&
+          allow create: if isMember() &&
             request.resource.data.userId == request.auth.uid &&
             request.resource.data.status == 'pending_approval';
           allow update: if isFinanceApprover() &&
@@ -105,9 +158,8 @@ service cloud.firestore {
         // Path: .../announcements/{announcementId}
         // -----------------------------------------------------------------------
         match /announcements/{announcementId} {
-          allow read: if request.auth != null;
-          allow write: if request.auth != null && 
-            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
+          allow read: if isMember();
+          allow write: if hasSkill('mural.publicar');
         }
 
         // -----------------------------------------------------------------------
@@ -115,21 +167,20 @@ service cloud.firestore {
         // Path: .../financial/{userId}
         // -----------------------------------------------------------------------
         match /financial/{userId} {
-          allow read: if request.auth != null && (request.auth.uid == userId || 
-            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin');
-          
+          allow read: if request.auth != null &&
+            (request.auth.uid == userId || hasSkill('financeiro.gerenciar'));
+
           match /monthly_fees/{feeId} {
-            allow read: if request.auth != null && (request.auth.uid == userId || 
-              get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin');
-            allow write: if request.auth != null && 
-              get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
+            allow read: if request.auth != null &&
+              (request.auth.uid == userId || hasSkill('financeiro.gerenciar'));
+            allow write: if hasSkill('financeiro.gerenciar');
           }
 
           match /bazaar_debts/{debtId} {
-            allow read: if request.auth != null && (request.auth.uid == userId || 
-              get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin');
-            allow write: if request.auth != null && 
-              get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
+            allow read: if request.auth != null &&
+              (request.auth.uid == userId ||
+                hasSkill('bazar.gerenciar') || hasSkill('financeiro.gerenciar'));
+            allow write: if hasSkill('bazar.gerenciar');
           }
         }
 
@@ -138,8 +189,7 @@ service cloud.firestore {
         // Path: .../financial_goals/{goalId}
         // -----------------------------------------------------------------------
         match /financial_goals/{goalId} {
-          allow read, write: if request.auth != null && 
-            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
+          allow read, write: if hasSkill('financeiro.gerenciar');
         }
 
         // -----------------------------------------------------------------------
@@ -147,13 +197,17 @@ service cloud.firestore {
         // Path: .../events/{eventId}
         // -----------------------------------------------------------------------
         match /events/{eventId} {
+          // Visitante enxerga o calendário; o resto é de membros.
           allow read: if request.auth != null;
-          allow write: if request.auth != null && 
-            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
-          
+          allow write: if hasSkill('calendario.gerenciar');
+          // Faxina: quem tem a skill altera SÓ escala e presença de faxina.
+          allow update: if hasSkill('limpeza.gerenciar') &&
+            request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['cleaningCrew', 'confirmedAttendance', 'updatedAt']);
+
           match /confirmations/{userId} {
             allow read: if request.auth != null;
-            allow write: if request.auth != null && request.auth.uid == userId;
+            allow write: if isMember() && request.auth.uid == userId;
           }
         }
 
@@ -162,9 +216,8 @@ service cloud.firestore {
         // Path: .../studies/{docId}
         // -----------------------------------------------------------------------
         match /studies/{docId} {
-          allow read: if request.auth != null;
-          allow write: if request.auth != null && 
-            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
+          allow read: if isMember();
+          allow write: if hasSkill('estudos.gerenciar');
         }
         // -----------------------------------------------------------------------
         // CAMBONE SCHEDULES SUBCOLLECTION
@@ -172,8 +225,7 @@ service cloud.firestore {
         // -----------------------------------------------------------------------
         match /cambone_schedules/{scheduleId} {
           allow read: if true;
-          allow write: if request.auth != null && 
-            get(/databases/$(database)/documents/environments/$(env)/tenants/$(tenantId)/users/$(request.auth.uid)).data.role == 'admin';
+          allow write: if hasSkill('calendario.gerenciar');
         }
       }
     }
@@ -191,8 +243,11 @@ service cloud.firestore {
     // -----------------------------------------------------------------------
     match /notifications_queue/{docId} {
       // Permite criar apenas se o usuário estiver logado e for admin no tenant/env especificado
-      allow create: if request.auth != null && 
-        get(/databases/$(database)/documents/environments/$(request.resource.data.env)/tenants/$(request.resource.data.tenantId)/users/$(request.auth.uid)).data.role == 'admin';
+      // Admin, ou membro com a skill 'notificacoes.enviar' (no tenant/env do doc).
+      allow create: if request.auth != null && (
+        get(/databases/$(database)/documents/environments/$(request.resource.data.env)/tenants/$(request.resource.data.tenantId)/users/$(request.auth.uid)).data.role == 'admin' ||
+        (get(/databases/$(database)/documents/environments/$(request.resource.data.env)/tenants/$(request.resource.data.tenantId)/users/$(request.auth.uid)).data.role == 'user' &&
+          'notificacoes.enviar' in get(/databases/$(database)/documents/environments/$(request.resource.data.env)/tenants/$(request.resource.data.tenantId)/users/$(request.auth.uid)).data.get('skills', [])));
       
       // Proíbe leitura, update ou delete pelo app (apenas Cloud Functions devem gerenciar)
       allow read, update, delete: if false;

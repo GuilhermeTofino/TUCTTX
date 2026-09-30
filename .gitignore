@@ -34,3 +34,5 @@ env.json
 .widget_preview/
 .DS_Store
 functions-whatsapp/node_modules
+
+firestore-tests/node_modules

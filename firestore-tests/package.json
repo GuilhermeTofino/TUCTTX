@@ -1,0 +1,12 @@
+{
+  "name": "firestore-rules-tests",
+  "private": true,
+  "description": "Testes das regras do Firestore/Storage contra o emulador. Rode: npm test (na raiz do repo: ver firestore-tests/README.md)",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 --test-timeout=60000"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "firebase": "^12.0.0"
+  }
+}
