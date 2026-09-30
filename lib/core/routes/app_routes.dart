@@ -3,6 +3,7 @@ import 'package:app_tenda/features/admin/presentation/views/member_management_vi
 import 'package:app_tenda/features/admin/presentation/views/menu_management_view.dart';
 import 'package:app_tenda/features/calendar/presentation/views/calendar_view.dart';
 import 'package:app_tenda/features/finance/presentation/views/financial_hub_view.dart';
+import 'package:app_tenda/features/finance/presentation/views/receipt_review_view.dart';
 import 'package:app_tenda/features/admin/presentation/views/admin_announcements_view.dart';
 import 'package:app_tenda/features/admin/presentation/views/admin_studies_view.dart';
 import 'package:app_tenda/features/admin/presentation/views/admin_cleaning_dashboard_view.dart';
@@ -40,6 +41,7 @@ class AppRoutes {
   static const String adminCambone = '/admin-cambone';
   static const String myEntities = '/my-entities';
   static const String houseEntities = '/admin-house-entities';
+  static const String receiptReview = '/receipt-review';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -113,6 +115,16 @@ class AppRoutes {
 
       case houseEntities:
         return MaterialPageRoute(builder: (_) => const HouseEntitiesView());
+
+      case receiptReview:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final requestId = args?['requestId'] as String?;
+        if (requestId == null || requestId.isEmpty) {
+          return _errorRoute("Solicitação não informada.");
+        }
+        return MaterialPageRoute(
+          builder: (_) => ReceiptReviewView(requestId: requestId),
+        );
 
       default:
         return _errorRoute("Rota não encontrada: ${settings.name}");

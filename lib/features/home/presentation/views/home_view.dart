@@ -15,6 +15,7 @@ import 'package:app_tenda/features/calendar/presentation/viewmodels/calendar_vie
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 import 'package:app_tenda/features/announcements/domain/models/announcement_model.dart';
 import 'package:app_tenda/core/services/version_check_service.dart';
+import 'package:app_tenda/core/services/push_navigation_service.dart';
 import 'package:app_tenda/features/home/presentation/widgets/home_highlights_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:app_tenda/core/services/dynamic_island/dynamic_island_service.dart';
@@ -220,6 +221,9 @@ class _HomeViewState extends State<HomeView> {
 
   void _onUserLoaded() {
     if (_viewModel.currentUser != null) {
+      // Se um push levou o usuário até aqui (ex.: via login), segue para o destino.
+      getIt<PushNavigationService>().onHomeReady();
+
       final tenantSlug = _viewModel.currentUser!.tenantSlug;
       _announcementVM.listenToAnnouncements(tenantSlug);
 
@@ -280,6 +284,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void dispose() {
+    getIt<PushNavigationService>().onHomeGone();
     _viewModel.removeListener(_onUserLoaded);
     _announcementVM.removeListener(_checkForNewAnnouncements);
     super.dispose();

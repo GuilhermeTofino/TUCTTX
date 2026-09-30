@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/core/services/notification_repository.dart';
+import 'package:app_tenda/core/services/push_navigation_service.dart';
 
 class NotificationService {
   final NotificationRepository _repository;
@@ -42,7 +45,11 @@ class NotificationService {
     );
 
     // Na versão < 20.0.0, o parâmetro é posicional
-    await _localNotifications.initialize(initializationSettings);
+    // O toque na notificação local (app aberto no Android) leva o payload.
+    await _localNotifications.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: _handleLocalNotificationTap,
+    );
 
     // 3. Listeners
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
@@ -111,12 +118,34 @@ class NotificationService {
             presentSound: true,
           ),
         ),
+        payload: jsonEncode(message.data),
       );
     }
   }
 
   void _handleMessageOpened(RemoteMessage message) {
-    // Lógica para quando o usuário clica na notificação
+    // App em segundo plano: o usuário tocou na notificação
     if (kDebugMode) print("Notificação clicada: ${message.data}");
+    getIt<PushNavigationService>().handle(message.data);
+  }
+
+  void _handleLocalNotificationTap(NotificationResponse response) {
+    final payload = response.payload;
+    if (payload == null || payload.isEmpty) return;
+    try {
+      final data = Map<String, dynamic>.from(jsonDecode(payload) as Map);
+      getIt<PushNavigationService>().handle(data);
+    } catch (e) {
+      if (kDebugMode) print("Payload de notificação inválido: $e");
+    }
+  }
+
+  /// App encerrado: a notificação que abriu o app, se houver. Chamar após o
+  /// runApp, para o navegador já existir.
+  Future<void> handleInitialMessage() async {
+    final message = await _fcm.getInitialMessage();
+    if (message != null) {
+      getIt<PushNavigationService>().handle(message.data);
+    }
   }
 }

@@ -18,6 +18,7 @@ import 'package:app_tenda/core/services/notification_repository.dart';
 import 'package:app_tenda/core/services/firebase_notification_repository.dart';
 import 'package:app_tenda/core/services/notification_service.dart';
 import 'package:app_tenda/core/services/push_trigger_service.dart';
+import 'package:app_tenda/core/services/push_navigation_service.dart';
 import 'package:app_tenda/core/services/calendar_service.dart';
 import 'package:app_tenda/features/finance/domain/repositories/finance_repository.dart';
 import 'package:app_tenda/features/finance/domain/repositories/payment_request_repository.dart';
@@ -66,6 +67,9 @@ Future<void> setupServiceLocator() async {
   );
   getIt.registerLazySingleton<PushTriggerService>(() => PushTriggerService());
   getIt.registerLazySingleton<CalendarService>(() => CalendarService());
+  getIt.registerLazySingleton<PushNavigationService>(
+    () => PushNavigationService(),
+  );
 
   final geminiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
   if (geminiKey.isEmpty) {

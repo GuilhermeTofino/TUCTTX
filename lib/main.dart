@@ -12,6 +12,7 @@ import 'package:app_tenda/core/routes/app_routes.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:app_tenda/core/services/notification_service.dart';
+import 'package:app_tenda/core/services/push_navigation_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:app_tenda/core/services/layout_service.dart';
@@ -124,8 +125,11 @@ void main() async {
       cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
     );
 
+    getIt<PushNavigationService>().attach(navigatorKey);
+
     runApp(const MyApp());
     unawaited(_initDeepLinks());
+    unawaited(getIt<NotificationService>().handleInitialMessage());
   } catch (e, stack) {
     dev.log("ERRO CRÍTICO NA INICIALIZAÇÃO: $e");
     dev.log("Stack: $stack");

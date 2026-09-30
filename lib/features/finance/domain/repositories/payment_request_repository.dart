@@ -17,6 +17,12 @@ abstract class PaymentRequestRepository {
   });
 
   Future<void> createRequest(PaymentRequestModel request);
+
+  /// Uma solicitação pelo id; null se não existir.
+  Future<PaymentRequestModel?> getRequest(String requestId);
+
+  /// Ids dos admins marcados como aprovadores do financeiro.
+  Future<List<String>> getApproverIds();
 }
 
 class FirebasePaymentRequestRepository extends BaseFirestoreDataSource
@@ -70,5 +76,22 @@ class FirebasePaymentRequestRepository extends BaseFirestoreDataSource
       'payment_requests',
       request.id,
     ).set(request.toMap());
+  }
+
+  @override
+  Future<PaymentRequestModel?> getRequest(String requestId) async {
+    final doc = await tenantDocument('payment_requests', requestId).get();
+    if (!doc.exists || doc.data() == null) return null;
+    return PaymentRequestModel.fromMap(
+      doc.data() as Map<String, dynamic>,
+      doc.id,
+    );
+  }
+
+  @override
+  Future<List<String>> getApproverIds() async {
+    final doc = await tenantDocument('settings', 'finance').get();
+    final data = doc.data() as Map<String, dynamic>?;
+    return List<String>.from(data?['approverIds'] ?? const []);
   }
 }
