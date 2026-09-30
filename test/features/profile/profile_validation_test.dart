@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app_tenda/features/profile/domain/profile_validation.dart';
 import 'package:app_tenda/features/profile/domain/models/health_data_model.dart';
+import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
 
 void main() {
   group('nome', () {
@@ -37,6 +38,16 @@ void main() {
     test('hoje é aceito', () => expect(ProfileValidation.birthDate(now, now: now), isNull));
   });
 
+  group('campo obrigatório', () {
+    test('vazio ou só espaços é recusado, com a mensagem pedida', () {
+      expect(ProfileValidation.required(null, 'falta'), 'falta');
+      expect(ProfileValidation.required('   ', 'falta'), 'falta');
+    });
+    test('texto livre é aceito (contato pode ter nome e número)', () {
+      expect(ProfileValidation.required('Mãe (11) 98888-7777', 'falta'), isNull);
+    });
+  });
+
   test('campo opcional em branco vira null', () {
     expect(ProfileValidation.optional('   '), isNull);
     expect(ProfileValidation.optional(null), isNull);
@@ -56,6 +67,18 @@ void main() {
     test('fromMap lê os quatro campos', () {
       final h = HealthData.fromMap({'alergias': 'a', 'medicamentos': 'm', 'condicoesMedicas': 'c', 'tipoSanguineo': 'O+'});
       expect([h.alergias, h.medicamentos, h.condicoesMedicas, h.tipoSanguineo], ['a', 'm', 'c', 'O+']);
+    });
+  });
+
+  group('campos que o próprio usuário pode editar', () {
+    test('inclui o que o membro completa depois de aprovado', () {
+      expect(UserRepository.personalFields,
+          containsAll(['name', 'phone', 'photoUrl', 'emergencyContact', 'jaTirouSanto', 'jogoComTata']));
+    });
+    test('NUNCA inclui acesso nem dados que só o sistema grava', () {
+      for (final blocked in ['role', 'status', 'skills', 'fcmTokens', 'email', 'tenantSlug', 'createdAt', 'id']) {
+        expect(UserRepository.personalFields.contains(blocked), isFalse, reason: blocked);
+      }
     });
   });
 }

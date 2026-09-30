@@ -8,9 +8,14 @@ import 'package:app_tenda/features/profile/domain/models/health_data_model.dart'
 import 'package:app_tenda/features/profile/domain/profile_validation.dart';
 import 'package:app_tenda/features/profile/presentation/viewmodels/edit_profile_viewmodel.dart';
 
-/// "Editar Meu Cadastro": qualquer perfil (consulente, filho de santo ou admin)
-/// edita os próprios dados pessoais. Papel, status e permissões não aparecem
-/// aqui: só o admin muda, e as regras do Firestore travam de qualquer forma.
+/// "Editar Meu Cadastro".
+///
+/// - Consulente (visitante): só foto, nome e telefone.
+/// - Membro e admin: tudo (dados pessoais, contato de emergência, fundamento,
+///   entidades e saúde).
+///
+/// Papel, status e permissões nunca aparecem aqui: só o admin muda, e as regras do
+/// Firestore travam de qualquer forma.
 class EditProfileView extends StatefulWidget {
   const EditProfileView({super.key});
 
@@ -24,6 +29,7 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   final _name = TextEditingController();
   final _phone = TextEditingController();
+  final _emergency = TextEditingController();
   final _endereco = TextEditingController();
   final _orixaFrente = TextEditingController();
   final _orixaJunto = TextEditingController();
@@ -32,6 +38,8 @@ class _EditProfileViewState extends State<EditProfileView> {
   final _medicamentos = TextEditingController();
   final _condicoes = TextEditingController();
   DateTime? _dataNascimento;
+  bool _jaTirouSanto = false;
+  bool _jogoComTata = false;
   bool _populated = false;
 
   @override
@@ -43,7 +51,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   @override
   void dispose() {
     for (final c in [
-      _name, _phone, _endereco, _orixaFrente, _orixaJunto,
+      _name, _phone, _emergency, _endereco, _orixaFrente, _orixaJunto,
       _tipoSanguineo, _alergias, _medicamentos, _condicoes,
     ]) {
       c.dispose();
@@ -60,10 +68,13 @@ class _EditProfileViewState extends State<EditProfileView> {
     _populated = true;
     _name.text = user.name;
     _phone.text = user.phone;
+    _emergency.text = user.emergencyContact;
     _endereco.text = user.endereco ?? '';
     _orixaFrente.text = user.orixaFrente ?? '';
     _orixaJunto.text = user.orixaJunto ?? '';
     _dataNascimento = user.dataNascimento;
+    _jaTirouSanto = user.jaTirouSanto;
+    _jogoComTata = user.jogoComTata;
     final health = _viewModel.health;
     _tipoSanguineo.text = health.tipoSanguineo ?? '';
     _alergias.text = health.alergias ?? '';
@@ -90,21 +101,28 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   Future<void> _save() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
+    final basic = _viewModel.user?.isVisitor ?? false;
+
     final error = await _viewModel.save(
-      ProfileInput(
-        name: _name.text,
-        phone: _phone.text,
-        dataNascimento: _dataNascimento,
-        endereco: _endereco.text,
-        orixaFrente: _orixaFrente.text,
-        orixaJunto: _orixaJunto.text,
-        health: HealthData(
-          tipoSanguineo: _tipoSanguineo.text,
-          alergias: _alergias.text,
-          medicamentos: _medicamentos.text,
-          condicoesMedicas: _condicoes.text,
-        ),
-      ),
+      basic
+          ? ProfileInput.basic(name: _name.text, phone: _phone.text)
+          : ProfileInput(
+              name: _name.text,
+              phone: _phone.text,
+              emergencyContact: _emergency.text,
+              dataNascimento: _dataNascimento,
+              endereco: _endereco.text,
+              jaTirouSanto: _jaTirouSanto,
+              jogoComTata: _jogoComTata,
+              orixaFrente: _orixaFrente.text,
+              orixaJunto: _orixaJunto.text,
+              health: HealthData(
+                tipoSanguineo: _tipoSanguineo.text,
+                alergias: _alergias.text,
+                medicamentos: _medicamentos.text,
+                condicoesMedicas: _condicoes.text,
+              ),
+            ),
     );
     if (!mounted) return;
     if (error != null) {
@@ -161,6 +179,8 @@ class _EditProfileViewState extends State<EditProfileView> {
   Widget _buildForm(tenant) {
     final user = _viewModel.user!;
     final saving = _viewModel.isSaving;
+    // Consulente: só o essencial (foto, nome e telefone).
+    final basic = user.isVisitor;
 
     return Form(
       key: _formKey,
@@ -192,42 +212,61 @@ class _EditProfileViewState extends State<EditProfileView> {
             enabled: false,
             decoration: _dec('E-mail', helper: 'O e-mail é o seu login e não pode ser alterado aqui.'),
           ),
-          const SizedBox(height: 12),
-          InkWell(
-            onTap: _pickDate,
-            child: InputDecorator(
-              decoration: _dec('Data de nascimento'),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _dataNascimento == null
-                          ? 'Toque para escolher'
-                          : DateFormat('dd/MM/yyyy').format(_dataNascimento!),
+
+          if (!basic) ...[
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _emergency,
+              decoration: _dec('Contato de emergência', helper: 'Nome e telefone de quem devemos avisar.'),
+              validator: (v) => ProfileValidation.required(v, 'Informe um contato de emergência.'),
+            ),
+            const SizedBox(height: 12),
+            InkWell(
+              onTap: _pickDate,
+              child: InputDecorator(
+                decoration: _dec('Data de nascimento'),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _dataNascimento == null
+                            ? 'Toque para escolher'
+                            : DateFormat('dd/MM/yyyy').format(_dataNascimento!),
+                      ),
                     ),
-                  ),
-                  if (_dataNascimento != null)
-                    GestureDetector(
-                      onTap: () => setState(() => _dataNascimento = null),
-                      child: const Icon(Icons.clear, size: 18),
-                    ),
-                ],
+                    if (_dataNascimento != null)
+                      GestureDetector(
+                        onTap: () => setState(() => _dataNascimento = null),
+                        child: const Icon(Icons.clear, size: 18),
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _endereco,
-            textCapitalization: TextCapitalization.sentences,
-            decoration: _dec('Endereço'),
-          ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _endereco,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: _dec('Endereço'),
+            ),
 
-          _section('Fundamento'),
-          TextFormField(controller: _orixaFrente, decoration: _dec('Santo de cabeça (Orixá de frente)')),
-          const SizedBox(height: 12),
-          TextFormField(controller: _orixaJunto, decoration: _dec('Orixá junto')),
-          // Entidades são coisa de membro: o consulente não vê este atalho.
-          if (!user.isVisitor) ...[
+            _section('Fundamento'),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Já tirou santo?'),
+              value: _jaTirouSanto,
+              onChanged: (v) => setState(() => _jaTirouSanto = v),
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Joga com Tata?'),
+              value: _jogoComTata,
+              onChanged: (v) => setState(() => _jogoComTata = v),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(controller: _orixaFrente, decoration: _dec('Santo de cabeça (Orixá de frente)')),
+            const SizedBox(height: 12),
+            TextFormField(controller: _orixaJunto, decoration: _dec('Orixá junto')),
             const SizedBox(height: 4),
             ListTile(
               contentPadding: EdgeInsets.zero,
@@ -237,36 +276,36 @@ class _EditProfileViewState extends State<EditProfileView> {
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () => Navigator.pushNamed(context, AppRoutes.myEntities),
             ),
-          ],
 
-          _section('Saúde'),
-          Container(
-            padding: const EdgeInsets.all(12),
-            margin: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.06),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.lock_outline, size: 18, color: Colors.blue),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Estes dados ficam protegidos: só você e a administração da casa conseguem ver.',
-                    style: TextStyle(fontSize: 12),
+            _section('Saúde'),
+            Container(
+              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.06),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.lock_outline, size: 18, color: Colors.blue),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Estes dados ficam protegidos: só você e a administração da casa conseguem ver.',
+                      style: TextStyle(fontSize: 12),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          TextFormField(controller: _tipoSanguineo, decoration: _dec('Tipo sanguíneo')),
-          const SizedBox(height: 12),
-          TextFormField(controller: _alergias, maxLines: 2, decoration: _dec('Alergias')),
-          const SizedBox(height: 12),
-          TextFormField(controller: _medicamentos, maxLines: 2, decoration: _dec('Medicamentos')),
-          const SizedBox(height: 12),
-          TextFormField(controller: _condicoes, maxLines: 2, decoration: _dec('Condições médicas')),
+            TextFormField(controller: _tipoSanguineo, decoration: _dec('Tipo sanguíneo')),
+            const SizedBox(height: 12),
+            TextFormField(controller: _alergias, maxLines: 2, decoration: _dec('Alergias')),
+            const SizedBox(height: 12),
+            TextFormField(controller: _medicamentos, maxLines: 2, decoration: _dec('Medicamentos')),
+            const SizedBox(height: 12),
+            TextFormField(controller: _condicoes, maxLines: 2, decoration: _dec('Condições médicas')),
+          ],
 
           const SizedBox(height: 28),
           FilledButton(

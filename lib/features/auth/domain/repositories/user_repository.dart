@@ -34,6 +34,10 @@ abstract class UserRepository {
     'dataNascimento',
     'orixaFrente',
     'orixaJunto',
+    // O consulente se cadastra só com o básico; estes o membro completa depois.
+    'emergencyContact',
+    'jaTirouSanto',
+    'jogoComTata',
   };
 
   /// Atualiza SÓ os campos pessoais informados, sem regravar o perfil inteiro

@@ -12,11 +12,19 @@ import 'package:app_tenda/features/profile/domain/profile_validation.dart';
 
 /// Dados que o usuário pode editar no próprio cadastro. Nunca inclui role,
 /// status nem skills: só o admin muda (e as regras do Firestore travam).
+///
+/// O consulente só tem nome e telefone ([ProfileInput.basic]): o resto do cadastro
+/// (contato de emergência, fundamento, saúde, endereço) ele completa depois de
+/// aprovado como membro.
 class ProfileInput {
   final String name;
   final String phone;
+  final bool basicOnly;
   final DateTime? dataNascimento;
   final String? endereco;
+  final String? emergencyContact;
+  final bool jaTirouSanto;
+  final bool jogoComTata;
   final String? orixaFrente;
   final String? orixaJunto;
   final HealthData health;
@@ -26,10 +34,24 @@ class ProfileInput {
     required this.phone,
     this.dataNascimento,
     this.endereco,
+    this.emergencyContact,
+    this.jaTirouSanto = false,
+    this.jogoComTata = false,
     this.orixaFrente,
     this.orixaJunto,
     this.health = const HealthData(),
-  });
+  }) : basicOnly = false;
+
+  const ProfileInput.basic({required this.name, required this.phone})
+    : basicOnly = true,
+      dataNascimento = null,
+      endereco = null,
+      emergencyContact = null,
+      jaTirouSanto = false,
+      jogoComTata = false,
+      orixaFrente = null,
+      orixaJunto = null,
+      health = const HealthData();
 }
 
 class EditProfileViewModel extends ChangeNotifier {
@@ -133,7 +155,13 @@ class EditProfileViewModel extends ChangeNotifier {
 
     final error = ProfileValidation.name(input.name) ??
         ProfileValidation.phone(input.phone) ??
-        ProfileValidation.birthDate(input.dataNascimento);
+        (input.basicOnly
+            ? null
+            : ProfileValidation.birthDate(input.dataNascimento) ??
+                  ProfileValidation.required(
+                    input.emergencyContact,
+                    'Informe um contato de emergência.',
+                  ));
     if (error != null) return error;
 
     _isSaving = true;
@@ -142,26 +170,37 @@ class EditProfileViewModel extends ChangeNotifier {
       final personal = <String, dynamic>{
         'name': input.name.trim(),
         'phone': input.phone.trim(),
-        'endereco': ProfileValidation.optional(input.endereco),
-        'orixaFrente': ProfileValidation.optional(input.orixaFrente),
-        'orixaJunto': ProfileValidation.optional(input.orixaJunto),
-        'dataNascimento': input.dataNascimento?.toIso8601String(),
       };
+      // Consulente: só nome e telefone. Nada mais é gravado (nem null em campo que
+      // ele nem vê) e a saúde nem é tocada.
+      if (!input.basicOnly) {
+        personal.addAll({
+          'endereco': ProfileValidation.optional(input.endereco),
+          'emergencyContact': input.emergencyContact!.trim(),
+          'jaTirouSanto': input.jaTirouSanto,
+          'jogoComTata': input.jogoComTata,
+          'orixaFrente': ProfileValidation.optional(input.orixaFrente),
+          'orixaJunto': ProfileValidation.optional(input.orixaJunto),
+          'dataNascimento': input.dataNascimento?.toIso8601String(),
+        });
+      }
       await _userRepository.updatePersonalFields(current.id, personal);
 
       final health = input.health.cleaned();
-      await _userRepository.saveHealth(current.id, health);
+      if (!input.basicOnly) {
+        await _userRepository.saveHealth(current.id, health);
+      }
 
       // Relê o perfil gravado: o copyWith do modelo mantém o valor antigo quando
       // recebe null, então apagar um campo não apareceria na tela.
       final fresh = await _userRepository.getUserProfile(current.id);
       _user = fresh ?? current;
-      _health = health;
+      if (!input.basicOnly) _health = health;
 
       // Atualiza o cartão da Home sem reler tudo.
       final home = getIt<HomeViewModel>();
       if (fresh != null) home.updateCurrentUser(fresh);
-      home.updateOwnHealth(health);
+      if (!input.basicOnly) home.updateOwnHealth(health);
       return null;
     } catch (e) {
       debugPrint('Erro ao salvar cadastro: $e');

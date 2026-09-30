@@ -27,6 +27,11 @@ class ProfileValidation {
     return null;
   }
 
+  /// Campo obrigatório de texto livre (ex.: contato de emergência: nem sempre é
+  /// só um telefone, então só exige que não esteja vazio).
+  static String? required(String? value, String message) =>
+      (value ?? '').trim().isEmpty ? message : null;
+
   /// Texto opcional: vazio vira null (não grava campo em branco).
   static String? optional(String? value) {
     final v = (value ?? '').trim();
