@@ -148,7 +148,7 @@ Só o arquivo é removido. A solicitação e os dados contábeis (valor, `paidAt
 
 # Papéis, skills e dados de saúde
 
-Modelo de acesso: `visitor` (só vê o calendário), `user` (filho de santo; acessa mural, estudos, financeiro etc. e tem as **skills** que o admin marcar) e `admin` (todas as skills + gestão de membros). Todo cadastro novo nasce visitante e pede acesso pelo app; o admin aprova em Painel administrativo → Membros. Toda mudança de papel/skills vai para o `audit_log` e pode ser desfeita pelo histórico do membro.
+Modelo de acesso: `visitor` (só vê o calendário), `user` (filho de santo; acessa mural, estudos, financeiro etc. e tem as **skills** que o admin marcar) e `admin` (todas as skills + gestão de membros). Todo cadastro novo nasce consulente e pede acesso pelo app; o admin aprova em Painel administrativo → Membros. Toda mudança de papel/skills vai para o `audit_log` e pode ser desfeita pelo histórico do membro.
 
 Skills: `calendario.gerenciar`, `mural.publicar`, `estudos.gerenciar`, `financeiro.gerenciar`, `bazar.gerenciar`, `limpeza.gerenciar`, `entidades.moderar`, `notificacoes.enviar`. As regras (`firestore.rules`/`storage.rules`) conhecem exatamente estas 8; se mudar uma, mude em `PermissionService` também. Gestão de membros, atalhos da Home e aprovação de comprovantes continuam só do admin.
 
@@ -189,4 +189,4 @@ node set-feature-flag.js --flag eventReminders --on --apply      # liga (ADMIN_E
 node set-feature-flag.js --flag presenceRemovedPush --off --apply
 ```
 
-O cadastro de visitante é outro interruptor, no Remote Config (`<tenant>_visitor_signup_enabled`). Ver `docs/rollout.md` para a ordem completa de publicação.
+O cadastro de consulente é outro interruptor, no Remote Config (`<tenant>_visitor_signup_enabled`). Ver `docs/rollout.md` para a ordem completa de publicação.

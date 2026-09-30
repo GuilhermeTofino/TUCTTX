@@ -10,7 +10,7 @@ class FeatureFlags {
   String get _visitorSignupKey =>
       '${AppConfig.instance.tenant.tenantSlug}_visitor_signup_enabled';
 
-  /// Cadastros novos entram como visitante? Desligado por padrão: sem parâmetro,
+  /// Cadastros novos entram como consulente? Desligado por padrão: sem parâmetro,
   /// sem internet ou com qualquer falha, devolve false (comportamento de sempre).
   ///
   /// Não mexe em defaults nem no intervalo de busca: o VersionCheckService usa o

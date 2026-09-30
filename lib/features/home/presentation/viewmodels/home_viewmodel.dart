@@ -125,7 +125,7 @@ class HomeViewModel extends ChangeNotifier {
         ),
       );
 
-      // Visitante só enxerga o calendário.
+      // Consulente só enxerga o calendário.
       final user = _currentUser;
       if (user != null) _menus = menusFor(user, _menus);
     } catch (e) {

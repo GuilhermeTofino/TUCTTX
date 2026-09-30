@@ -18,7 +18,7 @@ void main() {
   ];
   List<String> names(MemberTab t, {String q = ''}) => usersForTab(all, t, query: q).map((u) => u.name).toList();
 
-  test('visitantes: só visitantes, quem pediu acesso primeiro', () {
+  test('consulentes: só consulentes, quem pediu acesso primeiro', () {
     expect(names(MemberTab.visitors), ['Eva', 'Davi']);
   });
 
@@ -30,14 +30,14 @@ void main() {
     expect(names(MemberTab.admins), ['Ana', 'Zeca']);
   });
 
-  test('um admin aparece em "membros" e em "admins", nunca em "visitantes"', () {
+  test('um admin aparece em "membros" e em "admins", nunca em "consulentes"', () {
     final ana = all.first;
     expect(MemberTab.members.includes(ana), isTrue);
     expect(MemberTab.admins.includes(ana), isTrue);
     expect(MemberTab.visitors.includes(ana), isFalse);
   });
 
-  test('visitante nunca aparece em membros nem em admins', () {
+  test('consulente nunca aparece em membros nem em admins', () {
     final davi = all[3];
     expect(MemberTab.members.includes(davi), isFalse);
     expect(MemberTab.admins.includes(davi), isFalse);

@@ -33,8 +33,8 @@ Com `USE_EMULATOR=true` o app mostra a faixa **EMULADOR** no canto e recusa abri
 | admin2@teste.dev | Bruno Admin, admin e aprovador do financeiro |
 | membro@teste.dev | Carla Membro, sem permissões, com 12 mensalidades e dados de saúde |
 | mural@teste.dev | Diego Mural, membro com a skill "publicar no mural" |
-| visitante@teste.dev | Elisa Visitante, visitante ativo |
-| pendente@teste.dev | Fabio Pendente, visitante que já pediu acesso |
+| visitante@teste.dev | Elisa Consulente, consulente ativo |
+| pendente@teste.dev | Fabio Pendente, consulente que já pediu acesso |
 
 ## O que o emulador NÃO cobre
 

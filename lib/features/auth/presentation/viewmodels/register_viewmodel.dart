@@ -45,7 +45,7 @@ class RegisterViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Modo visitante é um interruptor (Remote Config); desligado = cadastro como sempre.
+      // Modo consulente é um interruptor (Remote Config); desligado = cadastro como sempre.
       final role = signupRoleFor(
         visitorSignupEnabled: await getIt<FeatureFlags>().visitorSignupEnabled(),
       );

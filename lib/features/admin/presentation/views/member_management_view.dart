@@ -103,7 +103,7 @@ class _MemberManagementViewState extends State<MemberManagementView>
     }
     switch (tab) {
       case MemberTab.visitors:
-        return "Nenhum visitante.";
+        return "Nenhum consulente.";
       case MemberTab.members:
         return "Nenhum membro encontrado.";
       case MemberTab.admins:
@@ -142,8 +142,8 @@ class _MemberManagementViewState extends State<MemberManagementView>
         unselectedLabelColor: Colors.grey[600],
         indicatorColor: Theme.of(context).colorScheme.primary,
         tabs: [
-          // O ponto laranja avisa que há visitante esperando aprovação.
-          tab("Visitantes", MemberTab.visitors, dot: pending > 0),
+          // O ponto laranja avisa que há consulente esperando aprovação.
+          tab("Consulentes", MemberTab.visitors, dot: pending > 0),
           tab("Membros", MemberTab.members),
           tab("Admins", MemberTab.admins),
         ],
@@ -271,7 +271,7 @@ class _MemberManagementViewState extends State<MemberManagementView>
         onEditSkills: _editSkills,
         onDemoteToVisitor: (m) => _run(
           () => _viewModel.demoteToVisitor(m),
-          "${m.name} foi rebaixado(a) para visitante.",
+          "${m.name} foi rebaixado(a) para consulente.",
         ),
         onShowHistory: (m) => showAuditHistorySheet(
           context,
@@ -283,7 +283,7 @@ class _MemberManagementViewState extends State<MemberManagementView>
   }
 
   String _roleLabel(UserModel member) {
-    if (member.isPendingApproval && member.isVisitor) return "VISITANTE · PEDIU ACESSO";
+    if (member.isPendingApproval && member.isVisitor) return "CONSULENTE · PEDIU ACESSO";
     switch (member.role) {
       case 'admin':
         return "ADMIN";
@@ -291,7 +291,7 @@ class _MemberManagementViewState extends State<MemberManagementView>
         final n = member.skills.length;
         return n == 0 ? "MEMBRO" : "MEMBRO · $n ${n == 1 ? 'PERMISSÃO' : 'PERMISSÕES'}";
       default:
-        return "VISITANTE";
+        return "CONSULENTE";
     }
   }
 

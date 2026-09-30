@@ -13,7 +13,7 @@ Publicar por trás: primeiro o que é invisível e compatível com o app atual, 
 | 1 | Regras do Firestore e Storage | Não (compatíveis com o app atual; 131 testes) |
 | 2 | Functions novas, **desligadas** | Não |
 | 3 | Dados de configuração (aprovadores, interruptores) | Não |
-| 4 | App novo nas lojas, cadastro de visitante **desligado** | Só vê "Editar Meu Cadastro" |
+| 4 | App novo nas lojas, cadastro de consulente **desligado** | Só vê "Editar Meu Cadastro" |
 | 5 | Atualização forçada (automática) e migração da saúde | Não |
 | 6 | Ligar novidades, uma por vez | Sim, de propósito |
 | 7 | Tirar a compatibilidade com o app antigo das regras | Não |
@@ -85,7 +85,7 @@ ADMIN_ENV=prod node scripts/admin/set-feature-flag.js --flag eventReminders --on
 ADMIN_ENV=prod node scripts/admin/set-feature-flag.js --flag presenceRemovedPush --on --apply
 ```
 
-Cadastro de visitante: no Remote Config, `tucttx_visitor_signup_enabled` = true e publicar. Chega aos aparelhos em até 1 hora. **Antes de ligar**, combine quem vai aprovar visitantes (Membros → filtro "Aguardando aprovação"), porque cadastros novos passam a ver só o calendário.
+Cadastro de consulente: no Remote Config, `tucttx_visitor_signup_enabled` = true e publicar. Chega aos aparelhos em até 1 hora. **Antes de ligar**, combine quem vai aprovar consulentes (Membros → filtro "Aguardando aprovação"), porque cadastros novos passam a ver só o calendário.
 
 Para desligar qualquer um, o mesmo comando com `--off` (Remote Config: valor false).
 
@@ -96,5 +96,5 @@ Depois da fase 5 concluída, um commit de regras: parar de aceitar cadastro com 
 ## O que os usuários sentem em cada caso
 
 - Quem já usa o app: o item **Editar Meu Cadastro** nas configurações. Nada mais, até a fase 6.
-- Admins: novas opções no cartão do membro (aprovar visitante, permissões, histórico).
-- Quem entra pela primeira vez, só depois de ligar o cadastro de visitante: vê apenas o calendário até ser aprovado.
+- Admins: novas opções no cartão do membro (aprovar consulente, permissões, histórico).
+- Quem entra pela primeira vez, só depois de ligar o cadastro de consulente: vê apenas o calendário até ser aprovado.

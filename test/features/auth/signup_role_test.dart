@@ -6,7 +6,7 @@ void main() {
     expect(signupRoleFor(visitorSignupEnabled: false), 'user');
   });
 
-  test('interruptor ligado: cadastro entra como visitante', () {
+  test('interruptor ligado: cadastro entra como consulente', () {
     expect(signupRoleFor(visitorSignupEnabled: true), 'visitor');
   });
 }

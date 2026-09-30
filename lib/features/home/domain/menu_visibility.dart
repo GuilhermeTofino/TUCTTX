@@ -1,7 +1,7 @@
 import 'package:app_tenda/core/services/menu_option_model.dart';
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 
-/// Ações de menu que o visitante pode abrir: só o calendário. O resto (finanças,
+/// Ações de menu que o consulente pode abrir: só o calendário. O resto (finanças,
 /// estudos, cambones, entidades da casa) é de membros; as regras já barram os dados.
 const Set<String> visitorMenuActions = {'route:/calendar'};
 

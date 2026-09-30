@@ -21,7 +21,7 @@ void main() {
     menu('route:/admin-house-entities'),
   ];
 
-  test('visitante só vê o calendário', () {
+  test('consulente só vê o calendário', () {
     expect(menusFor(user('visitor'), all).map((m) => m.action), ['route:/calendar']);
   });
 
@@ -30,7 +30,7 @@ void main() {
     expect(menusFor(user('admin'), all), hasLength(5));
   });
 
-  test('sem menu de calendário, o visitante não vê nada', () {
+  test('sem menu de calendário, o consulente não vê nada', () {
     expect(menusFor(user('visitor'), [menu('internal:finance')]), isEmpty);
   });
 

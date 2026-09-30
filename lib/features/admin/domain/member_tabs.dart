@@ -1,7 +1,7 @@
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 
 /// Abas da lista de membros.
-///  - [visitors]: quem ainda é visitante;
+///  - [visitors]: quem ainda é consulente;
 ///  - [members]: filhos de santo E administradores (admin também é membro);
 ///  - [admins]: só os administradores (por isso um admin aparece em duas abas).
 enum MemberTab { visitors, members, admins }
@@ -20,7 +20,7 @@ extension MemberTabRules on MemberTab {
 }
 
 /// Usuários de uma aba, já filtrados pela [query] (nome ou e-mail, sem
-/// diferenciar maiúsculas) e ordenados. Na aba de visitantes quem pediu acesso vem
+/// diferenciar maiúsculas) e ordenados. Na aba de consulentes quem pediu acesso vem
 /// primeiro, porque é quem está esperando resposta; depois, por nome.
 List<UserModel> usersForTab(
   List<UserModel> all,

@@ -47,6 +47,6 @@ abstract class UserRepository {
   /// Grava os dados de saúde na subcoleção privada.
   Future<void> saveHealth(String uid, HealthData health);
 
-  /// Visitante pede aprovação como membro: status active -> pending_approval.
+  /// Consulente pede aprovação como membro: status active -> pending_approval.
   Future<void> requestApproval(String uid);
 }

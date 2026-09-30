@@ -11,8 +11,8 @@
  *   admin2@teste.dev      Bruno Admin      admin  (aprovador do financeiro)
  *   membro@teste.dev      Carla Membro     membro, sem permissões, com mensalidades e dados de saúde
  *   mural@teste.dev       Diego Mural      membro com a skill "publicar no mural"
- *   visitante@teste.dev   Elisa Visitante  visitante ativo
- *   pendente@teste.dev    Fabio Pendente   visitante que já pediu acesso
+ *   visitante@teste.dev   Elisa Consulente  consulente ativo
+ *   pendente@teste.dev    Fabio Pendente   consulente que já pediu acesso
  */
 
 // Fixa o emulador ANTES de carregar o admin SDK.
@@ -31,7 +31,7 @@ const ACCOUNTS = [
     { uid: "seed-admin2", email: "admin2@teste.dev", name: "Bruno Admin", role: "admin" },
     { uid: "seed-membro", email: "membro@teste.dev", name: "Carla Membro", role: "user" },
     { uid: "seed-mural", email: "mural@teste.dev", name: "Diego Mural", role: "user", skills: ["mural.publicar"] },
-    { uid: "seed-visitante", email: "visitante@teste.dev", name: "Elisa Visitante", role: "visitor" },
+    { uid: "seed-visitante", email: "visitante@teste.dev", name: "Elisa Consulente", role: "visitor" },
     { uid: "seed-pendente", email: "pendente@teste.dev", name: "Fabio Pendente", role: "visitor", status: "pending_approval" },
 ];
 
@@ -80,7 +80,7 @@ async function main() {
     // Quem aprova comprovantes.
     await db.doc(`${TENANT}/settings/finance`).set({ approverIds: ["seed-admin", "seed-admin2"] });
 
-    // Atalhos da Home (como em produção: só o Calendário é aberto a visitantes).
+    // Atalhos da Home (como em produção: só o Calendário é aberto a consulentes).
     const menus = [
         { id: "calendario", title: "Calendário", icon: "calendar", color: "primary", action: "route:/calendar", order: 1 },
         { id: "financeiro", title: "Financeiro", icon: "finance", color: "green", action: "internal:finance", order: 2 },
@@ -94,7 +94,7 @@ async function main() {
     await db.doc(`${TENANT}/events/evento-hoje`).set({ title: "Gira de hoje", date: spDate(0, 19), description: "Trazer branco", type: "Gira", cleaningCrew: [], confirmedAttendance: [] });
     await db.doc(`${TENANT}/events/evento-amanha`).set({ title: "Gira de amanhã", date: spDate(1, 19), description: "Roupa branca", type: "Gira", cleaningCrew: [], confirmedAttendance: [] });
 
-    // Mural (para membros; visitante não lê).
+    // Mural (para membros; consulente não lê).
     await db.doc(`${TENANT}/announcements/aviso-1`).set({
         title: "Bem-vindos ao ambiente de teste", body: "Este aviso só existe no emulador.",
         createdAt: admin.firestore.Timestamp.now(), authorId: "seed-admin", authorName: "Ana Admin",

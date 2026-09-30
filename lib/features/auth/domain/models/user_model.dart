@@ -69,7 +69,7 @@ class UserModel {
   bool get isAdmin => role == 'admin';
   bool get isVisitor => role == 'visitor';
 
-  /// Membro = 'user' ou 'admin' (visitante só enxerga o calendário).
+  /// Membro = 'user' ou 'admin' (consulente só enxerga o calendário).
   bool get isMember => role == 'user' || role == 'admin';
   bool get isPendingApproval => status == 'pending_approval';
 

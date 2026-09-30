@@ -38,14 +38,14 @@ class MemberManagementViewModel extends ChangeNotifier {
   String get searchQuery => _searchQuery;
   bool get isLoading => _isLoading;
 
-  /// Usuários de uma aba (visitantes, membros ou admins), com a busca aplicada.
+  /// Usuários de uma aba (consulentes, membros ou admins), com a busca aplicada.
   List<UserModel> membersFor(MemberTab tab) =>
       usersForTab(_allMembers, tab, query: _searchQuery);
 
   /// Quantos usuários a aba mostra agora (respeita a busca).
   int countFor(MemberTab tab) => membersFor(tab).length;
 
-  /// Visitantes que pediram para virar membro (status pending_approval).
+  /// Consulentes que pediram para virar membro (status pending_approval).
   List<UserModel> get pendingApprovalMembers => _allMembers
       .where((u) => u.isVisitor && u.isPendingApproval)
       .toList();
@@ -276,10 +276,10 @@ class MemberManagementViewModel extends ChangeNotifier {
     if (user.isAdmin) await _dropFromApproversIfListed(user.id);
   }
 
-  /// Aprova um visitante como membro ("filho de santo"): role 'user', status 'active'.
+  /// Aprova um consulente como membro ("filho de santo"): role 'user', status 'active'.
   Future<void> approveVisitor(UserModel user) async {
     if (!user.isVisitor) {
-      throw StateError('Só visitantes são aprovados.');
+      throw StateError('Só consulentes são aprovados.');
     }
     _guardAccessChange(user, losesAdmin: false);
     await _changeAccess(user, {'role': 'user', 'status': 'active'});
@@ -294,7 +294,7 @@ class MemberManagementViewModel extends ChangeNotifier {
     await _changeAccess(user, {'skills': skills});
   }
 
-  /// Rebaixa um membro para visitante: perde skills e volta a status 'active'.
+  /// Rebaixa um membro para consulente: perde skills e volta a status 'active'.
   Future<void> demoteToVisitor(UserModel user) async {
     _guardAccessChange(user, losesAdmin: true);
     await _changeAccess(user, {

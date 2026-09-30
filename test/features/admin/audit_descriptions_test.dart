@@ -19,21 +19,21 @@ AuditLogEntry entry(
 );
 
 void main() {
-  test('aprovação de visitante', () {
+  test('aprovação de consulente', () {
     expect(
       describeAuditEntry(entry('role_change',
         {'role': 'visitor', 'status': 'pending_approval'},
         {'role': 'user', 'status': 'active'})),
-      'Papel: Visitante → Filho(a) de santo · Status: Aguardando aprovação → Ativo',
+      'Papel: Consulente → Filho(a) de santo · Status: Aguardando aprovação → Ativo',
     );
   });
 
-  test('rebaixar para visitante mostra que as permissões foram removidas', () {
+  test('rebaixar para consulente mostra que as permissões foram removidas', () {
     expect(
       describeAuditEntry(entry('role_change',
         {'role': 'user', 'skills': ['mural.publicar']},
         {'role': 'visitor', 'skills': <String>[]})),
-      'Papel: Filho(a) de santo → Visitante · Permissões removidas',
+      'Papel: Filho(a) de santo → Consulente · Permissões removidas',
     );
   });
 

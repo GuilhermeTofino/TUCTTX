@@ -8,7 +8,7 @@ import 'package:app_tenda/features/profile/domain/models/health_data_model.dart'
 import 'package:app_tenda/features/profile/domain/profile_validation.dart';
 import 'package:app_tenda/features/profile/presentation/viewmodels/edit_profile_viewmodel.dart';
 
-/// "Editar Meu Cadastro": qualquer perfil (visitante, filho de santo ou admin)
+/// "Editar Meu Cadastro": qualquer perfil (consulente, filho de santo ou admin)
 /// edita os próprios dados pessoais. Papel, status e permissões não aparecem
 /// aqui: só o admin muda, e as regras do Firestore travam de qualquer forma.
 class EditProfileView extends StatefulWidget {
@@ -226,7 +226,7 @@ class _EditProfileViewState extends State<EditProfileView> {
           TextFormField(controller: _orixaFrente, decoration: _dec('Santo de cabeça (Orixá de frente)')),
           const SizedBox(height: 12),
           TextFormField(controller: _orixaJunto, decoration: _dec('Orixá junto')),
-          // Entidades são coisa de membro: o visitante não vê este atalho.
+          // Entidades são coisa de membro: o consulente não vê este atalho.
           if (!user.isVisitor) ...[
             const SizedBox(height: 4),
             ListTile(

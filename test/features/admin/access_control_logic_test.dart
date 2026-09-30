@@ -17,13 +17,13 @@ void main() {
       });
     });
 
-    test('sem role vira visitante', () {
+    test('sem role vira consulente', () {
       expect(accessState({})['role'], 'visitor');
     });
   });
 
   group('planAccessChange', () {
-    test('aprovar visitante pendente: uma entrada role_change com role e status', () {
+    test('aprovar consulente pendente: uma entrada role_change com role e status', () {
       final drafts = planAccessChange(
         current: user(role: 'visitor', status: 'pending_approval'),
         changes: {'role': 'user', 'status': 'active'},
@@ -34,7 +34,7 @@ void main() {
       expect(drafts.single.after, {'role': 'user', 'status': 'active'});
     });
 
-    test('rebaixar para visitante leva as skills junto, na mesma entrada', () {
+    test('rebaixar para consulente leva as skills junto, na mesma entrada', () {
       final drafts = planAccessChange(
         current: user(skills: ['mural.publicar']),
         changes: {'role': 'visitor', 'status': 'active', 'skills': <String>[]},

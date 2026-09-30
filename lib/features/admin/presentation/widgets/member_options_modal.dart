@@ -14,13 +14,13 @@ class MemberOptionsModal extends StatelessWidget {
   final Future<void> Function(UserModel)? onToggleFinanceApprover;
   final bool isFinanceApprover;
 
-  /// Visitante -> membro ("filho de santo").
+  /// Consulente -> membro ("filho de santo").
   final Future<void> Function(UserModel)? onApproveVisitor;
 
   /// Abre a checklist de permissões (só para membros, role 'user').
   final Future<void> Function(UserModel)? onEditSkills;
 
-  /// Membro -> visitante (perde as permissões).
+  /// Membro -> consulente (perde as permissões).
   final Future<void> Function(UserModel)? onDemoteToVisitor;
 
   /// Histórico de mudanças de acesso, com "Desfazer".
@@ -207,12 +207,12 @@ class MemberOptionsModal extends StatelessWidget {
               if (member.role == 'user' && onDemoteToVisitor != null)
                 _buildOptionCard(
                   context,
-                  title: "Rebaixar p/ Visitante",
+                  title: "Rebaixar p/ Consulente",
                   icon: Icons.person_off_outlined,
                   color: Colors.red,
                   onTap: () => _confirm(
                     context,
-                    title: "Rebaixar para visitante",
+                    title: "Rebaixar para consulente",
                     message:
                         "${member.name} perderá o acesso de membro e todas as permissões. Só verá o calendário.",
                     color: Colors.red,

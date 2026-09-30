@@ -30,7 +30,7 @@ void main() {
     expect(service.canManageCalendar(u), isFalse);
   });
 
-  test('visitante nunca tem skill, nem "no papel"', () {
+  test('consulente nunca tem skill, nem "no papel"', () {
     final u = user('visitor', skills: [PermissionService.bulletinPost]);
     for (final skill in PermissionService.allSkills) {
       expect(service.hasSkill(u, skill), isFalse, reason: skill);

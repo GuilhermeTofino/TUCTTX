@@ -2,7 +2,7 @@ import 'package:app_tenda/core/services/permission_service.dart';
 import 'package:app_tenda/features/admin/domain/models/audit_log_entry.dart';
 
 /// Texto em português de uma entrada do histórico de acesso.
-/// Ex.: "Papel: Visitante → Filho(a) de santo · Status: Aguardando aprovação → Ativo".
+/// Ex.: "Papel: Consulente → Filho(a) de santo · Status: Aguardando aprovação → Ativo".
 String describeAuditEntry(AuditLogEntry entry) {
   final body = switch (entry.action) {
     'skill_grant' => _skillsDiff(entry, granted: true),
@@ -13,7 +13,7 @@ String describeAuditEntry(AuditLogEntry entry) {
 }
 
 const _roles = {
-  'visitor': 'Visitante',
+  'visitor': 'Consulente',
   'user': 'Filho(a) de santo',
   'admin': 'Administrador',
 };

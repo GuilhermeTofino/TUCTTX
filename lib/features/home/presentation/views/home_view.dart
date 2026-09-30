@@ -227,7 +227,7 @@ class _HomeViewState extends State<HomeView> {
       getIt<PushNavigationService>().onHomeReady();
 
       final tenantSlug = _viewModel.currentUser!.tenantSlug;
-      // Visitante não lê o mural (firestore.rules): nem tenta escutar.
+      // Consulente não lê o mural (firestore.rules): nem tenta escutar.
       if (_viewModel.currentUser!.isMember) {
         _announcementVM.listenToAnnouncements(tenantSlug);
       }
@@ -430,12 +430,12 @@ class _HomeViewState extends State<HomeView> {
         return "Filho(a) de Santo";
       default:
         return user.isPendingApproval
-            ? "Visitante · aguardando aprovação"
-            : "Visitante";
+            ? "Consulente · aguardando aprovação"
+            : "Consulente";
     }
   }
 
-  /// Visitante só vê o calendário; daqui ele pede para virar membro.
+  /// Consulente só vê o calendário; daqui ele pede para virar membro.
   Widget _buildVisitorBanner(UserModel user) {
     final pending = user.isPendingApproval;
     return Container(
@@ -457,7 +457,7 @@ class _HomeViewState extends State<HomeView> {
             child: Text(
               pending
                   ? "Seu pedido de acesso foi enviado. Aguarde a aprovação da casa."
-                  : "Você entrou como visitante e só vê o calendário. Peça acesso para participar da casa.",
+                  : "Você entrou como consulente e só vê o calendário. Peça acesso para participar da casa.",
               style: const TextStyle(fontSize: 13),
             ),
           ),
@@ -949,7 +949,7 @@ class _HomeViewState extends State<HomeView> {
                 },
               ),
               const Divider(),
-              // Entidades são coisa de membro: o visitante não vê este atalho.
+              // Entidades são coisa de membro: o consulente não vê este atalho.
               if (_viewModel.currentUser?.isVisitor != true) ...[
                 ListTile(
                   leading: const Icon(Icons.groups_3_outlined),

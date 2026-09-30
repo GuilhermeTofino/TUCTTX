@@ -36,7 +36,7 @@ Map<String, dynamic> accessState(Map<String, dynamic> userDoc) => {
 /// (subconjunto de role/status/skills). Vazio se nada muda de fato.
 ///
 /// - Mudou papel ou status: uma entrada `role_change` (se as skills também mudam,
-///   como ao rebaixar para visitante, entram na mesma entrada).
+///   como ao rebaixar para consulente, entram na mesma entrada).
 /// - Mudaram só as skills: uma entrada `skill_grant` (acrescentadas) e/ou uma
 ///   `skill_revoke` (retiradas), encadeadas (o "depois" de uma é o "antes" da outra),
 ///   para cada uma poder ser desfeita na ordem inversa.
