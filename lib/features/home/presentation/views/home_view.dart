@@ -949,16 +949,19 @@ class _HomeViewState extends State<HomeView> {
                 },
               ),
               const Divider(),
-              ListTile(
-                leading: const Icon(Icons.groups_3_outlined),
-                title: const Text("Minhas Entidades"),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, AppRoutes.myEntities);
-                },
-              ),
-              const Divider(),
+              // Entidades são coisa de membro: o visitante não vê este atalho.
+              if (_viewModel.currentUser?.isVisitor != true) ...[
+                ListTile(
+                  leading: const Icon(Icons.groups_3_outlined),
+                  title: const Text("Minhas Entidades"),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, AppRoutes.myEntities);
+                  },
+                ),
+                const Divider(),
+              ],
               ListTile(
                 leading: const Icon(Icons.description_outlined),
                 title: const Text("Termos de Uso"),

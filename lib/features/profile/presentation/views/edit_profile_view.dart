@@ -226,15 +226,18 @@ class _EditProfileViewState extends State<EditProfileView> {
           TextFormField(controller: _orixaFrente, decoration: _dec('Santo de cabeça (Orixá de frente)')),
           const SizedBox(height: 12),
           TextFormField(controller: _orixaJunto, decoration: _dec('Orixá junto')),
-          const SizedBox(height: 4),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.groups_3_outlined),
-            title: const Text('Minhas Entidades'),
-            subtitle: const Text('Gerencie suas entidades em uma tela própria.'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => Navigator.pushNamed(context, AppRoutes.myEntities),
-          ),
+          // Entidades são coisa de membro: o visitante não vê este atalho.
+          if (!user.isVisitor) ...[
+            const SizedBox(height: 4),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.groups_3_outlined),
+              title: const Text('Minhas Entidades'),
+              subtitle: const Text('Gerencie suas entidades em uma tela própria.'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => Navigator.pushNamed(context, AppRoutes.myEntities),
+            ),
+          ],
 
           _section('Saúde'),
           Container(

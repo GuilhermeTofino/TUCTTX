@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/core/services/push_trigger_service.dart';
 
+import 'package:app_tenda/features/admin/domain/member_tabs.dart';
 import 'package:app_tenda/features/admin/domain/models/audit_log_entry.dart';
 import 'package:app_tenda/features/admin/domain/repositories/access_control_repository.dart';
 import 'package:app_tenda/features/calendar/domain/repositories/event_repository.dart';
@@ -32,22 +33,22 @@ class MemberManagementViewModel extends ChangeNotifier {
   List<UserModel> _filteredMembers = [];
   bool _isLoading = false;
   String _searchQuery = "";
-  bool _onlyPending = false;
 
   List<UserModel> get members => _filteredMembers;
+  String get searchQuery => _searchQuery;
   bool get isLoading => _isLoading;
-  bool get onlyPending => _onlyPending;
+
+  /// Usuários de uma aba (visitantes, membros ou admins), com a busca aplicada.
+  List<UserModel> membersFor(MemberTab tab) =>
+      usersForTab(_allMembers, tab, query: _searchQuery);
+
+  /// Quantos usuários a aba mostra agora (respeita a busca).
+  int countFor(MemberTab tab) => membersFor(tab).length;
 
   /// Visitantes que pediram para virar membro (status pending_approval).
   List<UserModel> get pendingApprovalMembers => _allMembers
       .where((u) => u.isVisitor && u.isPendingApproval)
       .toList();
-
-  void setOnlyPending(bool value) {
-    _onlyPending = value;
-    _applyFilter();
-    notifyListeners();
-  }
 
   Future<void> loadMembers() async {
     _isLoading = true;
@@ -82,9 +83,6 @@ class MemberManagementViewModel extends ChangeNotifier {
 
   void _applyFilter() {
     Iterable<UserModel> list = _allMembers;
-    if (_onlyPending) {
-      list = list.where((u) => u.isVisitor && u.isPendingApproval);
-    }
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
       list = list.where(

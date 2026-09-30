@@ -1,3 +1,4 @@
+import 'package:app_tenda/features/admin/domain/member_tabs.dart';
 import 'package:app_tenda/features/admin/presentation/viewmodels/member_management_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
@@ -17,15 +18,32 @@ class MemberManagementView extends StatefulWidget {
   State<MemberManagementView> createState() => _MemberManagementViewState();
 }
 
-class _MemberManagementViewState extends State<MemberManagementView> {
+class _MemberManagementViewState extends State<MemberManagementView>
+    with SingleTickerProviderStateMixin {
   final MemberManagementViewModel _viewModel =
       getIt<MemberManagementViewModel>();
+  late final TabController _tabs = TabController(
+    length: MemberTab.values.length,
+    vsync: this,
+  );
 
   @override
   void initState() {
     super.initState();
     _viewModel.loadMembers();
+    // Sem TabBarView (a tela é uma CustomScrollView): a aba escolhida só decide qual lista mostrar.
+    _tabs.addListener(() {
+      if (!_tabs.indexIsChanging) setState(() {});
+    });
   }
+
+  @override
+  void dispose() {
+    _tabs.dispose();
+    super.dispose();
+  }
+
+  MemberTab get _currentTab => MemberTab.values[_tabs.index];
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +59,7 @@ class _MemberManagementViewState extends State<MemberManagementView> {
           SliverToBoxAdapter(
             child: ListenableBuilder(
               listenable: _viewModel,
-              builder: (context, _) => _buildFilterChips(),
+              builder: (context, _) => _buildTabBar(),
             ),
           ),
           ListenableBuilder(
@@ -53,9 +71,11 @@ class _MemberManagementViewState extends State<MemberManagementView> {
                 );
               }
 
-              if (_viewModel.members.isEmpty) {
-                return const SliverFillRemaining(
-                  child: Center(child: Text("Nenhum membro encontrado.")),
+              final list = _viewModel.membersFor(_currentTab);
+              if (list.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: Text(_emptyMessage(_currentTab))),
                 );
               }
 
@@ -63,12 +83,11 @@ class _MemberManagementViewState extends State<MemberManagementView> {
                 padding: const EdgeInsets.all(16),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
-                    final member = _viewModel.members[index];
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: _buildMemberCard(member),
+                      child: _buildMemberCard(list[index]),
                     );
-                  }, childCount: _viewModel.members.length),
+                  }, childCount: list.length),
                 ),
               );
             },
@@ -78,24 +97,55 @@ class _MemberManagementViewState extends State<MemberManagementView> {
     );
   }
 
-  Widget _buildFilterChips() {
+  String _emptyMessage(MemberTab tab) {
+    if (_viewModel.searchQuery.trim().isNotEmpty) {
+      return "Ninguém encontrado nesta aba.";
+    }
+    switch (tab) {
+      case MemberTab.visitors:
+        return "Nenhum visitante.";
+      case MemberTab.members:
+        return "Nenhum membro encontrado.";
+      case MemberTab.admins:
+        return "Nenhum administrador.";
+    }
+  }
+
+  Widget _buildTabBar() {
     final pending = _viewModel.pendingApprovalMembers.length;
+
+    Tab tab(String label, MemberTab t, {bool dot = false}) => Tab(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("$label (${_viewModel.countFor(t)})"),
+          if (dot) ...[
+            const SizedBox(width: 6),
+            Container(
+              width: 8,
+              height: 8,
+              decoration: const BoxDecoration(
+                color: Colors.orange,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      child: Row(
-        children: [
-          ChoiceChip(
-            label: const Text("Todos"),
-            selected: !_viewModel.onlyPending,
-            onSelected: (_) => _viewModel.setOnlyPending(false),
-          ),
-          const SizedBox(width: 8),
-          ChoiceChip(
-            label: Text("Aguardando aprovação ($pending)"),
-            selected: _viewModel.onlyPending,
-            onSelected: (_) => _viewModel.setOnlyPending(true),
-          ),
+      child: TabBar(
+        controller: _tabs,
+        labelColor: Theme.of(context).colorScheme.primary,
+        unselectedLabelColor: Colors.grey[600],
+        indicatorColor: Theme.of(context).colorScheme.primary,
+        tabs: [
+          // O ponto laranja avisa que há visitante esperando aprovação.
+          tab("Visitantes", MemberTab.visitors, dot: pending > 0),
+          tab("Membros", MemberTab.members),
+          tab("Admins", MemberTab.admins),
         ],
       ),
     );
