@@ -82,9 +82,9 @@ async function main() {
 
     // Atalhos da Home (como em produção: só o Calendário é aberto a visitantes).
     const menus = [
-        { id: "calendario", title: "Calendário", icon: "calendar_today_outlined", color: "primary", action: "route:/calendar", order: 1 },
-        { id: "financeiro", title: "Financeiro", icon: "payments_outlined", color: "green", action: "internal:finance", order: 2 },
-        { id: "estudos", title: "Estudos", icon: "menu_book_outlined", color: "blue", action: "internal:studies", order: 3 },
+        { id: "calendario", title: "Calendário", icon: "calendar", color: "primary", action: "route:/calendar", order: 1 },
+        { id: "financeiro", title: "Financeiro", icon: "finance", color: "green", action: "internal:finance", order: 2 },
+        { id: "estudos", title: "Estudos", icon: "school", color: "blue", action: "internal:studies", order: 3 },
         { id: "cambones", title: "Cambones", icon: "people", color: "orange", action: "route:/cambone-list", order: 4 },
     ];
     for (const { id, ...m } of menus) await db.doc(`${TENANT}/menus/${id}`).set({ ...m, isEnabled: true });
