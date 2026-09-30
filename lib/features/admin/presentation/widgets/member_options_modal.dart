@@ -14,12 +14,28 @@ class MemberOptionsModal extends StatelessWidget {
   final Future<void> Function(UserModel)? onToggleFinanceApprover;
   final bool isFinanceApprover;
 
+  /// Visitante -> membro ("filho de santo").
+  final Future<void> Function(UserModel)? onApproveVisitor;
+
+  /// Abre a checklist de permissões (só para membros, role 'user').
+  final Future<void> Function(UserModel)? onEditSkills;
+
+  /// Membro -> visitante (perde as permissões).
+  final Future<void> Function(UserModel)? onDemoteToVisitor;
+
+  /// Histórico de mudanças de acesso, com "Desfazer".
+  final Future<void> Function(UserModel)? onShowHistory;
+
   const MemberOptionsModal({
     super.key,
     required this.member,
     this.onPromoteToAdmin,
     this.onToggleFinanceApprover,
     this.isFinanceApprover = false,
+    this.onApproveVisitor,
+    this.onEditSkills,
+    this.onDemoteToVisitor,
+    this.onShowHistory,
   });
 
   @override
@@ -33,7 +49,8 @@ class MemberOptionsModal extends StatelessWidget {
           topRight: Radius.circular(30),
         ),
       ),
-      child: Column(
+      child: SingleChildScrollView(
+       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -159,6 +176,60 @@ class MemberOptionsModal extends StatelessWidget {
                   color: member.isAdmin ? Colors.red : Colors.indigo,
                   onTap: () => _showConfirmationDialog(context),
                 ),
+              if (member.isVisitor && onApproveVisitor != null)
+                _buildOptionCard(
+                  context,
+                  title: member.isPendingApproval
+                      ? "Aprovar (pediu acesso)"
+                      : "Aprovar como Filho(a)",
+                  icon: Icons.how_to_reg_outlined,
+                  color: Colors.green,
+                  onTap: () => _confirm(
+                    context,
+                    title: "Aprovar como filho(a) de santo",
+                    message:
+                        "${member.name} passará a ter acesso de membro (mural, estudos, financeiro e demais áreas).",
+                    color: Colors.green,
+                    onConfirm: () => onApproveVisitor?.call(member),
+                  ),
+                ),
+              if (member.role == 'user' && onEditSkills != null)
+                _buildOptionCard(
+                  context,
+                  title: "Permissões",
+                  icon: Icons.tune_rounded,
+                  color: Colors.deepPurple,
+                  onTap: () {
+                    Navigator.pop(context);
+                    onEditSkills?.call(member);
+                  },
+                ),
+              if (member.role == 'user' && onDemoteToVisitor != null)
+                _buildOptionCard(
+                  context,
+                  title: "Rebaixar p/ Visitante",
+                  icon: Icons.person_off_outlined,
+                  color: Colors.red,
+                  onTap: () => _confirm(
+                    context,
+                    title: "Rebaixar para visitante",
+                    message:
+                        "${member.name} perderá o acesso de membro e todas as permissões. Só verá o calendário.",
+                    color: Colors.red,
+                    onConfirm: () => onDemoteToVisitor?.call(member),
+                  ),
+                ),
+              if (onShowHistory != null)
+                _buildOptionCard(
+                  context,
+                  title: "Histórico",
+                  icon: Icons.history_rounded,
+                  color: Colors.brown,
+                  onTap: () {
+                    Navigator.pop(context);
+                    onShowHistory?.call(member);
+                  },
+                ),
               // Só admins podem ser aprovadores (as regras exigem os dois).
               if (member.isAdmin && onToggleFinanceApprover != null)
                 _buildOptionCard(
@@ -175,6 +246,35 @@ class MemberOptionsModal extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
+        ],
+       ),
+      ),
+    );
+  }
+
+  /// Confirmação genérica; fecha o modal e executa [onConfirm].
+  void _confirm(
+    BuildContext context, {
+    required String title,
+    required String message,
+    required Color color,
+    required VoidCallback onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Cancelar")),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx); // Fecha o dialog
+              Navigator.pop(context); // Fecha o modal
+              onConfirm();
+            },
+            child: Text("Confirmar", style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+          ),
         ],
       ),
     );

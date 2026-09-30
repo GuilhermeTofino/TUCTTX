@@ -5,6 +5,8 @@ import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:app_tenda/features/admin/presentation/widgets/member_options_modal.dart';
+import 'package:app_tenda/features/admin/presentation/widgets/skills_dialog.dart';
+import 'package:app_tenda/features/admin/presentation/widgets/audit_history_sheet.dart';
 
 import 'package:app_tenda/core/widgets/premium_sliver_app_bar.dart';
 
@@ -36,6 +38,12 @@ class _MemberManagementViewState extends State<MemberManagementView> {
             backgroundIcon: Icons.people_alt_rounded,
           ),
           SliverToBoxAdapter(child: _buildSearchBar()),
+          SliverToBoxAdapter(
+            child: ListenableBuilder(
+              listenable: _viewModel,
+              builder: (context, _) => _buildFilterChips(),
+            ),
+          ),
           ListenableBuilder(
             listenable: _viewModel,
             builder: (context, _) {
@@ -64,6 +72,29 @@ class _MemberManagementViewState extends State<MemberManagementView> {
                 ),
               );
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChips() {
+    final pending = _viewModel.pendingApprovalMembers.length;
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: Row(
+        children: [
+          ChoiceChip(
+            label: const Text("Todos"),
+            selected: !_viewModel.onlyPending,
+            onSelected: (_) => _viewModel.setOnlyPending(false),
+          ),
+          const SizedBox(width: 8),
+          ChoiceChip(
+            label: Text("Aguardando aprovação ($pending)"),
+            selected: _viewModel.onlyPending,
+            onSelected: (_) => _viewModel.setOnlyPending(true),
           ),
         ],
       ),
@@ -136,9 +167,9 @@ class _MemberManagementViewState extends State<MemberManagementView> {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            member.role.toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.blue,
+                            _roleLabel(member),
+                            style: TextStyle(
+                              color: member.isPendingApproval ? Colors.orange : Colors.blue,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -175,10 +206,68 @@ class _MemberManagementViewState extends State<MemberManagementView> {
       backgroundColor: Colors.transparent,
       builder: (context) => MemberOptionsModal(
         member: member,
-        onPromoteToAdmin: _viewModel.toggleAdminRole,
+        onPromoteToAdmin: (m) => _run(
+          () => _viewModel.toggleAdminRole(m),
+          m.isAdmin
+              ? "${m.name} não é mais administrador(a)."
+              : "${m.name} agora é administrador(a).",
+        ),
         isFinanceApprover: _viewModel.isFinanceApprover(member.id),
         onToggleFinanceApprover: _toggleFinanceApprover,
+        onApproveVisitor: (m) => _run(
+          () => _viewModel.approveVisitor(m),
+          "${m.name} agora é filho(a) de santo.",
+        ),
+        onEditSkills: _editSkills,
+        onDemoteToVisitor: (m) => _run(
+          () => _viewModel.demoteToVisitor(m),
+          "${m.name} foi rebaixado(a) para visitante.",
+        ),
+        onShowHistory: (m) => showAuditHistorySheet(
+          context,
+          member: m,
+          viewModel: _viewModel,
+        ),
       ),
+    );
+  }
+
+  String _roleLabel(UserModel member) {
+    if (member.isPendingApproval && member.isVisitor) return "VISITANTE · PEDIU ACESSO";
+    switch (member.role) {
+      case 'admin':
+        return "ADMIN";
+      case 'user':
+        return member.skills.isEmpty ? "MEMBRO" : "MEMBRO · ${member.skills.length} PERMISSÕES";
+      default:
+        return "VISITANTE";
+    }
+  }
+
+  /// Executa uma mudança de acesso e mostra o resultado (ou o motivo da recusa).
+  Future<void> _run(Future<void> Function() action, String success) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await action();
+      messenger.showSnackBar(SnackBar(content: Text(success)));
+    } on StateError catch (e) {
+      // Travas de negócio (ex.: alterar o próprio acesso, último admin).
+      messenger.showSnackBar(SnackBar(content: Text(e.message)));
+    } catch (_) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text("Não foi possível concluir. Tente novamente.")),
+      );
+    }
+  }
+
+  Future<void> _editSkills(UserModel member) async {
+    final catalog = await _viewModel.loadSkillsCatalog();
+    if (!mounted) return;
+    final chosen = await showSkillsDialog(context, member: member, catalog: catalog);
+    if (chosen == null) return;
+    await _run(
+      () => _viewModel.setSkills(member, chosen),
+      "Permissões de ${member.name.split(' ').first} atualizadas.",
     );
   }
 

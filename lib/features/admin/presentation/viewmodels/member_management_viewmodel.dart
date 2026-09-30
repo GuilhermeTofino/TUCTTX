@@ -4,8 +4,9 @@ import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart
 import 'package:intl/intl.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/core/services/push_trigger_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:app_tenda/features/admin/domain/models/audit_log_entry.dart';
+import 'package:app_tenda/features/admin/domain/repositories/access_control_repository.dart';
 import 'package:app_tenda/features/calendar/domain/repositories/event_repository.dart';
 import 'package:app_tenda/features/finance/domain/repositories/payment_request_repository.dart';
 import 'package:app_tenda/features/finance/presentation/viewmodels/receipt_approval_viewmodel.dart';
@@ -17,10 +18,10 @@ class MemberManagementViewModel extends ChangeNotifier {
   final PushTriggerService _pushService = getIt<PushTriggerService>();
   final PaymentRequestRepository _paymentRepository =
       getIt<PaymentRequestRepository>();
+  final AccessControlRepository _accessRepository =
+      getIt<AccessControlRepository>();
 
   MemberManagementViewModel(this._userRepository);
-
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Set<String> _approverIds = {};
 
@@ -31,14 +32,22 @@ class MemberManagementViewModel extends ChangeNotifier {
   List<UserModel> _filteredMembers = [];
   bool _isLoading = false;
   String _searchQuery = "";
-  List<Map<String, dynamic>> _auditHistory = [];
+  bool _onlyPending = false;
 
   List<UserModel> get members => _filteredMembers;
   bool get isLoading => _isLoading;
-  List<Map<String, dynamic>> get auditHistory => _auditHistory;
+  bool get onlyPending => _onlyPending;
 
-  List<UserModel> get pendingApprovalMembers =>
-      _allMembers.where((u) => u.status == 'pending_approval').toList();
+  /// Visitantes que pediram para virar membro (status pending_approval).
+  List<UserModel> get pendingApprovalMembers => _allMembers
+      .where((u) => u.isVisitor && u.isPendingApproval)
+      .toList();
+
+  void setOnlyPending(bool value) {
+    _onlyPending = value;
+    _applyFilter();
+    notifyListeners();
+  }
 
   Future<void> loadMembers() async {
     _isLoading = true;
@@ -72,22 +81,17 @@ class MemberManagementViewModel extends ChangeNotifier {
   }
 
   void _applyFilter() {
-    if (_searchQuery.isEmpty) {
-      _filteredMembers = List.from(_allMembers);
-    } else {
-      _filteredMembers = _allMembers.where((user) {
-        final nameMatch = user.name.toLowerCase().contains(
-          _searchQuery.toLowerCase(),
-        );
-        final emailMatch = user.email.toLowerCase().contains(
-          _searchQuery.toLowerCase(),
-        );
-        return nameMatch || emailMatch;
-      }).toList();
+    Iterable<UserModel> list = _allMembers;
+    if (_onlyPending) {
+      list = list.where((u) => u.isVisitor && u.isPendingApproval);
     }
-
-    // Ordenar por nome por padrão
-    _filteredMembers.sort((a, b) => a.name.compareTo(b.name));
+    if (_searchQuery.isNotEmpty) {
+      final q = _searchQuery.toLowerCase();
+      list = list.where(
+        (u) => u.name.toLowerCase().contains(q) || u.email.toLowerCase().contains(q),
+      );
+    }
+    _filteredMembers = list.toList()..sort((a, b) => a.name.compareTo(b.name));
   }
 
   Future<void> saveAmaciDates(
@@ -192,230 +196,132 @@ class MemberManagementViewModel extends ChangeNotifier {
     );
   }
 
-  Future<void> toggleAdminRole(UserModel user) async {
-    final newRole = user.isAdmin ? 'user' : 'admin';
-    final updatedUser = user.copyWith(role: newRole);
+  // ---------------------------------------------------------------------------
+  // ACESSO (papel, status, skills): sempre pelo AccessControlRepository, que grava
+  // a mudança e o audit_log na mesma transação, com o admin logado como ator.
+  // ---------------------------------------------------------------------------
 
-    try {
-      await _userRepository.saveUserProfile(updatedUser);
+  String get _actorId {
+    final id = getIt<HomeViewModel>().currentUser?.id;
+    if (id == null || id.isEmpty) {
+      throw StateError('Sessão expirada. Entre novamente.');
+    }
+    return id;
+  }
 
-      // Quem deixa de ser admin sai da lista de aprovadores. As regras já o
-      // barrariam, mas assim a lista não guarda ids sem efeito.
-      if (user.isAdmin && isFinanceApprover(user.id)) {
-        try {
-          await _paymentRepository.setApprover(user.id, enabled: false);
-          _approverIds.remove(user.id);
-        } catch (e) {
-          debugPrint("Erro ao remover aprovador rebaixado: $e");
-        }
-      }
+  int get _adminCount => _allMembers.where((u) => u.isAdmin).length;
 
-      // Atualiza a lista localmente para refletir a mudança imediatamente
-      final index = _allMembers.indexWhere((u) => u.id == user.id);
-      if (index != -1) {
-        _allMembers[index] = updatedUser;
-        _applyFilter(); // Re-aplica filtros se houver
-        notifyListeners();
-      }
-    } catch (e) {
-      debugPrint("Erro ao alterar permissão de admin: $e");
-      rethrow;
+  /// Trava de segurança: ninguém altera o próprio acesso, e o último admin não
+  /// pode ser rebaixado (o app ficaria sem quem administre).
+  void _guardAccessChange(UserModel target, {required bool losesAdmin}) {
+    if (target.id == _actorId) {
+      throw StateError('Você não pode alterar o seu próprio acesso.');
+    }
+    if (losesAdmin && target.isAdmin && _adminCount <= 1) {
+      throw StateError('Este é o último administrador e não pode ser rebaixado.');
     }
   }
 
-  String? _tenantId;
-  String? _env;
-
-  void setContext(String tenantId, String env) {
-    _tenantId = tenantId;
-    _env = env;
-  }
-
-  Future<void> approveUserAsFilho(UserModel user) async {
-    if (_tenantId == null || _env == null) return;
-
-    final updatedUser = user.copyWith(role: 'user', status: 'active');
-    try {
-      await _recordAuditLog(
-        user.id,
-        'role_change',
-        {'role': user.role, 'status': user.status},
-        {'role': 'user', 'status': 'active'},
-      );
-      await _userRepository.saveUserProfile(updatedUser);
-
-      final index = _allMembers.indexWhere((u) => u.id == user.id);
-      if (index != -1) {
-        _allMembers[index] = updatedUser;
-        _applyFilter();
-        notifyListeners();
-      }
-    } catch (e) {
-      debugPrint("Erro ao aprovar usuário: $e");
-      rethrow;
-    }
-  }
-
-  Future<void> updateUserSkills(UserModel user, List<String> newSkills) async {
-    if (_tenantId == null || _env == null) return;
-
-    final updatedUser = user.copyWith(skills: newSkills);
-    try {
-      await _recordAuditLog(
-        user.id,
-        'skill_change',
-        {'skills': user.skills},
-        {'skills': newSkills},
-      );
-      await _userRepository.saveUserProfile(updatedUser);
-
-      final index = _allMembers.indexWhere((u) => u.id == user.id);
-      if (index != -1) {
-        _allMembers[index] = updatedUser;
-        _applyFilter();
-        notifyListeners();
-      }
-    } catch (e) {
-      debugPrint("Erro ao atualizar skills: $e");
-      rethrow;
-    }
-  }
-
-  Future<void> demoteToVisitor(UserModel user) async {
-    if (_tenantId == null || _env == null) return;
-
-    final updatedUser = user.copyWith(
-      role: 'visitor',
-      status: 'active',
-      skills: [],
-    );
-    try {
-      await _recordAuditLog(
-        user.id,
-        'role_change',
-        {'role': user.role, 'status': user.status, 'skills': user.skills},
-        {'role': 'visitor', 'status': 'active', 'skills': []},
-      );
-      await _userRepository.saveUserProfile(updatedUser);
-
-      final index = _allMembers.indexWhere((u) => u.id == user.id);
-      if (index != -1) {
-        _allMembers[index] = updatedUser;
-        _applyFilter();
-        notifyListeners();
-      }
-    } catch (e) {
-      debugPrint("Erro ao rebaixar para visitante: $e");
-      rethrow;
-    }
-  }
-
-  Future<void> loadAuditHistory(String userId) async {
-    if (_tenantId == null || _env == null) return;
-
-    try {
-      final snapshot = await _firestore
-          .collection('environments')
-          .doc(_env)
-          .collection('tenants')
-          .doc(_tenantId)
-          .collection('audit_log')
-          .where('targetUserId', isEqualTo: userId)
-          .orderBy('timestamp', descending: true)
-          .limit(50)
-          .get();
-
-      _auditHistory = snapshot.docs.map((doc) {
-        return {...doc.data(), 'id': doc.id};
-      }).toList();
-
-      notifyListeners();
-    } catch (e) {
-      debugPrint("Erro ao carregar histórico de auditoria: $e");
-    }
-  }
-
-  Future<void> undoAuditLog(String auditLogId, UserModel targetUser) async {
-    if (_tenantId == null || _env == null) return;
-
-    try {
-      final auditDoc = await _firestore
-          .collection('environments')
-          .doc(_env)
-          .collection('tenants')
-          .doc(_tenantId)
-          .collection('audit_log')
-          .doc(auditLogId)
-          .get();
-
-      if (!auditDoc.exists) return;
-
-      final before = auditDoc['before'] as Map<String, dynamic>;
-      final restoredUser = targetUser.copyWith(
-        role: before['role'] as String?,
-        status: before['status'] as String?,
-        skills: (before['skills'] as List?)?.cast<String>(),
-      );
-
-      await _firestore
-          .collection('environments')
-          .doc(_env)
-          .collection('tenants')
-          .doc(_tenantId)
-          .collection('audit_log')
-          .doc(auditLogId)
-          .update({'undone': true});
-
-      await _recordAuditLog(
-        targetUser.id,
-        'undo',
-        before,
-        restoredUser.toMap(),
-      );
-
-      await _userRepository.saveUserProfile(restoredUser);
-
-      final index = _allMembers.indexWhere((u) => u.id == targetUser.id);
-      if (index != -1) {
-        _allMembers[index] = restoredUser;
-        _applyFilter();
-      }
-
-      await loadAuditHistory(targetUser.id);
-      notifyListeners();
-    } catch (e) {
-      debugPrint("Erro ao desfazer ação: $e");
-      rethrow;
-    }
-  }
-
-  Future<void> _recordAuditLog(
-    String targetUserId,
-    String action,
-    Map<String, dynamic> before,
-    Map<String, dynamic> after,
+  Future<void> _changeAccess(
+    UserModel user,
+    Map<String, dynamic> changes,
   ) async {
-    if (_tenantId == null || _env == null) return;
-
     try {
-      await _firestore
-          .collection('environments')
-          .doc(_env)
-          .collection('tenants')
-          .doc(_tenantId)
-          .collection('audit_log')
-          .add({
-        'targetUserId': targetUserId,
-        'actorId': 'current_user_id', // Será preenchido pelo admin logado
-        'action': action,
-        'before': before,
-        'after': after,
-        'timestamp': FieldValue.serverTimestamp(),
-        'undone': false,
-      });
+      await _accessRepository.applyAccessChange(
+        targetUserId: user.id,
+        actorId: _actorId,
+        changes: changes,
+      );
+      _patchLocal(
+        user.id,
+        role: changes['role'] as String?,
+        status: changes['status'] as String?,
+        skills: changes['skills'] == null
+            ? null
+            : List<String>.from(changes['skills'] as List),
+      );
     } catch (e) {
-      debugPrint("Erro ao gravar audit_log: $e");
+      debugPrint("Erro ao alterar acesso: $e");
       rethrow;
     }
+  }
+
+  /// Atualiza a cópia local do membro, sem reler a lista inteira.
+  void _patchLocal(String id, {String? role, String? status, List<String>? skills}) {
+    final index = _allMembers.indexWhere((u) => u.id == id);
+    if (index == -1) return;
+    _allMembers[index] = _allMembers[index].copyWith(
+      role: role,
+      status: status,
+      skills: skills,
+    );
+    _applyFilter();
+    notifyListeners();
+  }
+
+  /// Tira o admin da lista de aprovadores do financeiro (as regras já o barrariam
+  /// sem o papel de admin, mas assim a lista não guarda ids sem efeito).
+  Future<void> _dropFromApproversIfListed(String userId) async {
+    if (!isFinanceApprover(userId)) return;
+    try {
+      await _paymentRepository.setApprover(userId, enabled: false);
+      _approverIds.remove(userId);
+    } catch (e) {
+      debugPrint("Erro ao remover aprovador rebaixado: $e");
+    }
+  }
+
+  /// Promove a admin ou remove o papel de admin (volta a 'user').
+  Future<void> toggleAdminRole(UserModel user) async {
+    _guardAccessChange(user, losesAdmin: user.isAdmin);
+    await _changeAccess(user, {'role': user.isAdmin ? 'user' : 'admin'});
+    if (user.isAdmin) await _dropFromApproversIfListed(user.id);
+  }
+
+  /// Aprova um visitante como membro ("filho de santo"): role 'user', status 'active'.
+  Future<void> approveVisitor(UserModel user) async {
+    if (!user.isVisitor) {
+      throw StateError('Só visitantes são aprovados.');
+    }
+    _guardAccessChange(user, losesAdmin: false);
+    await _changeAccess(user, {'role': 'user', 'status': 'active'});
+  }
+
+  /// Define as skills de um membro (role 'user'). Admin já tem todas.
+  Future<void> setSkills(UserModel user, List<String> skills) async {
+    if (user.role != 'user') {
+      throw StateError('Skills só se aplicam a membros (filhos de santo).');
+    }
+    _guardAccessChange(user, losesAdmin: false);
+    await _changeAccess(user, {'skills': skills});
+  }
+
+  /// Rebaixa um membro para visitante: perde skills e volta a status 'active'.
+  Future<void> demoteToVisitor(UserModel user) async {
+    _guardAccessChange(user, losesAdmin: true);
+    await _changeAccess(user, {
+      'role': 'visitor',
+      'status': 'active',
+      'skills': <String>[],
+    });
+    await _dropFromApproversIfListed(user.id);
+  }
+
+  // ---------------------------------------------------------------------------
+  // HISTÓRICO E DESFAZER
+  // ---------------------------------------------------------------------------
+
+  Future<List<SkillDefinition>> loadSkillsCatalog() =>
+      _accessRepository.getSkillsCatalog();
+
+  Future<List<AuditLogEntry>> loadHistory(String userId) =>
+      _accessRepository.getHistory(userId);
+
+  /// Desfaz uma entrada do histórico. Lança [StateError] com o motivo se o
+  /// acesso do membro mudou depois dela.
+  Future<void> undo(AuditLogEntry entry) async {
+    await _accessRepository.undo(logId: entry.id, actorId: _actorId);
+    // O desfazer pode ter mudado papel/status/skills: relê o membro.
+    await loadMembers();
   }
 }
