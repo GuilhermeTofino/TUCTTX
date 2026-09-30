@@ -288,7 +288,8 @@ class _MemberManagementViewState extends State<MemberManagementView>
       case 'admin':
         return "ADMIN";
       case 'user':
-        return member.skills.isEmpty ? "MEMBRO" : "MEMBRO · ${member.skills.length} PERMISSÕES";
+        final n = member.skills.length;
+        return n == 0 ? "MEMBRO" : "MEMBRO · $n ${n == 1 ? 'PERMISSÃO' : 'PERMISSÕES'}";
       default:
         return "VISITANTE";
     }
