@@ -28,6 +28,10 @@ abstract class PaymentRequestRepository {
   /// Ids dos admins marcados como aprovadores do financeiro.
   Future<List<String>> getApproverIds();
 
+  /// Inclui ou remove [userId] da lista de aprovadores. Altera só esse id
+  /// (arrayUnion/arrayRemove), sem regravar a lista inteira.
+  Future<void> setApprover(String userId, {required bool enabled});
+
   /// Solicitações com algum mês ainda aguardando decisão (todas as pessoas).
   Stream<List<PaymentRequestModel>> getPendingRequests();
 
@@ -214,6 +218,16 @@ class FirebasePaymentRequestRepository extends BaseFirestoreDataSource
         }, SetOptions(merge: true));
       }
     });
+  }
+
+  @override
+  Future<void> setApprover(String userId, {required bool enabled}) async {
+    await tenantDocument('settings', 'finance').set({
+      'approverIds': enabled
+          ? FieldValue.arrayUnion([userId])
+          : FieldValue.arrayRemove([userId]),
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 
   @override

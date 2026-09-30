@@ -10,10 +10,16 @@ class MemberOptionsModal extends StatelessWidget {
 
   final Future<void> Function(UserModel)? onPromoteToAdmin;
 
+  /// Marca/desmarca o admin como aprovador de comprovantes do financeiro.
+  final Future<void> Function(UserModel)? onToggleFinanceApprover;
+  final bool isFinanceApprover;
+
   const MemberOptionsModal({
     super.key,
     required this.member,
     this.onPromoteToAdmin,
+    this.onToggleFinanceApprover,
+    this.isFinanceApprover = false,
   });
 
   @override
@@ -153,6 +159,19 @@ class MemberOptionsModal extends StatelessWidget {
                   color: member.isAdmin ? Colors.red : Colors.indigo,
                   onTap: () => _showConfirmationDialog(context),
                 ),
+              // Só admins podem ser aprovadores (as regras exigem os dois).
+              if (member.isAdmin && onToggleFinanceApprover != null)
+                _buildOptionCard(
+                  context,
+                  title: isFinanceApprover
+                      ? "Remover Aprovador"
+                      : "Aprovador Financeiro",
+                  icon: isFinanceApprover
+                      ? Icons.money_off_csred_outlined
+                      : Icons.verified_user_outlined,
+                  color: isFinanceApprover ? Colors.red : Colors.teal,
+                  onTap: () => _showApproverDialog(context),
+                ),
             ],
           ),
           const SizedBox(height: 16),
@@ -188,6 +207,40 @@ class MemberOptionsModal extends StatelessWidget {
                 color: member.isAdmin ? Colors.red : Colors.indigo,
                 fontWeight: FontWeight.bold,
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showApproverDialog(BuildContext context) {
+    final color = isFinanceApprover ? Colors.red : Colors.teal;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          isFinanceApprover ? "Remover Aprovador" : "Aprovador Financeiro",
+        ),
+        content: Text(
+          isFinanceApprover
+              ? "${member.name} deixará de aprovar comprovantes de mensalidade."
+              : "${member.name} passará a receber e aprovar os comprovantes de mensalidade enviados pelos membros.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx); // Fecha o dialog
+              Navigator.pop(context); // Fecha o modal
+              onToggleFinanceApprover?.call(member);
+            },
+            child: Text(
+              "Confirmar",
+              style: TextStyle(color: color, fontWeight: FontWeight.bold),
             ),
           ),
         ],

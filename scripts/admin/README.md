@@ -122,6 +122,8 @@ O membro envia o comprovante do PIX pelo app e um aprovador do financeiro confer
 
 ## Definir os aprovadores
 
+Pelo app: Painel administrativo → Membros → toque no membro (que já deve ser admin) → **Aprovador Financeiro** (ou **Remover Aprovador**). Rebaixar um admin também o tira da lista. O script abaixo continua útil para configurar um tenant novo ou várias pessoas de uma vez.
+
 Só admins podem entrar na lista (as regras do Firestore exigem ser admin **e** constar em `approverIds`). Sem essa lista ninguém aprova e ninguém recebe o push de "comprovante aguardando".
 
 ```bash

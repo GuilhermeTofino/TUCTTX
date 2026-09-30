@@ -176,7 +176,32 @@ class _MemberManagementViewState extends State<MemberManagementView> {
       builder: (context) => MemberOptionsModal(
         member: member,
         onPromoteToAdmin: _viewModel.toggleAdminRole,
+        isFinanceApprover: _viewModel.isFinanceApprover(member.id),
+        onToggleFinanceApprover: _toggleFinanceApprover,
       ),
     );
+  }
+
+  Future<void> _toggleFinanceApprover(UserModel member) async {
+    final wasApprover = _viewModel.isFinanceApprover(member.id);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await _viewModel.toggleFinanceApprover(member);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            wasApprover
+                ? "${member.name} não é mais aprovador do financeiro."
+                : "${member.name} agora é aprovador do financeiro.",
+          ),
+        ),
+      );
+    } catch (_) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text("Não foi possível alterar o aprovador. Tente novamente."),
+        ),
+      );
+    }
   }
 }

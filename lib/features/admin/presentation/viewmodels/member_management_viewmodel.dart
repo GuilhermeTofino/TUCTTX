@@ -6,13 +6,23 @@ import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/core/services/push_trigger_service.dart';
 
 import 'package:app_tenda/features/calendar/domain/repositories/event_repository.dart';
+import 'package:app_tenda/features/finance/domain/repositories/payment_request_repository.dart';
+import 'package:app_tenda/features/finance/presentation/viewmodels/receipt_approval_viewmodel.dart';
+import 'package:app_tenda/features/home/presentation/viewmodels/home_viewmodel.dart';
 
 class MemberManagementViewModel extends ChangeNotifier {
   final UserRepository _userRepository;
   final EventRepository _eventRepository = getIt<EventRepository>();
   final PushTriggerService _pushService = getIt<PushTriggerService>();
+  final PaymentRequestRepository _paymentRepository =
+      getIt<PaymentRequestRepository>();
 
   MemberManagementViewModel(this._userRepository);
+
+  Set<String> _approverIds = {};
+
+  /// Se [userId] está na lista de aprovadores do financeiro.
+  bool isFinanceApprover(String userId) => _approverIds.contains(userId);
 
   List<UserModel> _allMembers = [];
   List<UserModel> _filteredMembers = [];
@@ -28,12 +38,22 @@ class MemberManagementViewModel extends ChangeNotifier {
 
     try {
       _allMembers = await _userRepository.getAllUsers();
+      _approverIds = (await _loadApproverIds()).toSet();
       _applyFilter();
     } catch (e) {
       debugPrint("Erro ao carregar membros: $e");
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<List<String>> _loadApproverIds() async {
+    try {
+      return await _paymentRepository.getApproverIds();
+    } catch (e) {
+      debugPrint("Erro ao carregar aprovadores do financeiro: $e");
+      return [];
     }
   }
 
@@ -133,12 +153,54 @@ class MemberManagementViewModel extends ChangeNotifier {
     }
   }
 
+  /// Marca ou desmarca um admin como aprovador de comprovantes. Só admins
+  /// entram na lista: as regras exigem ser admin E constar nela.
+  Future<void> toggleFinanceApprover(UserModel user) async {
+    if (!user.isAdmin) {
+      throw StateError('Só administradores podem ser aprovadores do financeiro.');
+    }
+    final enable = !isFinanceApprover(user.id);
+
+    try {
+      await _paymentRepository.setApprover(user.id, enabled: enable);
+      if (enable) {
+        _approverIds.add(user.id);
+      } else {
+        _approverIds.remove(user.id);
+      }
+      notifyListeners();
+      await _refreshOwnApproverState();
+    } catch (e) {
+      debugPrint("Erro ao alterar aprovador do financeiro: $e");
+      rethrow;
+    }
+  }
+
+  /// Atualiza o card "Comprovantes" do hub caso quem mexeu na lista seja o
+  /// próprio aprovador logado.
+  Future<void> _refreshOwnApproverState() async {
+    await getIt<ReceiptApprovalViewModel>().init(
+      getIt<HomeViewModel>().currentUser,
+    );
+  }
+
   Future<void> toggleAdminRole(UserModel user) async {
     final newRole = user.isAdmin ? 'user' : 'admin';
     final updatedUser = user.copyWith(role: newRole);
 
     try {
       await _userRepository.saveUserProfile(updatedUser);
+
+      // Quem deixa de ser admin sai da lista de aprovadores. As regras já o
+      // barrariam, mas assim a lista não guarda ids sem efeito.
+      if (user.isAdmin && isFinanceApprover(user.id)) {
+        try {
+          await _paymentRepository.setApprover(user.id, enabled: false);
+          _approverIds.remove(user.id);
+        } catch (e) {
+          debugPrint("Erro ao remover aprovador rebaixado: $e");
+        }
+      }
 
       // Atualiza a lista localmente para refletir a mudança imediatamente
       final index = _allMembers.indexWhere((u) => u.id == user.id);
