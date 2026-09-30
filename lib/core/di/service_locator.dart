@@ -38,6 +38,8 @@ import 'package:app_tenda/features/cambone/presentation/viewmodels/cambone_viewm
 import 'package:app_tenda/features/profile/presentation/viewmodels/my_entities_viewmodel.dart';
 import 'package:app_tenda/features/admin/presentation/viewmodels/house_entities_viewmodel.dart';
 import 'package:app_tenda/core/services/dynamic_island/dynamic_island_service.dart';
+import 'package:app_tenda/core/services/permission_service.dart';
+import 'package:app_tenda/features/profile/presentation/viewmodels/edit_profile_viewmodel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final getIt = GetIt.instance;
@@ -71,6 +73,7 @@ Future<void> setupServiceLocator() async {
   getIt.registerLazySingleton<PushNavigationService>(
     () => PushNavigationService(),
   );
+  getIt.registerLazySingleton<PermissionService>(() => PermissionService());
 
   final geminiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
   if (geminiKey.isEmpty) {
@@ -131,4 +134,8 @@ Future<void> setupServiceLocator() async {
 
   getIt.registerFactory<MyEntitiesViewModel>(() => MyEntitiesViewModel());
   getIt.registerFactory(() => HouseEntitiesViewModel());
+
+  getIt.registerFactory<EditProfileViewModel>(
+    () => EditProfileViewModel(getIt<AuthRepository>(), getIt<UserRepository>()),
+  );
 }
