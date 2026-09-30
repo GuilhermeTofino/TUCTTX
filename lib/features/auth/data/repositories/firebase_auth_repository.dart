@@ -118,7 +118,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
     String? medicamentos,
     String? condicoesMedicas,
     String? tipoSanguineo,
-    String role = 'visitor', // Todo cadastro novo nasce visitante (aprovação pelo admin)
+    String role = 'user', // Quem chama decide (ver signup_role.dart); padrão = comportamento de sempre
   }) async {
     try {
       if (name.trim().isEmpty ||

@@ -176,3 +176,17 @@ node migrate-private-health.js --apply  # copia para o privado e remove do docum
 - Idempotente; o que já estiver no privado prevalece.
 - **Em produção, rode só depois de a versão nova estar nas lojas e a atualização estar forçada.** O app antigo ainda grava saúde no documento aberto; rode de novo depois, sem risco.
 - Enquanto não migrar, a tela de perfil e a ficha do admin caem nos campos antigos do documento.
+
+---
+
+# Interruptores das novidades
+
+Lembretes de eventos e o aviso de presença desmarcada são visíveis para os membros/admins, então nascem **desligados**: a Function publicada fica dormente até alguém ligar, por tenant, em `settings/features`.
+
+```bash
+node set-feature-flag.js --show                                  # estado
+node set-feature-flag.js --flag eventReminders --on --apply      # liga (ADMIN_ENV=prod para produção)
+node set-feature-flag.js --flag presenceRemovedPush --off --apply
+```
+
+O cadastro de visitante é outro interruptor, no Remote Config (`<tenant>_visitor_signup_enabled`). Ver `docs/rollout.md` para a ordem completa de publicação.

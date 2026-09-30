@@ -18,7 +18,7 @@ abstract class AuthRepository {
     String? medicamentos,
     String? condicoesMedicas,
     String? tipoSanguineo,
-    String role = 'visitor',
+    String role = 'user',
   });
 
   Future<void> sendPasswordResetEmail(String email);

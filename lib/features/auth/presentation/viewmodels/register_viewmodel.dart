@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:app_tenda/features/auth/domain/signup_role.dart';
+import 'package:app_tenda/core/services/feature_flags.dart';
+import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 import 'package:app_tenda/features/auth/domain/repositories/auth_repository.dart';
 
@@ -42,7 +45,13 @@ class RegisterViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Modo visitante é um interruptor (Remote Config); desligado = cadastro como sempre.
+      final role = signupRoleFor(
+        visitorSignupEnabled: await getIt<FeatureFlags>().visitorSignupEnabled(),
+      );
+
       final user = await _authRepository.signUp(
+        role: role,
         name: data['name'],
         email: data['email'],
         phone: data['phone'],

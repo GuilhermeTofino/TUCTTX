@@ -74,6 +74,9 @@ async function main() {
         alergias: "Amendoim", medicamentos: null, condicoesMedicas: null, tipoSanguineo: "O+",
     });
 
+    // Interruptores das novidades (em produção nascem DESLIGADOS; aqui ligados para testar).
+    await db.doc(`${TENANT}/settings/features`).set({ eventReminders: true, presenceRemovedPush: true });
+
     // Quem aprova comprovantes.
     await db.doc(`${TENANT}/settings/finance`).set({ approverIds: ["seed-admin", "seed-admin2"] });
 

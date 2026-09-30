@@ -8,6 +8,7 @@ const { getRemoteConfig } = require("firebase-admin/remote-config");
 const { getStorage } = require("firebase-admin/storage");
 const { GoogleAuth } = require("google-auth-library");
 const { isExpiredReceipt } = require("./receipt_retention");
+const { isFeatureEnabled } = require("./feature_flags");
 const { saoPauloDayWindow, buildReminderPush, reminderTokens, chunk } = require("./event_reminders");
 const { buildPaymentReceiptPush, collectApproverTokens, pendingReceiptMonthKeys } = require("./payment_receipt_push");
 
@@ -461,6 +462,13 @@ exports.sendEventReminders = onSchedule({
         for (const tenantDoc of tenantsSnap.docs) {
             const tenantId = tenantDoc.id;
             try {
+                // Novidade visível para os membros: nasce desligada (settings/features).
+                const flags = (await tenantDoc.ref.collection("settings").doc("features").get()).data();
+                if (!isFeatureEnabled(flags, "eventReminders")) {
+                    console.log(`[${env}/${tenantId}] eventReminders desligado: nada enviado.`);
+                    continue;
+                }
+
                 const users = (await tenantDoc.ref.collection("users").get()).docs.map((d) => d.data());
 
                 for (const window of windows) {
@@ -523,6 +531,10 @@ exports.notifyAdminsOnPresenceRemoved = onDocumentDeleted({
 
     try {
         const tenantRoot = db.collection("environments").doc(env).collection("tenants").doc(tenantId);
+
+        // Novidade visível para os admins: nasce desligada (settings/features).
+        const flags = (await tenantRoot.collection("settings").doc("features").get()).data();
+        if (!isFeatureEnabled(flags, "presenceRemovedPush")) return;
 
         const eventDoc = await tenantRoot.collection("events").doc(eventId).get();
         if (!eventDoc.exists) return;
