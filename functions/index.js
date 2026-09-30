@@ -6,7 +6,7 @@ const { getMessaging } = require("firebase-admin/messaging");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { getRemoteConfig } = require("firebase-admin/remote-config");
 const { GoogleAuth } = require("google-auth-library");
-const { buildPaymentReceiptPush, collectApproverTokens } = require("./payment_receipt_push");
+const { buildPaymentReceiptPush, collectApproverTokens, pendingReceiptMonthKeys } = require("./payment_receipt_push");
 
 initializeApp();
 
@@ -335,6 +335,12 @@ exports.checkLateFees = onSchedule({
             const tenantId = tenantDoc.id;
             const usersSnap = await tenantDoc.ref.collection("users").get();
 
+            // Meses com comprovante aguardando aprovação não são cobrados.
+            const openRequestsSnap = await tenantDoc.ref.collection("payment_requests")
+                .where("status", "==", "pending_approval")
+                .get();
+            const underReview = pendingReceiptMonthKeys(openRequestsSnap.docs.map((d) => d.data()));
+
             for (const userDoc of usersSnap.docs) {
                 const userData = userDoc.data();
                 const userId = userDoc.id;
@@ -349,6 +355,11 @@ exports.checkLateFees = onSchedule({
 
                     // Verifica se o mês/ano já passou
                     const isPast = (feeData.year < currentYear) || (feeData.year === currentYear && feeData.month < currentMonth);
+
+                    if (isPast && underReview.has(`${userId}_${feeData.year}_${feeData.month}`)) {
+                        console.log(`Mensalidade em análise, ignorada: User ${userId}, ${feeData.month}/${feeData.year}`);
+                        continue;
+                    }
 
                     if (isPast) {
                         console.log(`Mensalidade ATRASADA encontrada: User ${userId}, ${feeData.month}/${feeData.year}`);

@@ -42,4 +42,20 @@ function collectApproverTokens({ approverIds, usersById, requesterId }) {
     return [...new Set(tokens)];
 }
 
-module.exports = { buildPaymentReceiptPush, collectApproverTokens };
+/**
+ * Chaves `userId_ano_mes` dos meses que ainda têm comprovante aguardando
+ * aprovação. O checkLateFees usa isso para não cobrar quem já pagou e espera.
+ */
+function pendingReceiptMonthKeys(requests) {
+    const keys = new Set();
+    for (const request of requests) {
+        for (const item of request.items || []) {
+            if (item.status === "pending_approval") {
+                keys.add(`${request.userId}_${item.year}_${item.month}`);
+            }
+        }
+    }
+    return keys;
+}
+
+module.exports = { buildPaymentReceiptPush, collectApproverTokens, pendingReceiptMonthKeys };

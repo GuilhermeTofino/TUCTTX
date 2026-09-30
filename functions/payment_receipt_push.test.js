@@ -1,6 +1,6 @@
 // Teste simples sem framework: `node functions/payment_receipt_push.test.js`
 const assert = require("node:assert");
-const { buildPaymentReceiptPush, collectApproverTokens } = require("./payment_receipt_push");
+const { buildPaymentReceiptPush, collectApproverTokens, pendingReceiptMonthKeys } = require("./payment_receipt_push");
 
 const request = {
     userId: "u1",
@@ -36,5 +36,18 @@ assert.deepStrictEqual(
     collectApproverTokens({ approverIds: [], usersById, requesterId: "u1" }),
     [],
 );
+
+// Só meses ainda pendentes contam como "em análise".
+const keys = pendingReceiptMonthKeys([
+    { userId: "u1", items: [
+        { month: 8, year: 2026, status: "pending_approval" },
+        { month: 9, year: 2026, status: "approved" },
+        { month: 7, year: 2026, status: "rejected" },
+    ] },
+    { userId: "u2", items: [{ month: 8, year: 2026, status: "pending_approval" }] },
+    { userId: "u3" },
+]);
+assert.deepStrictEqual([...keys].sort(), ["u1_2026_8", "u2_2026_8"]);
+assert.strictEqual(pendingReceiptMonthKeys([]).size, 0);
 
 console.log("payment_receipt_push: ok");
