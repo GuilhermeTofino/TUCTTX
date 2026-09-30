@@ -5,7 +5,9 @@ const { initializeApp } = require("firebase-admin/app");
 const { getMessaging } = require("firebase-admin/messaging");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { getRemoteConfig } = require("firebase-admin/remote-config");
+const { getStorage } = require("firebase-admin/storage");
 const { GoogleAuth } = require("google-auth-library");
+const { isExpiredReceipt } = require("./receipt_retention");
 const { buildPaymentReceiptPush, collectApproverTokens, pendingReceiptMonthKeys } = require("./payment_receipt_push");
 
 initializeApp();
@@ -307,6 +309,44 @@ exports.notifyApproversOnPaymentRequest = onDocumentCreated({
         console.log(`[${tenantId}] Comprovante ${requestId} enfileirado para ${tokens.length} token(s) de aprovadores.`);
     } catch (error) {
         console.error("Erro ao notificar aprovadores sobre comprovante:", error);
+    }
+});
+
+/**
+ * Retenção de comprovantes: em 1º de janeiro apaga os arquivos de anos anteriores
+ * (receipts/{ano}/...). Só o arquivo é removido; a solicitação e os dados contábeis
+ * permanecem no Firestore, e o app passa a mostrar "comprovante indisponível".
+ * Nunca toca no ano corrente. Apaga qualquer ano anterior (não só o último), para
+ * recuperar uma execução perdida.
+ */
+exports.deleteExpiredReceipts = onSchedule({
+    schedule: "0 3 1 1 *",
+    timeZone: "America/Sao_Paulo",
+    region: "southamerica-east1"
+}, async () => {
+    const db = getFirestore();
+    const currentYear = new Date().getFullYear();
+    const bucket = getStorage().bucket();
+
+    console.log(`Limpeza de comprovantes: removendo anos anteriores a ${currentYear}.`);
+
+    for (const env of ["dev", "prod"]) {
+        const tenantsSnap = await db.collection("environments").doc(env).collection("tenants").get();
+
+        for (const tenantDoc of tenantsSnap.docs) {
+            const prefix = `environments/${env}/tenants/${tenantDoc.id}/receipts/`;
+            try {
+                const [files] = await bucket.getFiles({ prefix });
+                const expired = files.filter((file) => isExpiredReceipt(file.name, currentYear));
+
+                for (const file of expired) {
+                    await file.delete();
+                }
+                console.log(`[${env}/${tenantDoc.id}] ${expired.length} comprovante(s) removido(s) de ${files.length} listado(s).`);
+            } catch (error) {
+                console.error(`[${env}/${tenantDoc.id}] Erro na limpeza de comprovantes:`, error);
+            }
+        }
     }
 });
 

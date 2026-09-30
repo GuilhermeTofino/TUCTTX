@@ -113,3 +113,31 @@ Nenhum desses três `.json`/`.csv` de dados reais é versionado no git — só o
 - Deploy: `firebase deploy --only functions:whatsapp` (da raiz do projeto).
 - Secrets necessários (`firebase functions:secrets:set NOME`): `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `SCHEDULER_TOKEN`.
 - Números autorizados a comandar o bot: hardcoded em `functions-whatsapp/index.js` (`WHATSAPP_ALLOWED_SENDERS`).
+
+---
+
+# Comprovantes de mensalidade — aprovadores e retenção
+
+O membro envia o comprovante do PIX pelo app e um aprovador do financeiro confere e dá baixa no mês. Quem aprova é definido por uma lista em `environments/{env}/tenants/{tenant}/settings/finance` (campo `approverIds`).
+
+## Definir os aprovadores
+
+Só admins podem entrar na lista (as regras do Firestore exigem ser admin **e** constar em `approverIds`). Sem essa lista ninguém aprova e ninguém recebe o push de "comprovante aguardando".
+
+```bash
+cd scripts/admin
+node set-finance-approvers.js --list-admins                  # uid e nome dos admins
+node set-finance-approvers.js --approvers uid1,uid2          # preview (não escreve)
+node set-finance-approvers.js --approvers uid1,uid2 --apply  # grava
+node set-finance-approvers.js --show                         # lista atual
+```
+
+- A gravação **substitui** a lista inteira: passe todos os aprovadores de uma vez.
+- O script recusa uid inexistente ou que não seja admin, e não grava nada nesse caso.
+- Por padrão usa `FINANCE_ENV=dev`. Para produção: `FINANCE_ENV=prod node set-finance-approvers.js ...`. Outras variáveis: `FINANCE_TENANT_ID` (default `tucttx`) e `FINANCE_SERVICE_ACCOUNT_PATH`.
+
+## Retenção dos arquivos
+
+Os comprovantes ficam em `receipts/{ano}/{userId}/{requestId}`, na pasta do ano do mês mais recente que o comprovante cobre. A Function `deleteExpiredReceipts` roda em 1º de janeiro (03:00, America/Sao_Paulo) e apaga os arquivos de anos **anteriores** ao atual; o ano corrente nunca é tocado.
+
+Só o arquivo é removido. A solicitação e os dados contábeis (valor, `paidAt`, aprovador) continuam no Firestore; a tela de revisão passa a mostrar "comprovante indisponível".
