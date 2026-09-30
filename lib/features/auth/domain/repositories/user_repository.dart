@@ -1,5 +1,6 @@
 import 'package:app_tenda/features/profile/domain/models/entity_model.dart';
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/profile/domain/models/health_data_model.dart';
 
 abstract class UserRepository {
   /// Busca o perfil completo de um usuário pelo seu ID único (UID).
@@ -22,4 +23,30 @@ abstract class UserRepository {
 
   /// Atualiza a lista de entidades ("Minhas Entidades") do usuário.
   Future<void> updateEntities(String uid, List<EntityModel> entities);
+
+  /// Chaves que o próprio usuário pode editar no seu documento.
+  /// Nunca inclui role, status nem skills (só admin muda; travado nas regras).
+  static const Set<String> personalFields = {
+    'name',
+    'phone',
+    'photoUrl',
+    'endereco',
+    'dataNascimento',
+    'orixaFrente',
+    'orixaJunto',
+  };
+
+  /// Atualiza SÓ os campos pessoais informados, sem regravar o perfil inteiro
+  /// (que sobrescreveria tokens de push e papel com uma cópia antiga).
+  /// Lança [ArgumentError] para qualquer chave fora de [personalFields].
+  Future<void> updatePersonalFields(String uid, Map<String, dynamic> fields);
+
+  /// Dados de saúde do usuário (subcoleção privada); null se ainda não existem.
+  Future<HealthData?> getHealth(String uid);
+
+  /// Grava os dados de saúde na subcoleção privada.
+  Future<void> saveHealth(String uid, HealthData health);
+
+  /// Visitante pede aprovação como membro: status active -> pending_approval.
+  Future<void> requestApproval(String uid);
 }

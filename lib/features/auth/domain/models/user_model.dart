@@ -67,6 +67,11 @@ class UserModel {
   });
 
   bool get isAdmin => role == 'admin';
+  bool get isVisitor => role == 'visitor';
+
+  /// Membro = 'user' ou 'admin' (visitante só enxerga o calendário).
+  bool get isMember => role == 'user' || role == 'admin';
+  bool get isPendingApproval => status == 'pending_approval';
 
   UserModel copyWith({
     String? id,
@@ -142,10 +147,9 @@ class UserModel {
       'jogoComTata': jogoComTata,
       'orixaFrente': orixaFrente,
       'orixaJunto': orixaJunto,
-      'alergias': alergias,
-      'medicamentos': medicamentos,
-      'condicoesMedicas': condicoesMedicas,
-      'tipoSanguineo': tipoSanguineo,
+      // Saúde (alergias, medicamentos, condições, tipo sanguíneo) NÃO é gravada
+      // aqui: vai para users/{uid}/private/health (ver HealthData). fromMap
+      // ainda lê esses campos para documentos antigos, até serem migrados.
       'lastAmaciDate': lastAmaciDate?.toIso8601String(),
       'nextAmaciDate': nextAmaciDate?.toIso8601String(),
       'dataNascimento': dataNascimento?.toIso8601String(),

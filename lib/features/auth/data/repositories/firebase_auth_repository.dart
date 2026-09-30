@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart' show FieldValue;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:developer' as dev;
 import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
+import 'package:app_tenda/features/profile/domain/models/health_data_model.dart';
 import 'package:app_tenda/features/auth/domain/repositories/auth_repository.dart';
 import 'package:app_tenda/core/services/base_firestore_datasource.dart';
 import 'package:app_tenda/core/utils/auth_exception_handler.dart';
@@ -116,7 +118,7 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
     String? medicamentos,
     String? condicoesMedicas,
     String? tipoSanguineo,
-    String role = 'user', // Suporte para definição de cargo no cadastro
+    String role = 'visitor', // Todo cadastro novo nasce visitante (aprovação pelo admin)
   }) async {
     try {
       if (name.trim().isEmpty ||
@@ -156,10 +158,28 @@ class FirebaseAuthRepository extends BaseFirestoreDataSource
         condicoesMedicas: condicoesMedicas,
         tipoSanguineo: tipoSanguineo,
         createdAt: DateTime.now(),
-        role: role, // Atribui o role (padrão 'user')
+        role: role, // padrão 'visitor'; status 'active' e skills [] vêm do modelo
       );
 
+      // O documento do usuário não leva dados de saúde (qualquer membro o lê):
+      // eles vão para a subcoleção privada.
       await tenantDocument('users', uid).set(newUser.toMap());
+
+      final health = HealthData(
+        alergias: alergias,
+        medicamentos: medicamentos,
+        condicoesMedicas: condicoesMedicas,
+        tipoSanguineo: tipoSanguineo,
+      );
+      if (!health.isEmpty) {
+        await tenantDocument('users', uid)
+            .collection('private')
+            .doc('health')
+            .set({
+              ...health.toMap(),
+              'updatedAt': FieldValue.serverTimestamp(),
+            });
+      }
 
       dev.log("--- CADASTRO FINALIZADO ---");
       return newUser;

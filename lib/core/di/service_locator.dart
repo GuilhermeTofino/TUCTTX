@@ -21,6 +21,7 @@ import 'package:app_tenda/core/services/push_trigger_service.dart';
 import 'package:app_tenda/core/services/push_navigation_service.dart';
 import 'package:app_tenda/core/services/calendar_service.dart';
 import 'package:app_tenda/features/finance/domain/repositories/finance_repository.dart';
+import 'package:app_tenda/features/admin/domain/repositories/access_control_repository.dart';
 import 'package:app_tenda/features/finance/domain/repositories/payment_request_repository.dart';
 import 'package:app_tenda/features/finance/presentation/viewmodels/payment_request_viewmodel.dart';
 import 'package:app_tenda/features/finance/presentation/viewmodels/receipt_approval_viewmodel.dart';
@@ -55,6 +56,9 @@ Future<void> setupServiceLocator() async {
   );
   getIt.registerLazySingleton<FinanceRepository>(
     () => FirebaseFinanceRepository(),
+  );
+  getIt.registerLazySingleton<AccessControlRepository>(
+    () => FirebaseAccessControlRepository(),
   );
   getIt.registerLazySingleton<PaymentRequestRepository>(
     () => FirebasePaymentRequestRepository(),

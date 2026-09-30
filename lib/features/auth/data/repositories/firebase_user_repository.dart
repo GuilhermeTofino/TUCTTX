@@ -3,6 +3,7 @@ import 'package:app_tenda/features/profile/domain/models/entity_model.dart';
 import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 import 'package:app_tenda/features/auth/domain/repositories/user_repository.dart';
 import 'package:app_tenda/core/services/base_firestore_datasource.dart';
+import 'package:app_tenda/features/profile/domain/models/health_data_model.dart';
 
 class FirebaseUserRepository extends BaseFirestoreDataSource
     implements UserRepository {
@@ -53,5 +54,43 @@ class FirebaseUserRepository extends BaseFirestoreDataSource
     await tenantDocument('users', uid).set({
       'entities': entities.map((e) => e.toMap()).toList(),
     }, SetOptions(merge: true));
+  }
+
+  @override
+  Future<void> updatePersonalFields(
+    String uid,
+    Map<String, dynamic> fields,
+  ) async {
+    final invalid = fields.keys.where(
+      (k) => !UserRepository.personalFields.contains(k),
+    );
+    if (invalid.isNotEmpty) {
+      throw ArgumentError('Campos não editáveis pelo usuário: ${invalid.join(', ')}');
+    }
+    if (fields.isEmpty) return;
+    await tenantDocument('users', uid).update(fields);
+  }
+
+  DocumentReference _healthRef(String uid) =>
+      tenantDocument('users', uid).collection('private').doc('health');
+
+  @override
+  Future<HealthData?> getHealth(String uid) async {
+    final doc = await _healthRef(uid).get();
+    if (!doc.exists || doc.data() == null) return null;
+    return HealthData.fromMap(doc.data() as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> saveHealth(String uid, HealthData health) async {
+    await _healthRef(uid).set({
+      ...health.toMap(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  @override
+  Future<void> requestApproval(String uid) async {
+    await tenantDocument('users', uid).update({'status': 'pending_approval'});
   }
 }
