@@ -3,7 +3,9 @@ import 'package:app_tenda/features/admin/presentation/views/member_management_vi
 import 'package:app_tenda/features/admin/presentation/views/menu_management_view.dart';
 import 'package:app_tenda/features/calendar/presentation/views/calendar_view.dart';
 import 'package:app_tenda/features/finance/presentation/views/financial_hub_view.dart';
+import 'package:app_tenda/features/finance/presentation/views/pending_receipts_view.dart';
 import 'package:app_tenda/features/finance/presentation/views/receipt_review_view.dart';
+import 'package:app_tenda/features/finance/presentation/views/user_pending_receipts_view.dart';
 import 'package:app_tenda/features/admin/presentation/views/admin_announcements_view.dart';
 import 'package:app_tenda/features/admin/presentation/views/admin_studies_view.dart';
 import 'package:app_tenda/features/admin/presentation/views/admin_cleaning_dashboard_view.dart';
@@ -42,6 +44,8 @@ class AppRoutes {
   static const String myEntities = '/my-entities';
   static const String houseEntities = '/admin-house-entities';
   static const String receiptReview = '/receipt-review';
+  static const String pendingReceipts = '/pending-receipts';
+  static const String userPendingReceipts = '/user-pending-receipts';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -124,6 +128,19 @@ class AppRoutes {
         }
         return MaterialPageRoute(
           builder: (_) => ReceiptReviewView(requestId: requestId),
+        );
+
+      case pendingReceipts:
+        return MaterialPageRoute(builder: (_) => const PendingReceiptsView());
+
+      case userPendingReceipts:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final userId = args?['userId'] as String?;
+        if (userId == null || userId.isEmpty) {
+          return _errorRoute("Membro não informado.");
+        }
+        return MaterialPageRoute(
+          builder: (_) => UserPendingReceiptsView(userId: userId),
         );
 
       default:

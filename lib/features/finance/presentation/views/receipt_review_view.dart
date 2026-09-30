@@ -4,12 +4,13 @@ import 'package:app_tenda/core/config/app_config.dart';
 import 'package:app_tenda/core/di/service_locator.dart';
 import 'package:app_tenda/features/finance/domain/models/payment_request_model.dart';
 import 'package:app_tenda/features/finance/domain/repositories/payment_request_repository.dart';
+import 'package:app_tenda/features/finance/presentation/viewmodels/receipt_approval_viewmodel.dart';
 import 'package:app_tenda/features/home/presentation/viewmodels/home_viewmodel.dart';
 
-/// Destino do push "comprovante aguardando aprovação".
+/// Tela do comprovante: dados da solicitação, arquivo e meses.
+/// Destino do push "comprovante aguardando aprovação" e da lista do aprovador.
 ///
-/// Nesta etapa mostra os dados da solicitação e faz a checagem de permissão;
-/// a conferência do arquivo e os botões Aprovar/Rejeitar vêm na etapa seguinte.
+/// Nesta etapa é só conferência; os botões Aprovar/Rejeitar vêm na seguinte.
 class ReceiptReviewView extends StatefulWidget {
   final String requestId;
   const ReceiptReviewView({super.key, required this.requestId});
@@ -20,6 +21,7 @@ class ReceiptReviewView extends StatefulWidget {
 
 class _ReceiptReviewViewState extends State<ReceiptReviewView> {
   final _repository = getIt<PaymentRequestRepository>();
+  final _approvalVM = getIt<ReceiptApprovalViewModel>();
   final _homeVM = getIt<HomeViewModel>();
 
   late final Future<_ReviewState> _future = _load();
@@ -29,13 +31,13 @@ class _ReceiptReviewViewState extends State<ReceiptReviewView> {
     if (user == null) return const _ReviewState.denied();
 
     try {
-      final approvers = await _repository.getApproverIds();
-      if (!user.isAdmin || !approvers.contains(user.id)) {
-        return const _ReviewState.denied();
-      }
+      // O push pode chegar antes de qualquer tela do aprovador ter carregado.
+      if (!_approvalVM.isLoaded) await _approvalVM.init(user);
+      if (!_approvalVM.isApprover) return const _ReviewState.denied();
 
       final request = await _repository.getRequest(widget.requestId);
       if (request == null) return const _ReviewState.notFound();
+      if (request.userId == user.id) return const _ReviewState.own();
       return _ReviewState.ready(request);
     } catch (_) {
       return const _ReviewState.failed();
@@ -69,6 +71,11 @@ class _ReceiptReviewViewState extends State<ReceiptReviewView> {
               return _message(
                 Icons.lock_outline,
                 'Você não tem permissão para aprovar comprovantes.',
+              );
+            case _ReviewKind.own:
+              return _message(
+                Icons.block,
+                'Você não pode aprovar o próprio comprovante.',
               );
             case _ReviewKind.notFound:
               return _message(
@@ -122,6 +129,8 @@ class _ReceiptReviewViewState extends State<ReceiptReviewView> {
           style: TextStyle(color: Colors.grey[700]),
         ),
         const SizedBox(height: 16),
+        _ReceiptPreview(path: request.receiptPath, viewModel: _approvalVM),
+        const SizedBox(height: 16),
         ...request.items.map(
           (i) => ListTile(
             contentPadding: EdgeInsets.zero,
@@ -150,13 +159,88 @@ class _ReceiptReviewViewState extends State<ReceiptReviewView> {
   }
 }
 
-enum _ReviewKind { ready, denied, notFound, failed }
+/// Exibe o comprovante baixado com a sessão do aprovador (sem link público).
+class _ReceiptPreview extends StatefulWidget {
+  final String path;
+  final ReceiptApprovalViewModel viewModel;
+  const _ReceiptPreview({required this.path, required this.viewModel});
+
+  @override
+  State<_ReceiptPreview> createState() => _ReceiptPreviewState();
+}
+
+class _ReceiptPreviewState extends State<_ReceiptPreview> {
+  late final Future<ReceiptFile?> _future = widget.viewModel.loadReceipt(
+    widget.path,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<ReceiptFile?>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const SizedBox(
+            height: 200,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasError) {
+          return _note(
+            Icons.error_outline,
+            'Não foi possível carregar o comprovante.',
+          );
+        }
+        final file = snapshot.data;
+        if (file == null) {
+          return _note(
+            Icons.hide_image_outlined,
+            'Comprovante indisponível (arquivo removido).',
+          );
+        }
+        if (file.isPdf) {
+          return _note(
+            Icons.picture_as_pdf,
+            'O comprovante é um PDF. A visualização de PDF ainda não está '
+            'disponível no app.',
+          );
+        }
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: InteractiveViewer(
+            child: Image.memory(file.bytes, fit: BoxFit.contain),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _note(IconData icon, String text) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.grey[500]),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text)),
+        ],
+      ),
+    );
+  }
+}
+
+enum _ReviewKind { ready, denied, own, notFound, failed }
 
 class _ReviewState {
   final _ReviewKind kind;
   final PaymentRequestModel? request;
   const _ReviewState._(this.kind, [this.request]);
   const _ReviewState.denied() : this._(_ReviewKind.denied);
+  const _ReviewState.own() : this._(_ReviewKind.own);
   const _ReviewState.notFound() : this._(_ReviewKind.notFound);
   const _ReviewState.failed() : this._(_ReviewKind.failed);
   const _ReviewState.ready(PaymentRequestModel request)

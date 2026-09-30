@@ -7,6 +7,8 @@ import 'package:app_tenda/features/auth/domain/models/user_model.dart';
 import 'package:app_tenda/features/auth/domain/repositories/auth_repository.dart';
 import 'package:app_tenda/core/services/menu_repository.dart';
 import 'package:app_tenda/core/services/notification_service.dart';
+import 'package:app_tenda/features/finance/presentation/viewmodels/payment_request_viewmodel.dart';
+import 'package:app_tenda/features/finance/presentation/viewmodels/receipt_approval_viewmodel.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final AuthRepository _authRepository = getIt<AuthRepository>();
@@ -102,6 +104,9 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> signOut() async {
     _isLoggingOut = true;
     _currentUser = null;
+    // Não deixa a fila/estado financeiro da conta anterior para a próxima.
+    getIt<PaymentRequestViewModel>().clear();
+    getIt<ReceiptApprovalViewModel>().clear();
     notifyListeners();
     await _authRepository.signOut();
   }

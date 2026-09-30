@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:app_tenda/core/services/base_firestore_datasource.dart';
 import 'package:app_tenda/features/finance/domain/models/payment_request_model.dart';
@@ -23,6 +24,21 @@ abstract class PaymentRequestRepository {
 
   /// Ids dos admins marcados como aprovadores do financeiro.
   Future<List<String>> getApproverIds();
+
+  /// Solicitações com algum mês ainda aguardando decisão (todas as pessoas).
+  Stream<List<PaymentRequestModel>> getPendingRequests();
+
+  /// Baixa o comprovante pelo caminho do Storage (leitura autenticada, sem
+  /// link público). Null se o arquivo não existir mais (ex.: limpeza anual).
+  Future<ReceiptFile?> downloadReceipt(String path);
+}
+
+class ReceiptFile {
+  final Uint8List bytes;
+  final String contentType;
+  const ReceiptFile(this.bytes, this.contentType);
+
+  bool get isPdf => contentType == 'application/pdf';
 }
 
 class FirebasePaymentRequestRepository extends BaseFirestoreDataSource
@@ -86,6 +102,40 @@ class FirebasePaymentRequestRepository extends BaseFirestoreDataSource
       doc.data() as Map<String, dynamic>,
       doc.id,
     );
+  }
+
+  @override
+  Stream<List<PaymentRequestModel>> getPendingRequests() {
+    return tenantCollection('payment_requests')
+        .where('status', whereIn: [
+          PaymentRequestStatus.pendingApproval.value,
+          PaymentRequestStatus.partial.value,
+        ])
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => PaymentRequestModel.fromMap(
+                  doc.data() as Map<String, dynamic>,
+                  doc.id,
+                ),
+              )
+              .toList(),
+        );
+  }
+
+  @override
+  Future<ReceiptFile?> downloadReceipt(String path) async {
+    try {
+      final ref = _storage.ref().child(path);
+      final bytes = await ref.getData(5 * 1024 * 1024);
+      if (bytes == null) return null;
+      final metadata = await ref.getMetadata();
+      return ReceiptFile(bytes, metadata.contentType ?? 'image/jpeg');
+    } on FirebaseException catch (e) {
+      if (e.code == 'object-not-found') return null;
+      rethrow;
+    }
   }
 
   @override
