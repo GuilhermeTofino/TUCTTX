@@ -2,6 +2,7 @@
  * Liga/desliga as novidades visíveis das Functions, em `settings/features`:
  *   eventReminders       lembretes diários de véspera e dia (07:00) para os membros
  *   presenceRemovedPush  aviso aos admins quando alguém desmarca presença
+ *   feeReminders         lembretes de mensalidade (pré-vencimento dia 7/10 e atraso semanal)
  * Tudo nasce DESLIGADO: publicar a Function não muda nada para ninguém até ligar aqui.
  *
  * Uso:
@@ -30,7 +31,7 @@ const SERVICE_ACCOUNT_PATH =
     path.join(os.homedir(), "Downloads", "tenda-white-label-firebase-adminsdk-fbsvc-8105b9edc3.json");
 
 // Mantenha igual a functions/feature_flags.js.
-const FLAGS = ["eventReminders", "presenceRemovedPush"];
+const FLAGS = ["eventReminders", "presenceRemovedPush", "feeReminders"];
 
 const args = process.argv.slice(2);
 const APPLY = args.includes("--apply");

@@ -6,8 +6,9 @@
  * Chaves:
  *  - eventReminders      lembretes diários de véspera/dia (sendEventReminders)
  *  - presenceRemovedPush aviso aos admins quando alguém desmarca presença
+ *  - feeReminders        lembretes de mensalidade: pré-vencimento e atraso (sendFeeReminders)
  */
-const FEATURE_KEYS = ["eventReminders", "presenceRemovedPush"];
+const FEATURE_KEYS = ["eventReminders", "presenceRemovedPush", "feeReminders"];
 
 /** Só `true` liga: qualquer outra coisa (ausente, "true", 1) mantém desligado. */
 function isFeatureEnabled(settingsData, key) {

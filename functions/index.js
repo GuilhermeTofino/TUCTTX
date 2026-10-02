@@ -9,7 +9,8 @@ const { getStorage } = require("firebase-admin/storage");
 const { GoogleAuth } = require("google-auth-library");
 const { isExpiredReceipt } = require("./receipt_retention");
 const { isFeatureEnabled } = require("./feature_flags");
-const { saoPauloDayWindow, buildReminderPush, reminderTokens, chunk } = require("./event_reminders");
+const { saoPauloParts, saoPauloDayWindow, buildReminderPush, reminderTokens, chunk } = require("./event_reminders");
+const { classifyFee, buildFeePush } = require("./fee_reminders");
 const { buildPaymentReceiptPush, collectApproverTokens, pendingReceiptMonthKeys } = require("./payment_receipt_push");
 
 initializeApp();
@@ -355,6 +356,8 @@ exports.deleteExpiredReceipts = onSchedule({
 /**
  * Função agendada para verificar mensalidades atrasadas.
  * Executa toda segunda-feira às 09:00 (Brasília).
+ * Tenants com `feeReminders` ligado são atendidos por sendFeeReminders (vencimento dia 10) e
+ * ficam fora daqui, para não avisar em duplicidade.
  */
 exports.checkLateFees = onSchedule({
     schedule: "every monday 09:00",
@@ -375,6 +378,8 @@ exports.checkLateFees = onSchedule({
 
         for (const tenantDoc of tenantsSnap.docs) {
             const tenantId = tenantDoc.id;
+            const flags = (await tenantDoc.ref.collection("settings").doc("features").get()).data();
+            if (isFeatureEnabled(flags, "feeReminders")) continue;
             const usersSnap = await tenantDoc.ref.collection("users").get();
 
             // Meses com comprovante aguardando aprovação não são cobrados.
@@ -433,6 +438,108 @@ exports.checkLateFees = onSchedule({
     }
 
     console.log("Verificação de mensalidades concluída.");
+});
+
+/**
+ * Lembretes de mensalidade, todo dia às 09:00 (Brasília). Vencimento: dia 10 (fee_reminders.js).
+ *
+ * - Pré-vencimento: 3 dias antes (dia 7) e no dia (10), para mensalidades pendentes.
+ * - Atraso: no dia seguinte ao vencimento a mensalidade vira 'late' e o membro é avisado;
+ *   quem segue em atraso é lembrado a cada 7 dias. Um push por membro e tipo, por execução.
+ * - Só membros (user/admin). Mês com comprovante aguardando aprovação não é cobrado.
+ * - Idempotente: marca `reminders_sent/fee_{uid}_{tipo}_{dia}`; reexecução não reenvia.
+ * - Atrás do interruptor `feeReminders` (settings/features), desligado por padrão.
+ */
+exports.sendFeeReminders = onSchedule({
+    schedule: "every day 09:00",
+    timeZone: "America/Sao_Paulo",
+    region: "southamerica-east1"
+}, async () => {
+    const db = getFirestore();
+    const now = new Date();
+    const sp = saoPauloParts(now);
+    const today = { y: sp.y, m: sp.m + 1, d: sp.d };
+    const dayKey = saoPauloDayWindow(now, 0).key;
+
+    for (const env of ["dev", "prod"]) {
+        const tenantsSnap = await db.collection("environments").doc(env).collection("tenants").get();
+
+        for (const tenantDoc of tenantsSnap.docs) {
+            const tenantId = tenantDoc.id;
+            try {
+                const flags = (await tenantDoc.ref.collection("settings").doc("features").get()).data();
+                if (!isFeatureEnabled(flags, "feeReminders")) {
+                    console.log(`[${env}/${tenantId}] feeReminders desligado: nada enviado.`);
+                    continue;
+                }
+
+                const openRequestsSnap = await tenantDoc.ref.collection("payment_requests")
+                    .where("status", "==", "pending_approval")
+                    .get();
+                const underReview = pendingReceiptMonthKeys(openRequestsSnap.docs.map((d) => d.data()));
+
+                const usersSnap = await tenantDoc.ref.collection("users").where("role", "in", ["user", "admin"]).get();
+
+                for (const userDoc of usersSnap.docs) {
+                    const user = userDoc.data();
+                    const userId = userDoc.id;
+                    if (!Array.isArray(user.fcmTokens) || user.fcmTokens.length === 0) continue;
+
+                    const feesSnap = await tenantDoc.ref.collection("financial").doc(userId).collection("monthly_fees")
+                        .where("status", "in", ["pending", "late"])
+                        .get();
+
+                    const groups = { pre_due: [], due_today: [], overdue: [] };
+                    for (const feeDoc of feesSnap.docs) {
+                        const fee = feeDoc.data();
+                        if (underReview.has(`${userId}_${fee.year}_${fee.month}`)) continue;
+                        const action = classifyFee(fee, today, fee.lastReminderAt?.toDate?.());
+                        if (!action) continue;
+                        groups[action.startsWith("overdue") ? "overdue" : action].push({ fee, ref: feeDoc.ref });
+                    }
+
+                    const firstName = (user.name || "").split(" ")[0] || "";
+                    for (const kind of Object.keys(groups)) {
+                        const entries = groups[kind];
+                        if (entries.length === 0) continue;
+
+                        const marker = tenantDoc.ref.collection("reminders_sent").doc(`fee_${userId}_${kind}_${dayKey}`);
+                        try {
+                            await marker.create({ sentAt: FieldValue.serverTimestamp() });
+                        } catch (error) {
+                            if (error.code === 6 || /ALREADY_EXISTS/i.test(String(error.message))) continue;
+                            throw error;
+                        }
+
+                        const fees = entries.map((e) => e.fee).sort((a, b) => a.year - b.year || a.month - b.month);
+                        const push = buildFeePush({ kind, fees, firstName });
+                        await db.collection("notifications_queue").add({
+                            tokens: user.fcmTokens,
+                            title: push.title,
+                            body: push.body,
+                            tenantId,
+                            env,
+                            status: "pending",
+                            createdAt: FieldValue.serverTimestamp(),
+                            data: push.data,
+                        });
+
+                        if (kind === "overdue") {
+                            for (const { ref } of entries) {
+                                await ref.update({
+                                    status: "late",
+                                    lastReminderAt: FieldValue.serverTimestamp(),
+                                    updatedAt: FieldValue.serverTimestamp()
+                                });
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error(`[${env}/${tenantId}] Erro nos lembretes de mensalidade:`, error);
+            }
+        }
+    }
 });
 
 /**

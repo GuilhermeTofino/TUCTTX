@@ -74,4 +74,4 @@ function chunk(list, size) {
     return out;
 }
 
-module.exports = { saoPauloDayWindow, formatTimeSaoPaulo, buildReminderPush, reminderTokens, chunk };
+module.exports = { saoPauloParts, saoPauloDayWindow, formatTimeSaoPaulo, buildReminderPush, reminderTokens, chunk };

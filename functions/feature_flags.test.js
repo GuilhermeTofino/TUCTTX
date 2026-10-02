@@ -15,6 +15,6 @@ for (const v of ["true", 1, "1", "on", {}, [], 0, false, null]) {
 assert.strictEqual(isFeatureEnabled({ eventReminders: true }, "presenceRemovedPush"), false);
 // nome errado é erro, não "desligado" (evita ficar dormente por typo)
 assert.throws(() => isFeatureEnabled({ eventReminder: true }, "eventReminder"), /desconhecido/);
-assert.deepStrictEqual(FEATURE_KEYS, ["eventReminders", "presenceRemovedPush"]);
+assert.deepStrictEqual(FEATURE_KEYS, ["eventReminders", "presenceRemovedPush", "feeReminders"]);
 
 console.log("feature_flags: ok");
