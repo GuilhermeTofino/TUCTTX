@@ -4,6 +4,8 @@
  * `pending` para cada mês do ano que ainda não existe.
  *
  * - Só entra quem tem role `user` ou `admin` (`--roles user` para só membros).
+ * - `--from-month N` (1-12): só cria de N em diante. Default: o mês atual se o ano for o
+ *   atual (meses passados não são criados, para não nascerem já vencidos); 1 em outro ano.
  * - Idempotente: mês que já existe (pago, atrasado, valor editado) nunca é tocado.
  * - Valor inicial: R$ 120 (`--value N` troca). Não é fixo: o valor real é ajustado na
  *   baixa, no app.
@@ -11,6 +13,7 @@
  * Uso:
  *   node activate-monthly-fees.js                      -> preview, ano atual, user+admin
  *   node activate-monthly-fees.js --apply              -> grava de verdade
+ *   node activate-monthly-fees.js --from-month 1 --apply   -> inclui meses passados
  *   node activate-monthly-fees.js --year 2027 --apply
  *   node activate-monthly-fees.js --roles user --apply
  *   node activate-monthly-fees.js --value 150 --apply
@@ -42,11 +45,19 @@ function argValue(name) {
 
 const YEAR = argValue("--year") ? Number(argValue("--year")) : new Date().getFullYear();
 const VALUE = argValue("--value") ? Number(argValue("--value")) : 120;
+const CURRENT = new Date();
+const FROM_MONTH = argValue("--from-month")
+    ? Number(argValue("--from-month"))
+    : (YEAR === CURRENT.getFullYear() ? CURRENT.getMonth() + 1 : 1);
 const ROLES = (argValue("--roles") || "user,admin").split(",").map((r) => r.trim()).filter(Boolean);
 
 async function main() {
     if (!Number.isInteger(YEAR) || YEAR < 2000 || YEAR > 2100) {
         console.error(`Ano inválido: ${argValue("--year")}`);
+        process.exit(1);
+    }
+    if (!Number.isInteger(FROM_MONTH) || FROM_MONTH < 1 || FROM_MONTH > 12) {
+        console.error(`Mês inválido: ${argValue("--from-month")}`);
         process.exit(1);
     }
     if (!Number.isFinite(VALUE) || VALUE < 0) {
@@ -66,7 +77,7 @@ async function main() {
     const db = admin.firestore();
     const tenantRoot = db.collection("environments").doc(ENV).collection("tenants").doc(TENANT_ID);
 
-    console.log(`Ambiente: ${ENV} | Tenant: ${TENANT_ID} | Ano: ${YEAR} | Roles: ${ROLES.join(",")} | Valor inicial: ${VALUE}`);
+    console.log(`Ambiente: ${ENV} | Tenant: ${TENANT_ID} | Ano: ${YEAR} (a partir do mês ${FROM_MONTH}) | Roles: ${ROLES.join(",")} | Valor inicial: ${VALUE}`);
     console.log(`Modo: ${APPLY ? "APLICAR (vai gravar de verdade)" : "PREVIEW (nada é alterado)"}\n`);
 
     const users = await tenantRoot.collection("users").where("role", "in", ROLES).get();
@@ -78,7 +89,7 @@ async function main() {
         const coll = tenantRoot.collection("financial").doc(userDoc.id).collection("monthly_fees");
         const existing = new Set((await coll.get()).docs.map((d) => d.id));
         const missing = [];
-        for (let m = 1; m <= 12; m++) if (!existing.has(`${YEAR}_${m}`)) missing.push(m);
+        for (let m = FROM_MONTH; m <= 12; m++) if (!existing.has(`${YEAR}_${m}`)) missing.push(m);
 
         console.log(`${missing.length === 0 ? "OK   " : "CRIAR"} ${userDoc.data().name || userDoc.id}: ${missing.length === 0 ? "já completo" : `${missing.length} mês(es)`}`);
         if (missing.length === 0) continue;
